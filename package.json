@@ -5,6 +5,7 @@
     "packages/*"
   ],
   "scripts": {
+    "bootstrap": "node scripts/bootstrap.js",
     "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
     "size-runtime": "node scripts/build.js runtime-dom size-check -p -f global",
