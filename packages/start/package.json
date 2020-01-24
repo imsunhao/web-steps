@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/start",
-  "version": "0.0.0-alpha.0",
+  "version": "0.0.0-alpha.1",
   "description": "@web-steps/start",
   "main": "index.js",
   "files": [
