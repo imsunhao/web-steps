@@ -1,0 +1,22 @@
+{
+  "name": "@web-steps/build",
+  "version": "0.0.0-alpha.1",
+  "description": "@web-steps/build",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "types": "dist/build.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsunhao/utils.git"
+  },
+  "keywords": [],
+  "author": "imsunhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imsunhao/utils/issues"
+  },
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/build#readme"
+}
