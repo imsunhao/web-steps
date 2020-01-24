@@ -1,9 +1,8 @@
 {
   "name": "@web-steps/build",
-  "version": "0.0.0-alpha.1",
+  "version": "0.0.0-alpha.0",
   "description": "@web-steps/build",
   "main": "index.js",
-  "module": "dist/build.esm-bundler.js",
   "files": [
     "index.js",
     "dist"
