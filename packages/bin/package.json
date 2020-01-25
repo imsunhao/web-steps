@@ -1,13 +1,13 @@
 {
-  "name": "@web-steps/build",
+  "name": "@web-steps/bin",
   "version": "0.0.1-alpha.0",
-  "description": "@web-steps/build",
+  "description": "@web-steps/bin",
   "main": "index.js",
   "files": [
     "index.js",
     "dist"
   ],
-  "types": "dist/build.d.ts",
+  "types": "dist/bin.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imsunhao/utils.git"
@@ -18,5 +18,5 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/build#readme"
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/bin#readme"
 }
