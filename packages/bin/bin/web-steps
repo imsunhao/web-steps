@@ -1,0 +1,6 @@
+#!/usr/bin/env node --max-old-space-size=4096
+'use strict'
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
+require('../dist').start()

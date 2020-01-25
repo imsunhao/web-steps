@@ -13,6 +13,9 @@
     "url": "git+https://github.com/imsunhao/utils.git"
   },
   "keywords": [],
+  "bin": {
+    "web-steps": "./bin/web-steps"
+  },
   "author": "imsunhao",
   "license": "MIT",
   "bugs": {

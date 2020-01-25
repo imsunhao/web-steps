@@ -25,13 +25,13 @@ let hasTSChecked = false
 
 const outputConfigs = {
   cjs: {
-    file: resolve(`dist/${name}.cjs.js`),
+    dir: resolve('dist'),
     format: `cjs`
-  },
-  esm: {
-    file: resolve(`dist/${name}.esm.js`),
-    format: `es`
   }
+}
+
+const entryFileMap = {
+  bin: ['src/dev.ts', 'src/index.ts']
 }
 
 const defaultFormats = ['cjs']
@@ -40,17 +40,6 @@ const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
 const packageConfigs = process.env.PROD_ONLY
   ? []
   : packageFormats.map(format => createConfig(format, outputConfigs[format]))
-
-if (process.env.NODE_ENV === 'production') {
-  packageFormats.forEach(format => {
-    if (format === 'cjs' && packageOptions.prod !== false) {
-      packageConfigs.push(createProductionConfig(format))
-    }
-    if (format === 'global' || format === 'esm') {
-      packageConfigs.push(createMinifiedConfig(format))
-    }
-  })
-}
 
 export default packageConfigs
 
@@ -61,15 +50,6 @@ function createConfig(format, output, plugins = []) {
   }
 
   output.externalLiveBindings = false
-
-  const isProductionBuild = process.env.__DEV__ === 'false' || /\.prod\.js$/.test(output.file)
-  const isGlobalBuild = format === 'global'
-  const isRawESMBuild = format === 'esm'
-  const isBundlerESMBuild = /esm-bundler/.test(format)
-
-  if (isGlobalBuild) {
-    output.name = packageOptions.name
-  }
 
   const shouldEmitDeclarations = process.env.TYPES != null && process.env.NODE_ENV === 'production' && !hasTSChecked
 
@@ -90,23 +70,19 @@ function createConfig(format, output, plugins = []) {
   // during a single build.
   hasTSChecked = true
 
-  const entryFile = format === 'esm-bundler-runtime' ? `src/runtime.ts` : `src/index.ts`
+  const entryFile = entryFileMap[name] ? entryFileMap[name].map(file => resolve(file)) : [resolve('src/index.ts')]
 
   return {
-    input: resolve(entryFile),
+    input: entryFile,
     // Global and Browser ESM builds inlines everything so that they can be
     // used alone.
-    external: isGlobalBuild || isRawESMBuild ? [] : knownExternals.concat(Object.keys(pkg.dependencies || [])),
+    external: knownExternals.concat(Object.keys(pkg.dependencies || [])),
     plugins: [
       json({
         namedExports: false
       }),
       tsPlugin,
-      createReplacePlugin(
-        isProductionBuild,
-        isBundlerESMBuild,
-        (isGlobalBuild || isRawESMBuild || isBundlerESMBuild) && !packageOptions.enableNonBrowserBranches
-      ),
+      createReplacePlugin(),
       ...plugins
     ],
     output,
@@ -118,21 +94,12 @@ function createConfig(format, output, plugins = []) {
   }
 }
 
-function createReplacePlugin(isProduction, isBundlerESMBuild, isBrowserBuild) {
+function createReplacePlugin() {
   const replacements = {
     __COMMIT__: `"${process.env.COMMIT}"`,
     __VERSION__: `"${masterVersion}"`,
-    __DEV__: isBundlerESMBuild
-      ? // preserve to be handled by bundlers
-        `(process.env.NODE_ENV !== 'production')`
-      : // hard coded dev/prod builds
-        !isProduction,
     // this is only used during tests
-    __TEST__: isBundlerESMBuild ? `(process.env.NODE_ENV === 'test')` : false,
-    // If the build is expected to run directly in the browser (global / esm builds)
-    __BROWSER__: isBrowserBuild,
-    // is targeting bundlers?
-    __BUNDLER__: isBundlerESMBuild,
+    __TEST__: `(process.env.NODE_ENV === 'test')`,
     // support options?
     // the lean build drops options related code with buildOptions.lean: true
     __FEATURE_OPTIONS__: !packageOptions.lean && !process.env.LEAN,
@@ -146,27 +113,4 @@ function createReplacePlugin(isProduction, isBundlerESMBuild, isBrowserBuild) {
     }
   })
   return replace(replacements)
-}
-
-function createProductionConfig(format) {
-  return createConfig(format, {
-    file: resolve(`dist/${name}.${format}.prod.js`),
-    format: outputConfigs[format].format
-  })
-}
-
-function createMinifiedConfig(format) {
-  const { terser } = require('rollup-plugin-terser')
-  return createConfig(
-    format,
-    {
-      file: resolve(`dist/${name}.${format}.prod.js`),
-      format: outputConfigs[format].format
-    },
-    [
-      terser({
-        module: /^esm/.test(format)
-      })
-    ]
-  )
 }

@@ -61,7 +61,10 @@ files.forEach(shortName => {
       `
 {
   "extends": "../../api-extractor.json",
-  "mainEntryPointFilePath": "./dist/packages/<unscopedPackageName>/src/index.d.ts"
+  "mainEntryPointFilePath": "./dist/packages/<unscopedPackageName>/src/index.d.ts",
+  "dtsRollup": {
+    "untrimmedFilePath": "./dist/<unscopedPackageName>.d.ts"
+  }
 }
 `.trim()
     )
@@ -83,11 +86,7 @@ files.forEach(shortName => {
       `
 'use strict'
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./dist/${shortName}.cjs.prod.js')
-} else {
-  module.exports = require('./dist/${shortName}.cjs.js')
-}
+module.exports = require('./dist/index.js')
     `.trim() + '\n'
     )
   }
