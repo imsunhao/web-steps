@@ -1,3 +1,12 @@
+## [0.0.1-alpha.2](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.1...v0.0.1-alpha.2) (2020-01-26)
+
+
+### Features
+
+* 将 bin 改名为 cli ([19bbb39](https://github.com/imsunhao/utils/commit/19bbb39c98bc0ef2afd0145a135c0b13550713d3))
+
+
+
 ## [0.0.1-alpha.1](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.0...v0.0.1-alpha.1) (2020-01-25)
 
 
