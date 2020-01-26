@@ -11,7 +11,6 @@ if (!process.env.TARGET) {
 const masterVersion = require('./package.json').version
 const packagesDir = path.resolve(__dirname, 'packages')
 const packageDir = path.resolve(packagesDir, process.env.TARGET)
-const name = path.basename(packageDir)
 const resolve = p => path.resolve(packageDir, p)
 const pkg = require(resolve(`package.json`))
 const packageOptions = pkg.buildOptions || {}
@@ -33,9 +32,7 @@ const outputConfigs = {
 const defaultFormats = ['cjs']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
-const packageConfigs = process.env.PROD_ONLY
-  ? []
-  : packageFormats.map(format => createConfig(format, outputConfigs[format]))
+const packageConfigs = packageFormats.map(format => createConfig(format, outputConfigs[format]))
 
 export default packageConfigs
 
@@ -58,6 +55,7 @@ function createConfig(format, output, plugins = []) {
         declaration: shouldEmitDeclarations,
         declarationMap: shouldEmitDeclarations
       },
+      include: ['packages/global.d.ts', 'packages/*/src', 'scripts/build.d.ts'],
       exclude: ['**/__tests__']
     }
   })
@@ -98,6 +96,8 @@ function createConfig(format, output, plugins = []) {
 
 function createReplacePlugin() {
   const replacements = {
+    __DEBUG__: `(!!process.env.DEBUG_PORT)`,
+    __DEBUG_PORT__: `(process.env.DEBUG_PORT)`,
     __COMMIT__: `"${process.env.COMMIT}"`,
     __VERSION__: `"${masterVersion}"`,
     // this is only used during tests

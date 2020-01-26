@@ -2,42 +2,38 @@ import execa from 'execa'
 import minimist from 'minimist'
 import { config } from '@web-steps/config'
 
-const isDebug = !!process.env.DEBUG_PORT
-
-class Run {
-  private debug = isDebug ? new Debug() : undefined
-
+export class Run {
   run(bin: string, args: string[] = [], opts: execa.Options<string> = {}) {
-    return execa(bin, args, { stdio: 'inherit', ...opts })
+    return execa(bin, args, { env: process.env, stdio: 'inherit', ...opts })
   }
 
   runNode(args: string[] = [], opts: execa.Options<string> = {}) {
-    args = this.debug ? this.debug.getDebugArgs(args) : args
+    args = __DEBUG__ ? [`--inspect-brk=${__DEBUG_PORT__}`] : args
     return this.run('node', args, opts)
   }
-}
 
-class Debug {
-  private get port() {
-    return parseInt(process.env.DEBUG_PORT || '-1')
-  }
-
-  private setPort(port: number) {
-    process.env.DEBUG_PORT = port + ''
-  }
-
-  getDebugArgs(args: string[] = []) {
-    const port = this.port
-    this.setPort(port + 1)
-    return [`--inspect-brk=${port}`, ...args]
+  runNodeIpc(args: string[] = [], opts: execa.Options<string> = {}) {
+    return this.runNode(args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], ...opts })
   }
 }
 
 export class Args {
   args: any
 
+  /**
+   * 根目录 地址
+   */
   get rootDir(): string {
-    return this.args.rootDir || process.cwd()
+    return this.args['root-dir'] || process.cwd()
+  }
+
+  /**
+   * 配置文件的相对路径
+   *
+   * - 配置文件 JSON 类型, 例如 web-steps.json
+   */
+  get config(): string {
+    return this.args.config || 'web-steps.json'
   }
 
   constructor() {
@@ -50,7 +46,7 @@ const args = new Args()
 
 async function main() {
   await config.init(args)
-  await run.runNode(['packages/cli/dist/dev.js', `--config=${config.path}`])
+  await run.runNode(['packages/cli/dist/dev.js'])
 }
 
 export function start() {

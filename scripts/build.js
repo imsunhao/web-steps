@@ -26,7 +26,6 @@ const args = require('minimist')(process.argv.slice(2))
 const targets = args._
 const formats = args.formats || args.f
 const devOnly = args.devOnly || args.d
-const prodOnly = !devOnly && (args.prodOnly || args.p)
 const isRelease = args.release
 const buildTypes = args.t || args.types || isRelease
 const buildAllMatching = args.all || args.a
@@ -77,7 +76,6 @@ async function build(target) {
         `TARGET:${target}`,
         formats ? `FORMATS:${formats}` : ``,
         buildTypes ? `TYPES:true` : ``,
-        prodOnly ? `PROD_ONLY:true` : ``,
         lean ? `LEAN:true` : ``
       ]
         .filter(Boolean)
