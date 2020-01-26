@@ -1,13 +1,13 @@
 {
-  "name": "@web-steps/bin",
+  "name": "@web-steps/cli",
   "version": "0.0.1-alpha.1",
-  "description": "@web-steps/bin",
+  "description": "@web-steps/cli",
   "main": "index.js",
   "files": [
     "index.js",
     "dist"
   ],
-  "types": "dist/bin.d.ts",
+  "types": "dist/cli.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imsunhao/utils.git"
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/bin#readme",
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/cli#readme",
   "dependencies": {
     "@web-steps/config": "^0.0.1-alpha.1"
   }
