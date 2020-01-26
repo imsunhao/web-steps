@@ -30,10 +30,6 @@ const outputConfigs = {
   }
 }
 
-const entryFileMap = {
-  bin: ['src/dev.ts', 'src/index.ts']
-}
-
 const defaultFormats = ['cjs']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
@@ -70,10 +66,16 @@ function createConfig(format, output, plugins = []) {
   // during a single build.
   hasTSChecked = true
 
-  const entryFile = entryFileMap[name] ? entryFileMap[name].map(file => resolve(file)) : [resolve('src/index.ts')]
+  const srcDir = resolve('src')
+  const files = fs
+    .readdirSync(srcDir)
+    .filter(p => {
+      return /\.ts/.test(p)
+    })
+    .map(path => resolve('src/' + path))
 
   return {
-    input: entryFile,
+    input: files,
     // Global and Browser ESM builds inlines everything so that they can be
     // used alone.
     external: knownExternals.concat(Object.keys(pkg.dependencies || [])),
