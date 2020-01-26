@@ -1,10 +1,6 @@
 import execa from 'execa'
-import { TA as devTA } from './dev'
-import { TConfig } from '@web-steps/config'
-
-export const a = '33333'
-
-export type TA = devTA
+import minimist from 'minimist'
+import { config } from '@web-steps/config'
 
 const isDebug = !!process.env.DEBUG_PORT
 
@@ -37,19 +33,24 @@ class Debug {
   }
 }
 
-class Config {
-  config: TConfig
-  init() {
-    this.config = require('@web-steps/config').start()
+export class Args {
+  args: any
+
+  get rootDir(): string {
+    return this.args.rootDir || process.cwd()
+  }
+
+  constructor() {
+    this.args = minimist(process.argv.slice(2))
   }
 }
 
 const run = new Run()
-const config = new Config()
+const args = new Args()
 
 async function main() {
-  config.init()
-  await run.runNode(['packages/bin/dist/dev.js'])
+  await config.init(args)
+  await run.runNode(['packages/cli/dist/dev.js', `--config=${config.path}`])
 }
 
 export function start() {

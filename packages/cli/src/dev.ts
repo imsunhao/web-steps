@@ -1,7 +1,5 @@
-debugger
+import minimist from 'minimist'
 
-console.log('t2222ests!!!!')
+const args = minimist(process.argv.slice(2))
 
-export const a: '22222' = '22222'
-
-export type TA = typeof a
+console.log('[dev]', args)
