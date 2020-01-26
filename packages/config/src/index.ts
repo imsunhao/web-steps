@@ -1,6 +1,6 @@
 console.log('hello word!')
 
 export type TConfig = {
-  test: string
+  test2: string
 }
-export const test2 = 'sss'
+export const test23 = 'sss444333'

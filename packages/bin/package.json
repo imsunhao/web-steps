@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/bin#readme"
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/bin#readme",
+  "dependencies": {
+    "@web-steps/config": "^0.0.1-alpha.1"
+  }
 }

@@ -1,6 +1,10 @@
 import execa from 'execa'
-// import { TConfig } from '@web-steps/config'
-type TConfig = any
+import { TA as devTA } from './dev'
+import { TConfig } from '@web-steps/config'
+
+export const a = '33333'
+
+export type TA = devTA
 
 const isDebug = !!process.env.DEBUG_PORT
 
@@ -18,17 +22,17 @@ class Run {
 }
 
 class Debug {
-  private get debugPort() {
+  private get port() {
     return parseInt(process.env.DEBUG_PORT || '-1')
   }
 
-  private setDebugPort(port: number) {
+  private setPort(port: number) {
     process.env.DEBUG_PORT = port + ''
   }
 
   getDebugArgs(args: string[] = []) {
-    const port = this.debugPort
-    this.setDebugPort(port + 1)
+    const port = this.port
+    this.setPort(port + 1)
     return [`--inspect-brk=${port}`, ...args]
   }
 }
