@@ -1,3 +1,5 @@
+import { Args } from "@types";
+
 // const isDebug = !!process.env.DEBUG_PORT
 const consolePrefix = '[@web-steps/config] '
 
@@ -9,7 +11,7 @@ export class Config {
     if (!this.isInit) throw new Error(consolePrefix + 'Config need init first. try await config.init()')
   }
 
-  async init(args: any) {
+  async init(args: Args) {
     args.rootDir
     const main = async () => {
       this.path = '/Users/sunhao/Documents/imsunhao/utils/__tests__/config.js'
