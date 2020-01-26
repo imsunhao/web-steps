@@ -15,7 +15,7 @@
     "size-compiler": "node scripts/build.js compiler-dom -p -f global",
     "size": "yarn size-runtime && yarn size-compiler",
     "lint": "prettier --write --parser typescript \"packages/**/*.ts?(x)\"",
-    "test": "cross-env NODE_ENV=test node scripts/build.js -t && jest",
+    "test": "yarn build -t && cross-env NODE_ENV=test jest",
     "release": "node scripts/release.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
