@@ -12,7 +12,10 @@ export class Run {
     return this.run('node', args, opts)
   }
 
-  runNodeIpc(args: string[] = [], opts: execa.Options<string> = {}) {
+  /**
+   * 启用 Nodejs 并使用 IPC 进程通讯
+   */
+  runNodeIPC(args: string[] = [], opts: execa.Options<string> = {}) {
     return this.runNode(args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], ...opts })
   }
 }

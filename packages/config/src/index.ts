@@ -12,6 +12,17 @@ function catchError(error: Error) {
   process.exit(1)
 }
 
+export type UserConfig = {
+  /**
+   * 测试 专用字段
+   * - 单元测试
+   * - 用户设置此字段无意义,如果想审查用户配置,请导出静态配置
+   */
+  test?: string
+}
+
+export type GetUserConfig = (startupOptions: any) => UserConfig
+
 export type TSetting = {
   /**
    * 项目 入口

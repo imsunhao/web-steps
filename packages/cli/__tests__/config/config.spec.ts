@@ -11,6 +11,7 @@ type TestResult = {
       getUserConfig: any
     }
   }
+  close?: boolean
 }
 
 const run = new Run()
@@ -20,26 +21,28 @@ describe('config', () => {
 
   cases.forEach(caseName => {
     test(`case: ${caseName}`, done => {
-      const childProcess = run.runNodeIpc([
+      const childProcess = run.runNodeIPC([
         'packages/cli/bin/web-steps',
         `--root-dir=${resolve(__dirname, 'case', caseName)}`
       ])
 
       const result: TestResult = require(`./case/${caseName}/test-result`).default
 
-      if (result.config) {
-        childProcess.on('message', message => {
-          // console.log('[父亲]', message)
-          const { name, data } = message as any
-          const rule = (result as any).config.result[name]
-          if (rule) {
-            expect(rule).toEqual(data)
+      childProcess.on('message', message => {
+        // console.log('[父亲]', message)
+        const { name, data } = message as any
+        const rule = (result as any).config.result[name]
+        if (rule) {
+          if (result.config) {
+            expect(data).toMatchObject(rule)
           }
-        })
-      }
+        }
+      })
 
       childProcess.on('close', code => {
-        expect(code).toEqual(0)
+        if (result.close) {
+          expect(code).toEqual(0)
+        }
         done()
       })
     })

@@ -5,5 +5,6 @@ export default {
         test: 'use-config-file'
       }
     }
-  }
+  },
+  close: true
 }
