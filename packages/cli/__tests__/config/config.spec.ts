@@ -2,6 +2,7 @@ import { readdirSync } from 'fs'
 import { resolve } from 'path'
 // import { readFileSync, existsSync } from 'fs'
 import { Run } from '../../src'
+import { ProcessMessage } from '@types'
 
 const caseDir = resolve(__dirname, 'case')
 
@@ -23,18 +24,19 @@ describe('config', () => {
     test(`case: ${caseName}`, done => {
       const childProcess = run.runNodeIPC([
         'packages/cli/bin/web-steps',
+        'test',
         `--root-dir=${resolve(__dirname, 'case', caseName)}`
       ])
 
       const result: TestResult = require(`./case/${caseName}/test-result`).default
 
-      childProcess.on('message', message => {
+      childProcess.on('message', (message: ProcessMessage) => {
         // console.log('[父亲]', message)
-        const { name, data } = message as any
+        const { name, payload } = message
         const rule = (result as any).config.result[name]
         if (rule) {
           if (result.config) {
-            expect(data).toMatchObject(rule)
+            expect(payload).toMatchObject(rule)
           }
         }
       })

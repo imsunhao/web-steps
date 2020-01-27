@@ -1,6 +1,17 @@
 import execa from 'execa'
 import minimist from 'minimist'
-import { config } from '@web-steps/config'
+import { catchError } from './utils/error'
+import { MinorCommandSettingList, MinorCommandKey } from './type'
+
+const minorCommandSettingList: Partial<MinorCommandSettingList<MinorCommandKey>> = {
+  create: {
+    send: false
+  }
+}
+
+const defaultMinorCommandSetting = {
+  send: true
+}
 
 export class Run {
   run(bin: string, args: string[] = [], opts: execa.Options<string> = {}) {
@@ -18,6 +29,11 @@ export class Run {
   runNodeIPC(args: string[] = [], opts: execa.Options<string> = {}) {
     return this.runNode(args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], ...opts })
   }
+
+  runCommand(command: MinorCommandKey, opts: execa.Options<string> = {}) {
+    const path = !__PRODUCTION__ ? 'packages/cli/dist' : 'node_modules/@web-steps/cli/dist'
+    return this.runNodeIPC([`${path}/${command}.js`], opts)
+  }
 }
 
 export class Args {
@@ -26,21 +42,26 @@ export class Args {
   /**
    * 根目录 地址
    */
-  get rootDir(): string {
-    return this.args['root-dir'] || process.cwd()
-  }
+  rootDir: string
 
   /**
    * 配置文件的相对路径
    *
    * - 配置文件 JSON 类型, 例如 web-steps.json
    */
-  get config(): string {
-    return this.args.config || 'web-steps.json'
-  }
+  config: string
+
+  minorCommand: MinorCommandKey
+
+  isHelp: boolean
 
   constructor() {
-    this.args = minimist(process.argv.slice(2))
+    const args: any = (this.args = minimist(process.argv.slice(2)))
+
+    this.rootDir = args['root-dir'] || process.cwd()
+    this.config = args.config || 'web-steps.json'
+    this.minorCommand = args._[0]
+    this.isHelp = args.help || args.h
   }
 }
 
@@ -48,12 +69,21 @@ const run = new Run()
 const args = new Args()
 
 async function main() {
-  await config.init(args)
-  await run.runNode(['packages/cli/dist/dev.js'])
+  const minorCommand = args.minorCommand
+  if (minorCommand) {
+    const minorCommandSetting = minorCommandSettingList[minorCommand] || defaultMinorCommandSetting
+    const childProcess = run.runCommand(minorCommand)
+    if (minorCommandSetting.send) {
+      const config = require('@web-steps/config').config
+      await config.init(args)
+      childProcess.send({ name: 'args', payload: args })
+      childProcess.send({ name: 'config', payload: config.config })
+      childProcess.send({ name: 'setting', payload: config.setting })
+      childProcess.disconnect()
+    }
+  }
 }
 
 export function start() {
-  main().catch(err => {
-    console.error(err)
-  })
+  main().catch(err => catchError(err))
 }

@@ -96,12 +96,15 @@ function createConfig(format, output, plugins = []) {
 
 function createReplacePlugin() {
   const replacements = {
+    __DEV__: `(process.env.NODE_ENV === 'development')`,
+    __PRODUCTION__: `(process.env.NODE_ENV === 'production')`,
+    __TEST__: `(process.env.NODE_ENV === 'test')`,
+
     __DEBUG__: `(!!process.env.DEBUG_PORT)`,
     __DEBUG_PORT__: `(process.env.DEBUG_PORT)`,
+
     __COMMIT__: `"${process.env.COMMIT}"`,
     __VERSION__: `"${masterVersion}"`,
-    // this is only used during tests
-    __TEST__: `(process.env.NODE_ENV === 'test')`,
     // support options?
     // the lean build drops options related code with buildOptions.lean: true
     __FEATURE_OPTIONS__: !packageOptions.lean && !process.env.LEAN,

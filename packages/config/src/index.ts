@@ -74,14 +74,14 @@ export class Config {
   private async getUserConfig() {
     const userConfigCachePath = this.resolve(this.setting.cache, 'config.js')
     if (existsSync(userConfigCachePath)) {
-      const souce = readFileSync(userConfigCachePath, 'utf-8')
-      this.config = requireFromString(souce)
+      const source = readFileSync(userConfigCachePath, 'utf-8')
+      this.config = requireFromString(source)
     }
 
     if (__TEST__ && process.send) {
       process.send({
         name: 'getUserConfig',
-        data: this.config
+        payload: this.config
       })
     }
   }

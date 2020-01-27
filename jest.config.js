@@ -1,10 +1,15 @@
 module.exports = {
   preset: 'ts-jest',
   globals: {
+    __DEV__: false,
+    __PRODUCTION__: true,
+    __TEST__: true,
+
     __DEBUG__: false,
     __DEBUG_PORT__: 32000,
-    __TEST__: true,
+
     __VERSION__: require('./package.json').version,
+
     __FEATURE_OPTIONS__: true,
     __FEATURE_SUSPENSE__: true
   },
