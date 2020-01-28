@@ -28,21 +28,21 @@ describe('config', () => {
         `--root-dir=${resolve(__dirname, 'case', caseName)}`
       ])
 
-      const result: TestConfig = require(`./case/${caseName}/test.config`).default
+      const testConfig: TestConfig = require(`./case/${caseName}/test-confg`).default
 
       childProcess.on('message', (message: ProcessMessage) => {
         // console.log('[父亲]', message)
         const { name, payload } = message
-        const rule = (result as any).config.result[name]
+        const rule = (testConfig as any).config.result[name]
         if (rule) {
-          if (result.config) {
+          if (testConfig.config) {
             expect(payload).toMatchObject(rule)
           }
         }
       })
 
       childProcess.on('close', code => {
-        if (result.close) {
+        if (testConfig.close) {
           expect(code).toEqual(0)
         }
         done()

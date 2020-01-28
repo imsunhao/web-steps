@@ -1,7 +1,8 @@
+import { merge } from 'packages/shared'
 import execa from 'execa'
 import minimist from 'minimist'
 import { catchError } from './utils/error'
-import { MinorCommandSettingList, MinorCommandKey } from './type'
+import { MinorCommandSettingList, MinorCommandKey, RunOptions } from './type'
 
 const minorCommandSettingList: Partial<MinorCommandSettingList<MinorCommandKey>> = {
   create: {
@@ -14,11 +15,27 @@ const defaultMinorCommandSetting = {
 }
 
 export class Run {
-  run(bin: string, args: string[] = [], opts: execa.Options<string> = {}) {
-    return execa(bin, args, { env: process.env, stdio: 'inherit', ...opts })
+  run(bin: string, args: string[] = [], opts: RunOptions = {}) {
+    if (opts.isSilence) {
+      if (opts.stdio && opts.stdio instanceof Array) {
+        opts.stdio[0] = 'ignore'
+        opts.stdio[1] = 'ignore'
+        opts.stdio[2] = 'ignore'
+      } else {
+        ;(opts as any).stdio = 'ignore'
+      }
+    }
+
+    if (opts.isRead) {
+      console.log(bin, args, merge({ env: process.env, stdio: 'inherit' }, opts))
+      const childProcess: execa.ExecaChildProcess<string> = {} as any
+      return childProcess
+    }
+
+    return execa(bin, args, merge({ env: process.env, stdio: 'inherit' }, opts))
   }
 
-  runNode(args: string[] = [], opts: execa.Options<string> = {}) {
+  runNode(args: string[] = [], opts: RunOptions = {}) {
     args = __DEBUG__ ? [`--inspect-brk=${__DEBUG_PORT__}`] : args
     return this.run('node', args, opts)
   }
@@ -26,11 +43,11 @@ export class Run {
   /**
    * 启用 Nodejs 并使用 IPC 进程通讯
    */
-  runNodeIPC(args: string[] = [], opts: execa.Options<string> = {}) {
-    return this.runNode(args, { stdio: ['inherit', 'inherit', 'inherit', 'ipc'], ...opts })
+  runNodeIPC(args: string[] = [], opts: RunOptions = {}) {
+    return this.runNode(args, merge({ stdio: ['inherit', 'inherit', 'inherit', 'ipc'] }, opts))
   }
 
-  runCommand(command: MinorCommandKey, opts: execa.Options<string> = {}) {
+  runCommand(command: MinorCommandKey, opts: RunOptions = {}) {
     const path = !__PRODUCTION__ ? 'packages/cli/dist' : 'node_modules/@web-steps/cli/dist'
     return this.runNodeIPC([`${path}/${command}.js`], opts)
   }

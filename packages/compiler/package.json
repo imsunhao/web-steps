@@ -13,10 +13,24 @@
     "url": "git+https://github.com/imsunhao/utils.git"
   },
   "keywords": [],
+  "bin": {
+    "web-steps--compiler": "./bin/web-steps--compiler"
+  },
   "author": "imsunhao",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/compiler#readme"
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/compiler#readme",
+  "dependencies": {
+    "require-from-string": "^2.0.2",
+    "ts-loader": "^6.2.1",
+    "webpack": "^4.41.5"
+  },
+  "devDependencies": {
+    "@types/webpack": "^4.41.3"
+  },
+  "peerDependencies": {
+    "typescript": "^3.7.0"
+  }
 }

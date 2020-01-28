@@ -1,4 +1,3 @@
-
 export type UserConfig = {
   /**
    * 测试 专用字段
@@ -38,4 +37,4 @@ export type TSetting = {
   cache: string
 }
 
-export type TConfig = {}
+export type TConfig = any
