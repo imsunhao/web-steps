@@ -1,8 +1,10 @@
-import { getWebpackConfigs, getCompiler, compilerDone } from './index'
+import { getCompiler, compilerDone } from './index'
 import { catchError, showStats } from './utils'
 import webpack from 'webpack'
 
-function compiling(webpackConfig: webpack.Configuration) {
+console.log('[compiler] production mode')
+
+async function compiling(webpackConfig: any) {
   let resolve: any
   let reject: any
   const p = new Promise<webpack.Stats>((r, j) => {
@@ -12,17 +14,15 @@ function compiling(webpackConfig: webpack.Configuration) {
   const compiler = getCompiler(webpackConfig)
   compiler.plugin('done', stats => compilerDone(stats, resolve, reject))
   compiler.run((err, stats) => showStats(stats))
-  return p
+  await p
 }
 
-function start() {
+export async function start(webpackConfigs: webpack.Configuration[]) {
   async function main() {
-    const webpackConfigs = await getWebpackConfigs()
-    webpackConfigs.forEach(async webpackConfig => {
+    for (let i = 0; i < webpackConfigs.length; i++) {
+      const webpackConfig = webpackConfigs[i]
       await compiling(webpackConfig)
-    })
+    }
   }
-  main().catch(err => catchError(err))
+  await main().catch(err => catchError(err))
 }
-
-start()

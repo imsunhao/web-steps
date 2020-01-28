@@ -9,8 +9,14 @@ import { showCompilerStart, getError } from './utils'
 // import { catchError } from './utils/error'
 // import { ProcessMessage } from '@types'
 
+const localArgs = minimist(process.argv.slice(2))
+let processMessageMap: ProcessMessageMap = {} as any
+
 export class Args {
-  args: any
+  get args(): any {
+    if (processMessageMap.args) return processMessageMap.args.args
+    return localArgs
+  }
 
   /**
    * Webpack 配置地址
@@ -28,15 +34,12 @@ export class Args {
     return this.args.target
   }
 
-  constructor() {
-    this.args = minimist(process.argv.slice(2))
+  get env(): 'production' | 'development' {
+    return this.args.env || process.env.NODE_ENV || 'production'
   }
 }
 
-let webpackConfigs: Configuration[] = []
-let processMessageMap: ProcessMessageMap
-
-const args = new Args()
+export const args = new Args()
 
 class WebpackConfig implements Configuration {
   constructor() {
@@ -50,40 +53,36 @@ class WebpackConfig implements Configuration {
   }
 }
 
-export async function getProcessMessage() {
-  processMessageMap = await getProcessMessageMap()
-  switch (args.target) {
-    case 'SSR-server':
-      webpackConfigs = [processMessageMap.config.src.SSRWebpack.server]
-      break
-    case 'SSR-client':
-      webpackConfigs = [processMessageMap.config.src.SSRWebpack.client]
-      break
-    case 'SSR':
-      webpackConfigs = [processMessageMap.config.src.SSRWebpack.client, processMessageMap.config.src.SSRWebpack.server]
-      break
-    default:
-      break
-  }
-}
-
-export async function getWebpackConfigs() {
+export async function getInitConfig() {
+  let webpackConfigs: Configuration[] = []
   if (args.webpackPath) {
     webpackConfigs = [new WebpackConfig()]
   } else {
     try {
-      await getProcessMessage()
+      processMessageMap = await getProcessMessageMap()
+
+      switch (args.target) {
+        case 'SSR-server':
+          webpackConfigs = [processMessageMap.config.src.SSRWebpack.server]
+        case 'SSR-client':
+          webpackConfigs = [processMessageMap.config.src.SSRWebpack.client]
+        case 'SSR':
+          webpackConfigs = [
+            processMessageMap.config.src.SSRWebpack.client,
+            processMessageMap.config.src.SSRWebpack.server
+          ]
+      }
     } catch (error) {
       throw getError('未能找到 webpack config. 请确保 webpackPath 存在 或者 使用 yarn web-step compiler 编译.')
     }
   }
-  if (__TEST__ && process.send) {
-    process.send({
-      name: 'webpackConfig',
-      payload: webpackConfigs
-    })
+
+  const { env } = args
+
+  return {
+    webpackConfigs,
+    env
   }
-  return webpackConfigs
 }
 
 /**
@@ -97,12 +96,12 @@ export function getCompiler(config: webpack.Configuration) {
 
 export function compilerDone(stats: webpack.Stats, resolve: any, reject: any) {
   console.log('compilerDone')
+  if (__TEST__ && process.send) {
+    process.send({ name: 'output' })
+  }
   if (stats.hasErrors()) {
     reject(stats)
   } else {
     resolve(stats)
-  }
-  if (__TEST__ && process.send) {
-    process.send({ name: 'output' })
   }
 }

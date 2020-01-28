@@ -1,15 +1,17 @@
-import { TestConfig } from '../../compiler.spec'
+import { TTestConfig } from '../../compiler.spec'
 import { resolve } from 'path'
 
-const testConfig: TestConfig = {
+const testConfig: TTestConfig = {
   skip: true,
   node: {
     target: 'web-steps--compiler'
   },
   result: {
-    output: {
-      filePath: resolve('./dist/index.js')
-    }
+    output: [
+      {
+        filePath: resolve('./dist/index.js')
+      }
+    ]
   },
   close: true
 }

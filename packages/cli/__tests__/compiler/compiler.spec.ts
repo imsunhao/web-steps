@@ -1,38 +1,20 @@
 import { readdirSync, existsSync } from 'fs'
 import { resolve } from 'path'
-import { Run } from '../../src'
+import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 
 const caseDir = resolve(__dirname, 'case')
 
-export type TestConfig = {
-  skip: boolean
-  node: {
-    target: 'web-steps' | 'web-steps--compiler'
-    env?: 'production' | 'development'
-    argv?: string[]
-  }
-  result: {
-    output?: {
-      filePath: string
-    }
-  }
-  close?: boolean
-}
-
-const run = new Run()
-
 describe('compiler', () => {
-  const cases = readdirSync(caseDir)
-
-  cases.forEach(caseName => {
+  readdirSync(caseDir).forEach(caseName => {
     const {
       skip,
       node,
       node: { target, argv },
+      webSteps,
       result,
       close
-    }: TestConfig = require(`./case/${caseName}/test-confg`).default
+    }: TTestConfig = require(`./case/${caseName}/test-confg`).default
     const env = node.env || 'development'
     if (skip) return test.todo(caseName)
     test(
@@ -43,12 +25,16 @@ describe('compiler', () => {
               'packages/cli/bin/web-steps',
               'compiler',
               `--root-dir=${resolve(__dirname, 'case', caseName)}`,
-              `--target=SSR${env ? '-' + env : ''}`
+              webSteps ? `--target=${webSteps.target}` : '',
+              `--env=${env}`
             ]
-          : [`packages/compiler/dist/compiler-${env}`]
+          : [`packages/compiler`, `--env=${env}`]
         ).concat(argv || [])
 
-        const childProcess = run.runNodeIPC(nodeArgv, { isSilence: true, isRead: false })
+        const childProcess = Execa.runNodeIPC(nodeArgv, { isSilence: true, isRead: false })
+        if (!childProcess.on) return done()
+
+        const resultSet = new Set<string>()
 
         childProcess.on('message', (message: ProcessMessage) => {
           const { name } = message
@@ -56,8 +42,10 @@ describe('compiler', () => {
           switch (name) {
             case 'output':
               if (result.output) {
-                const { filePath } = result.output
-                expect(existsSync(filePath)).toBeTruthy()
+                result.output.forEach(({ filePath }) => {
+                  expect(existsSync(filePath)).toBeTruthy()
+                })
+                resultSet.add(name)
               }
               break
             default:
@@ -69,6 +57,7 @@ describe('compiler', () => {
           if (close) {
             expect(code).toEqual(0)
           }
+          expect(Object.keys(result).length).toEqual(resultSet.size)
           done()
         })
       },
@@ -76,3 +65,23 @@ describe('compiler', () => {
     )
   })
 })
+
+type TOutput = {
+  filePath: string
+}
+
+export type TTestConfig = {
+  skip: boolean
+  node: {
+    target: 'web-steps' | 'web-steps--compiler'
+    env?: 'production' | 'development'
+    argv?: string[]
+  }
+  webSteps?: {
+    target: 'SSR' | 'SSR-client' | 'SSR-server'
+  }
+  result: {
+    output?: TOutput[]
+  }
+  close?: boolean
+}

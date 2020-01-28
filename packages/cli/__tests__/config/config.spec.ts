@@ -1,32 +1,19 @@
 import { readdirSync } from 'fs'
 import { resolve } from 'path'
 // import { readFileSync, existsSync } from 'fs'
-import { Run } from '../../src'
+import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 
 const caseDir = resolve(__dirname, 'case')
 
-type TestConfig = {
-  config?: {
-    result: {
-      getUserConfig: any
-    }
-  }
-  close?: boolean
-}
-
-const run = new Run()
-
 describe('config', () => {
-  const cases = readdirSync(caseDir)
-
-  cases.forEach(caseName => {
+  readdirSync(caseDir).forEach(caseName => {
     test(`case: ${caseName}`, done => {
-      const childProcess = run.runNodeIPC([
-        'packages/cli/bin/web-steps',
-        'test',
-        `--root-dir=${resolve(__dirname, 'case', caseName)}`
-      ])
+      const childProcess = Execa.runNodeIPC(
+        ['packages/cli/bin/web-steps', 'test', `--root-dir=${resolve(__dirname, 'case', caseName)}`],
+        { isRead: false, isSilence: true }
+      )
+      if (!childProcess.on) return done()
 
       const testConfig: TestConfig = require(`./case/${caseName}/test-confg`).default
 
@@ -50,3 +37,12 @@ describe('config', () => {
     })
   })
 })
+
+type TestConfig = {
+  config?: {
+    result: {
+      getUserConfig: any
+    }
+  }
+  close?: boolean
+}

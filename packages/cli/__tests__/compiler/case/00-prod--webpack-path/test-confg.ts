@@ -1,7 +1,7 @@
-import { TestConfig } from '../../compiler.spec'
+import { TTestConfig } from '../../compiler.spec'
 import { resolve } from 'path'
 
-const testConfig: TestConfig = {
+const testConfig: TTestConfig = {
   skip: false,
   node: {
     target: 'web-steps--compiler',
@@ -9,9 +9,11 @@ const testConfig: TestConfig = {
     argv: [`--webpack-path=${resolve(__dirname, './webpack.js')}`]
   },
   result: {
-    output: {
-      filePath: resolve(__dirname, './dist/index.js')
-    }
+    output: [
+      {
+        filePath: resolve(__dirname, './dist/index.js')
+      }
+    ]
   },
   close: true
 }

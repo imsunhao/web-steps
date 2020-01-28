@@ -75,7 +75,7 @@ export class Config {
     const userConfigCachePath = this.resolve(this.setting.cache, 'config.js')
     if (existsSync(userConfigCachePath)) {
       const source = readFileSync(userConfigCachePath, 'utf-8')
-      this.config = requireFromString(source)
+      this.config = requireFromString(source, userConfigCachePath)
     }
 
     if (__TEST__ && process.send) {
@@ -88,4 +88,5 @@ export class Config {
 }
 
 export const config = new Config()
+
 export * from './type'

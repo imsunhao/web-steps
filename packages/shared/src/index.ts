@@ -1,8 +1,6 @@
 import { ProcessMessage } from '@types'
 import { ProcessMessageMap } from './type'
 
-export const NUMBER_OF_PROCESS_MESSAGE = 3
-
 export function getProcessMessageMap() {
   let resolve: any
   let reject: any
@@ -10,14 +8,19 @@ export function getProcessMessageMap() {
     resolve = r
     reject = j
   })
+  // console.log('[getProcessMessageMap]', !!process.send)
   if (process.send) {
-    const messageMap: any = {}
-    let length = 0
-    process.on('message', ({ name, payload }: ProcessMessage) => {
+    const messageMap: ProcessMessageMap = {} as any
+    process.on('message', async ({ name, payload }: ProcessMessage) => {
       // console.log(name, payload)
-      messageMap[name] = payload
-      if (++length > NUMBER_OF_PROCESS_MESSAGE) {
-        resolve()
+      if (name === 'args') {
+        messageMap.args = payload
+        const c = require('@web-steps/config').config
+        await c.init(messageMap.args)
+        const { config, setting } = c
+        messageMap.config = config
+        messageMap.setting = setting
+        resolve(messageMap)
       }
     })
   } else {
@@ -31,8 +34,8 @@ export function createErrorHandle(name: string) {
     getError(message: string) {
       return new Error(`[@web-steps/${name}] ${message}`)
     },
-    catchError(error: Error): undefined {
-      console.error(error)
+    catchError(error: Error) {
+      console.error('[catchError]', error)
       process.exit(1)
     }
   }

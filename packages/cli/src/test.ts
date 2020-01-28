@@ -1,8 +1,9 @@
+import { Args } from '@types'
 import { catchError } from './utils/error'
-import { getProcessMessageMap } from 'packages/shared'
 
-async function main() {
-  await getProcessMessageMap()
+export function start(args: Args) {
+  async function main() {
+    console.log(args)
+  }
+  main().catch(err => catchError(err))
 }
-
-main().catch(err => catchError(err))
