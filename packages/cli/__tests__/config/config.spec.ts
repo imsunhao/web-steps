@@ -6,7 +6,7 @@ import { ProcessMessage } from '@types'
 
 const caseDir = resolve(__dirname, 'case')
 
-type TestResult = {
+type TestConfig = {
   config?: {
     result: {
       getUserConfig: any
@@ -28,7 +28,7 @@ describe('config', () => {
         `--root-dir=${resolve(__dirname, 'case', caseName)}`
       ])
 
-      const result: TestResult = require(`./case/${caseName}/test-result`).default
+      const result: TestConfig = require(`./case/${caseName}/test.config`).default
 
       childProcess.on('message', (message: ProcessMessage) => {
         // console.log('[父亲]', message)

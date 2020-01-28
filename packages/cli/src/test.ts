@@ -1,8 +1,8 @@
 import { catchError } from './utils/error'
-import { getMessageMap } from './utils/message'
+import { getProcessMessageMap } from 'packages/shared'
 
 async function main() {
-  await getMessageMap()
+  await getProcessMessageMap()
 }
 
 main().catch(err => catchError(err))

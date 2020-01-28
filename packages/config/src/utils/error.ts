@@ -1,8 +1,3 @@
-export function getError(message: string) {
-  return new Error('[@web-steps/config] ' + message)
-}
+import { createErrorHandle } from 'packages/shared'
 
-export function catchError(error: Error) {
-  console.error(error)
-  process.exit(1)
-}
+export const { getError, catchError } = createErrorHandle('config')

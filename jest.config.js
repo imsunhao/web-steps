@@ -19,6 +19,7 @@ module.exports = {
   watchPathIgnorePatterns: ['/node_modules/'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
+    '^packages/(.*?)$': '<rootDir>/packages/$1',
     '^@web-steps/(.*?)$': '<rootDir>/packages/$1/src'
   },
   rootDir: __dirname,
