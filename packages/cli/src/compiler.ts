@@ -4,7 +4,6 @@ import { Args, ProcessMessage } from '@types'
 import { nodeProcessSend } from 'packages/shared'
 
 export function start(args: Args) {
-  console.log('[compiler] start!')
   async function main() {
     const childProcess = Execa.runCommand('compiler', [], { isRead: false })
     nodeProcessSend(childProcess, { messageKey: 'args', payload: args })

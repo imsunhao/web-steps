@@ -44,7 +44,7 @@ export class Args {
     this.skipCompilerConfig = args['skip-compiler-config']
     this.forceCompilerConfig = args['force-compiler-config']
     this.majorCommand = args._[0]
-    this.cache = typeof args.cache !== 'undefined' ? args.cache : true
+    this.cache = args.cache !== 'false'
   }
 }
 

@@ -84,16 +84,23 @@ export class Config {
       env: 'production'
     })
     await this.getConfigConstructor(userConfigCachePath)
+
+    if (__TEST__) {
+      nodeProcessSend(process, {
+        messageKey: 'cache',
+        payload: userConfigCachePath
+      })
+    }
   }
 
   private async getConfigConstructor(userConfigCachePath: string) {
     const source = readFileSync(userConfigCachePath, 'utf-8')
-    this.configConstructor = requireFromString(source, userConfigCachePath)
+    const md = requireFromString(source, userConfigCachePath)
+    this.configConstructor = md.__esModule ? md.default : md
   }
 
   private async getConfig() {
     const userConfigCachePath = this.resolve(this.setting.cache, 'config.js')
-    console.log('getConfig', this.args)
     if (this.args.forceCompilerConfig) {
       await this.compilerConfig(userConfigCachePath)
     } else if (existsSync(userConfigCachePath)) {

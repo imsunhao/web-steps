@@ -3,7 +3,6 @@ import { catchError } from './utils'
 import { nodeProcessSend } from 'packages/shared'
 
 export async function start(payload?: CompilerConfig) {
-  console.log('compiler start', payload)
   async function main() {
     const { webpackConfigs, env } = payload || (await getInitConfig())
 
@@ -14,7 +13,13 @@ export async function start(payload?: CompilerConfig) {
     }
 
     if (__TEST__ && process.send) {
-      nodeProcessSend(process, { messageKey: 'exit', payload: 0 })
+      nodeProcessSend(process, {
+        messageKey: 'exit',
+        payload: {
+          name: 'compiler',
+          code: 0
+        }
+      })
     }
   }
 

@@ -35,7 +35,6 @@ export type TTestConfig = {
 export function testing(major: string, caseName: string, testConfig: TTestConfig) {
   const {
     skip,
-    cache,
     node,
     node: { target, argv, rootDir },
     webSteps,
@@ -43,6 +42,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
     close
   } = testConfig
   const env = node.env || 'development'
+  const cache = typeof testConfig.cache !== 'undefined' ? testConfig.cache : true
   if (skip) return test.todo(caseName)
   const args = minimist(process.argv.slice(3), { string: 'case' })
   if (args['case']) {
@@ -68,13 +68,13 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
             'packages/cli/bin/web-steps',
             major,
             `--root-dir=${rootDir}`,
-            cache ? `--cache=${cache}` : '',
+            !cache ? `--cache=${cache}` : '',
             webSteps ? `--target=${webSteps.target}` : '',
             `--env=${env}`
           ]
           break
         case 'web-steps--compiler':
-          nodeArgv = [`packages/compiler`, `--env=${env}`]
+          nodeArgv = [`packages/compiler/bin/web-steps--compiler`, `--env=${env}`]
         default:
           break
       }
