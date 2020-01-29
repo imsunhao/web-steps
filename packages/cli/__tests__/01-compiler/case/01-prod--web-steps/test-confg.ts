@@ -13,9 +13,11 @@ const testConfig: TTestConfig = {
   result: {
     output: [
       {
+        name: 'client',
         filePath: resolve(__dirname, './dist/client.js')
       },
       {
+        name: 'server',
         filePath: resolve(__dirname, './dist/server.js')
       }
     ]

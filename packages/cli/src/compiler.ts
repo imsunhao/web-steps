@@ -1,20 +1,22 @@
 import { catchError } from './utils/error'
 import { Execa } from './utils/node'
 import { Args, ProcessMessage } from '@types'
+import { nodeProcessSend } from 'packages/shared'
 
 export function start(args: Args) {
   console.log('[compiler] start!')
   async function main() {
     const childProcess = Execa.runCommand('compiler', [], { isRead: false })
-    childProcess.send({ name: 'args', payload: args })
+    nodeProcessSend(childProcess, { messageKey: 'args', payload: args })
     if (!process.send || !__TEST__) {
       childProcess.disconnect()
     } else {
       childProcess.on('message', (payload: ProcessMessage) => {
-        if (payload.name === 'exit') {
+        // console.log('[cli] start on message', payload)
+        if (payload.messageKey === 'exit') {
           childProcess.disconnect()
-        } else if (process.send) {
-          process.send(payload)
+        } else {
+          nodeProcessSend(process, payload)
         }
       })
     }

@@ -19,8 +19,8 @@ describe('config', () => {
 
       childProcess.on('message', (message: ProcessMessage) => {
         // console.log('[父亲]', message)
-        const { name, payload } = message
-        const rule = (testConfig as any).config.result[name]
+        const { messageKey, payload } = message
+        const rule = (testConfig as any).config.result[messageKey]
         if (rule) {
           if (testConfig.config) {
             expect(payload).toMatchObject(rule)

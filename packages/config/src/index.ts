@@ -4,6 +4,7 @@ import path from 'path'
 import requireFromString from 'require-from-string'
 import { TSetting, TConfig } from './type'
 import { getError, catchError } from './utils/error'
+import { nodeProcessSend } from 'packages/shared'
 
 const defaultSetting: Partial<TSetting> = {
   entry: 'web-steps.ts',
@@ -78,9 +79,9 @@ export class Config {
       this.config = requireFromString(source, userConfigCachePath)
     }
 
-    if (__TEST__ && process.send) {
-      process.send({
-        name: 'getUserConfig',
+    if (__TEST__) {
+      nodeProcessSend(process, {
+        messageKey: 'getUserConfig',
         payload: this.config
       })
     }

@@ -6,7 +6,7 @@ declare namespace WebSteps {
   type Config = TConfig
 
   type ProcessMessage = {
-    name: string
+    messageKey: string
     payload: any
   }
 }

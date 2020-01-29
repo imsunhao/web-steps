@@ -1,4 +1,4 @@
-import { readdirSync, existsSync } from 'fs'
+import { readdirSync, existsSync, unlinkSync } from 'fs'
 import { resolve } from 'path'
 import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
@@ -17,6 +17,14 @@ describe('compiler', () => {
     }: TTestConfig = require(`./case/${caseName}/test-confg`).default
     const env = node.env || 'development'
     if (skip) return test.todo(caseName)
+
+    if (result.output) {
+      for (let i = 0; i < result.output.length; i++) {
+        const { filePath } = result.output[i]
+        if (existsSync(filePath)) unlinkSync(filePath)
+      }
+    }
+
     test(
       caseName,
       done => {
@@ -37,15 +45,17 @@ describe('compiler', () => {
         const resultSet = new Set<string>()
 
         childProcess.on('message', (message: ProcessMessage) => {
-          const { name } = message
-          // console.log('[父亲]', name)
-          switch (name) {
+          const { messageKey, payload } = message
+          switch (messageKey) {
             case 'output':
               if (result.output) {
-                result.output.forEach(({ filePath }) => {
-                  expect(existsSync(filePath)).toBeTruthy()
-                })
-                resultSet.add(name)
+                for (let i = 0; i < result.output.length; i++) {
+                  const { filePath, name } = result.output[i]
+                  if (payload.name === name) {
+                    expect(existsSync(filePath)).toBeTruthy()
+                    resultSet.add(messageKey)
+                  }
+                }
               }
               break
             default:
@@ -57,7 +67,7 @@ describe('compiler', () => {
           if (close) {
             expect(code).toEqual(0)
           }
-          expect(Object.keys(result).length).toEqual(resultSet.size)
+          expect(resultSet.size).toEqual(Object.keys(result).length)
           done()
         })
       },
@@ -67,6 +77,7 @@ describe('compiler', () => {
 })
 
 type TOutput = {
+  name: string
   filePath: string
 }
 

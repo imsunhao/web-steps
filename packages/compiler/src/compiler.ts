@@ -1,5 +1,6 @@
 import { getInitConfig } from './index'
 import { catchError } from './utils'
+import { nodeProcessSend } from 'packages/shared'
 
 async function main() {
   const { webpackConfigs, env } = await getInitConfig()
@@ -11,7 +12,7 @@ async function main() {
   }
 
   if (__TEST__ && process.send) {
-    process.send({ name: 'exit', payload: 0 })
+    nodeProcessSend(process, { messageKey: 'exit', payload: 0 })
   }
 }
 

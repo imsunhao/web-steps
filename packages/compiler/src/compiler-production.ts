@@ -12,7 +12,7 @@ async function compiling(webpackConfig: any) {
     reject = j
   })
   const compiler = getCompiler(webpackConfig)
-  compiler.plugin('done', stats => compilerDone(stats, resolve, reject))
+  compiler.plugin('done', stats => compilerDone(stats, resolve, reject, webpackConfig))
   compiler.run((err, stats) => showStats(stats))
   await p
 }

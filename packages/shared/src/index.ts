@@ -1,5 +1,12 @@
 import { ProcessMessage } from '@types'
 import { ProcessMessageMap } from './type'
+import { ExecaChildProcess } from 'execa'
+
+export function nodeProcessSend(p: NodeJS.Process | ExecaChildProcess<string>, payload: ProcessMessage) {
+  if (p.send) {
+    p.send(payload)
+  }
+}
 
 export function getProcessMessageMap() {
   let resolve: any
@@ -11,9 +18,9 @@ export function getProcessMessageMap() {
   // console.log('[getProcessMessageMap]', !!process.send)
   if (process.send) {
     const messageMap: ProcessMessageMap = {} as any
-    process.on('message', async ({ name, payload }: ProcessMessage) => {
-      // console.log(name, payload)
-      if (name === 'args') {
+    process.on('message', async ({ messageKey, payload }: ProcessMessage) => {
+      // console.log('[getProcessMessageMap]', name, payload)
+      if (messageKey === 'args') {
         messageMap.args = payload
         const c = require('@web-steps/config').config
         await c.init(messageMap.args)

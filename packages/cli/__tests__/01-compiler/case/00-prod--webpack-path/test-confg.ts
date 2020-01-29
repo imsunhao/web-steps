@@ -11,6 +11,7 @@ const testConfig: TTestConfig = {
   result: {
     output: [
       {
+        name: 'config',
         filePath: resolve(__dirname, './dist/index.js')
       }
     ]

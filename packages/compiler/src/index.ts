@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'fs'
 import webpack, { Configuration } from 'webpack'
 import requireFromString from 'require-from-string'
 
-import { getProcessMessageMap, ProcessMessageMap } from 'packages/shared'
+import { getProcessMessageMap, ProcessMessageMap, nodeProcessSend } from 'packages/shared'
 import { showCompilerStart, getError } from './utils'
 
 // import { catchError } from './utils/error'
@@ -94,10 +94,10 @@ export function getCompiler(config: webpack.Configuration) {
   return webpack(config)
 }
 
-export function compilerDone(stats: webpack.Stats, resolve: any, reject: any) {
+export function compilerDone(stats: webpack.Stats, resolve: any, reject: any, webpackConfig: webpack.Configuration) {
   console.log('compilerDone')
   if (__TEST__ && process.send) {
-    process.send({ name: 'output' })
+    nodeProcessSend(process, { messageKey: 'output', payload: { name: webpackConfig.name } })
   }
   if (stats.hasErrors()) {
     reject(stats)
