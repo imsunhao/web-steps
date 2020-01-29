@@ -37,4 +37,6 @@ export type TSetting = {
   cache: string
 }
 
+export type TOptionsInject = {}
+
 export type TConfig = any

@@ -1,3 +1,5 @@
-module.exports = {
-  test: 'use-config-file'
+module.exports = function() {
+  return {
+    test: 'use-config-file'
+  }
 }

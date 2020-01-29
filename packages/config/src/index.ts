@@ -2,7 +2,7 @@ import { Args } from '@types'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import requireFromString from 'require-from-string'
-import { TSetting, TConfig } from './type'
+import { TSetting, TConfig, TOptionsInject } from './type'
 import { getError, catchError } from './utils/error'
 import { nodeProcessSend } from 'packages/shared'
 
@@ -22,6 +22,7 @@ export class Config {
 
   setting: TSetting
   config: TConfig
+  configConstructor: (inject: TOptionsInject) => TConfig
 
   resolve(...args: string[]) {
     if (!this.isInit) throw getError('Config need init first. try await config.init()')
@@ -76,8 +77,10 @@ export class Config {
     const userConfigCachePath = this.resolve(this.setting.cache, 'config.js')
     if (existsSync(userConfigCachePath)) {
       const source = readFileSync(userConfigCachePath, 'utf-8')
-      this.config = requireFromString(source, userConfigCachePath)
+      this.configConstructor = requireFromString(source, userConfigCachePath)
     }
+
+    this.config = this.configConstructor({})
 
     if (__TEST__) {
       nodeProcessSend(process, {
