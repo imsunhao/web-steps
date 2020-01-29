@@ -93,6 +93,7 @@ export type TTestConfig = {
   }
   result: {
     output?: TOutput[]
+    cache?: string
   }
   close?: boolean
 }
