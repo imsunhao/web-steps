@@ -5,8 +5,7 @@ module.exports = {
     __PRODUCTION__: true,
     __TEST__: true,
 
-    __DEBUG__: false,
-    __DEBUG_PORT__: 32000,
+    __DEBUG_PORT__: process.env.DEBUG_PORT || false,
 
     __VERSION__: require('./package.json').version,
 

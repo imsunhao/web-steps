@@ -1,6 +1,6 @@
 import minimist from 'minimist'
 import { catchError } from './utils/error'
-import { MinorCommandKey } from './type'
+import { MajorCommandKey, MinorCommandKey } from './type'
 
 export class Args {
   args: any
@@ -15,19 +15,36 @@ export class Args {
    *
    * - 配置文件 JSON 类型, 例如 web-steps.json
    */
-  config: string
+  settingPath: string
 
+  /**
+   * 是否启用缓存
+   * - 默认 启用
+   */
+  cache: boolean
+
+  majorCommand: MajorCommandKey
   minorCommand: MinorCommandKey
 
-  isHelp: boolean
+  /// config
+  /**
+   * 跳过 config 编译
+   */
+  skipCompilerConfig: boolean
+  /**
+   * 强制 config 编译
+   */
+  forceCompilerConfig: boolean
 
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2)))
 
     this.rootDir = args['root-dir'] || process.cwd()
-    this.config = args.config || 'web-steps.json'
-    this.minorCommand = args._[0]
-    this.isHelp = args.help || args.h
+    this.settingPath = args['setting-path'] || 'web-steps.json'
+    this.skipCompilerConfig = args['skip-compiler-config']
+    this.forceCompilerConfig = args['force-compiler-config']
+    this.majorCommand = args._[0]
+    this.cache = typeof args.cache !== 'undefined' ? args.cache : true
   }
 }
 
@@ -35,9 +52,10 @@ const args = new Args()
 
 export function start() {
   async function main() {
-    const minorCommand = args.minorCommand
-    if (minorCommand) {
-      require(`./${minorCommand}.js`).start(args)
+    // const minorCommand = args.majorCommand
+    const majorCommand = args.majorCommand
+    if (majorCommand) {
+      require(`./${majorCommand}.js`).start(args)
     }
   }
 

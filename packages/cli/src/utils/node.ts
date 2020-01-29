@@ -15,7 +15,7 @@ export class Execa {
     }
 
     if (opts.isRead) {
-      console.log(bin, args, merge({ env: process.env, stdio: 'inherit' }, opts))
+      console.log({ bin, args, opts: merge({ stdio: 'inherit' }, opts) })
       const childProcess: execa.ExecaChildProcess<string> = {} as any
       return childProcess
     }
@@ -24,7 +24,7 @@ export class Execa {
   }
 
   static runNode(args: string[] = [], opts: RunOptions = {}) {
-    args = __DEBUG__ ? [`--inspect-brk=${__DEBUG_PORT__}`] : args
+    args = __DEBUG_PORT__ ? [`--inspect-brk=${__DEBUG_PORT__}`, ...args] : args
     return this.run('node', args, opts)
   }
 

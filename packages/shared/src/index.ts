@@ -19,7 +19,7 @@ export function getProcessMessageMap() {
   if (process.send) {
     const messageMap: ProcessMessageMap = {} as any
     process.on('message', async ({ messageKey, payload }: ProcessMessage) => {
-      // console.log('[getProcessMessageMap]', name, payload)
+      // console.log('[getProcessMessageMap]', messageKey, payload)
       if (messageKey === 'args') {
         messageMap.args = payload
         const c = require('@web-steps/config').config
@@ -42,7 +42,7 @@ export function createErrorHandle(name: string) {
       return new Error(`[@web-steps/${name}] ${message}`)
     },
     catchError(error: Error) {
-      console.error('[catchError]', error)
+      console.error(error)
       process.exit(1)
     }
   }

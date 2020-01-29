@@ -73,6 +73,7 @@ export async function getInitConfig() {
           ]
       }
     } catch (error) {
+      console.log(error)
       throw getError('未能找到 webpack config. 请确保 webpackPath 存在 或者 使用 yarn web-step compiler 编译.')
     }
   }
@@ -84,6 +85,8 @@ export async function getInitConfig() {
     env
   }
 }
+
+export type CompilerConfig = SniffPromise<ReturnType<typeof getInitConfig>>
 
 /**
  * 获取 webpack Compiler

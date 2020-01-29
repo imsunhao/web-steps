@@ -1,6 +1,7 @@
 import execa from 'execa'
 
-export type MinorCommandKey = 'dev' | 'build' | 'release' | 'deploy' | 'debug' | 'start' | 'config' | 'create'
+export type MajorCommandKey = 'dev' | 'build' | 'release' | 'deploy' | 'debug' | 'start' | 'config' | 'create' | 'test' | 'compiler'
+export type MinorCommandKey = 'upload' | 'download'
 
 export type RunOptions = execa.Options<string> & {
   /**

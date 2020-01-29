@@ -1,11 +1,13 @@
-import { TTestConfig } from '../../compiler.spec'
+import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
   skip: true,
+  cache: false,
   node: {
+    rootDir: resolve(__dirname),
     target: 'web-steps',
-    env: 'production'
+    argv: ['--force-compiler-config']
   },
   webSteps: {
     target: 'SSR'

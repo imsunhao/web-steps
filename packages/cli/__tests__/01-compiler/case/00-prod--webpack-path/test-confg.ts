@@ -1,10 +1,11 @@
-import { TTestConfig } from '../../compiler.spec'
+import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
   skip: false,
   node: {
     target: 'web-steps--compiler',
+    rootDir: resolve(__dirname),
     env: 'production',
     argv: [`--webpack-path=${resolve(__dirname, './webpack.js')}`]
   },
