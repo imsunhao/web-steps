@@ -21,7 +21,9 @@
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/config#readme",
   "dependencies": {
     "require-from-string": "^2.0.2",
-    "rimraf": "^3.0.1"
+    "rimraf": "^3.0.1",
+    "webpack-merge": "^4.2.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
     "@types/require-from-string": "^1.2.0"

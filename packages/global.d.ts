@@ -12,4 +12,13 @@ declare var __VERSION__: string
 declare var __FEATURE_OPTIONS__: boolean
 declare var __FEATURE_SUSPENSE__: boolean
 
+//SSR
+
+declare var __HOST_GLOBAL__: any
+
 type SniffPromise<T> = T extends Promise<infer P> ? P : unknown
+
+declare module '*.vue' {
+  import Vue from 'vue'
+  export default Vue
+}

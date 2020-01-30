@@ -22,7 +22,7 @@ export type TTestConfig = {
     argv?: string[]
   }
   webSteps?: {
-    target: 'SSR' | 'SSR-client' | 'SSR-server'
+    target: 'SSR' | 'SSR-client' | 'SSR-server' | 'custom'
   }
   result: {
     config?: any

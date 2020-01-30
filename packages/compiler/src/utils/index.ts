@@ -6,12 +6,12 @@ export const { getError, catchError } = createErrorHandle('compiler')
 export function showWebpackCompilerError(stats: webpack.Stats) {
   if (stats.hasWarnings()) {
     stats.compilation.warnings.forEach(warning => {
-      console.log(warning)
+      console.log(warning.message)
     })
   }
   if (stats.hasErrors()) {
     stats.compilation.errors.forEach(error => {
-      console.log(error)
+      console.log(error.message)
     })
     if (__PRODUCTION__) throw getError('编译错误')
   }

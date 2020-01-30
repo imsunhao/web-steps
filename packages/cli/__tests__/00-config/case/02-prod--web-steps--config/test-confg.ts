@@ -9,7 +9,7 @@ const testConfig: TTestConfig = {
     target: 'web-steps'
   },
   webSteps: {
-    target: 'SSR'
+    target: 'custom'
   },
   result: {
     cache: resolve(__dirname, './node_modules/.web-steps_cache/config.js')

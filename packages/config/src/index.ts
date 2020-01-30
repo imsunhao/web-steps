@@ -1,4 +1,5 @@
 import { Args } from '@types'
+import webpackMerge from 'webpack-merge'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import requireFromString from 'require-from-string'
@@ -7,6 +8,9 @@ import { getError, catchError } from './utils/error'
 import { nodeProcessSend, merge } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 import getConfigWebpackConfig from './webpack/default-config.webpack.js'
+import defaultBaseWebpackConfig from './webpack/default-base.webpack.js'
+import defaultClientWebpackConfig from './webpack/default-client.webpack.js'
+import defaultServerWebpackConfig from './webpack/default-server.webpack.js'
 
 const defaultSetting: TSetting = {
   entry: 'web-steps.ts',
@@ -40,7 +44,7 @@ export class Config {
     )
   }
 
-  private configConstructor: (inject: TOptionsInject) => TConfig
+  private userConfigConstructor: (inject: TOptionsInject) => TConfig
 
   /**
    * 获取配置文件
@@ -73,7 +77,7 @@ export class Config {
       env: 'production'
     })
 
-    await this.getConfigConstructor(userConfigCachePath)
+    this.getUserConfigFromCache(userConfigCachePath)
 
     if (__TEST__) {
       nodeProcessSend(process, {
@@ -83,10 +87,10 @@ export class Config {
     }
   }
 
-  private async getConfigConstructor(userConfigCachePath: string) {
+  private getUserConfigFromCache(userConfigCachePath: string) {
     const source = readFileSync(userConfigCachePath, 'utf-8')
     const md = requireFromString(source, userConfigCachePath)
-    this.configConstructor = md.__esModule ? md.default : md
+    this.userConfigConstructor = md.__esModule ? md.default : md
   }
 
   private async getConfig() {
@@ -94,16 +98,52 @@ export class Config {
     if (this.args.forceCompilerConfig) {
       await this.compilerConfig(userConfigCachePath)
     } else if (existsSync(userConfigCachePath)) {
-      await this.getConfigConstructor(userConfigCachePath)
+      this.getUserConfigFromCache(userConfigCachePath)
     } else if (!this.args.skipCompilerConfig) {
       await this.compilerConfig(userConfigCachePath)
     }
 
-    if (!this.configConstructor) {
+    if (!this.userConfigConstructor) {
       throw getError(`无法找到 ${userConfigCachePath}`)
     }
 
-    this.config = this.configConstructor(this.startupOptions)
+    this.config = this.userConfigConstructor(this.startupOptions)
+
+    if (this.config.customBuild) {
+      this.config.customBuild = this.config.customBuild.map(webpackConfig => {
+        return webpackConfig instanceof Function ? webpackConfig(this.startupOptions, this.config) : webpackConfig
+      })
+    }
+
+    if (this.config.src && this.config.src.SSR) {
+      const SSR = this.config.src.SSR
+      const result = {
+        base: {} as any,
+        client: {} as any,
+        server: {} as any
+      }
+
+      Object.keys(result).forEach((key: keyof typeof result) => {
+        if (SSR[key]) {
+          let webpackConfig: any = SSR[key].webpack
+          if (webpackConfig instanceof Function) {
+            webpackConfig = webpackConfig(this.startupOptions, this.config)
+          }
+          result[key] = webpackConfig || {}
+        } else {
+          SSR[key] = { webpack: {} } as any
+        }
+      })
+
+      const baseWebpackConfig = webpackMerge(
+        { mode: this.args.env, context: this.args.rootDir },
+        defaultBaseWebpackConfig,
+        SSR.base.webpack
+      )
+      SSR.base.webpack = baseWebpackConfig
+      SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
+      SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
+    }
 
     if (__TEST__) {
       nodeProcessSend(process, {

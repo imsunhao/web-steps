@@ -36,9 +36,14 @@ export class Args {
    */
   forceCompilerConfig: boolean
 
+  /// compiler
+  /**
+   * 系统运行
+   */
+  env: 'production' | 'development'
+
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2)))
-
 
     this.rootDir = args['root-dir'] || process.cwd()
     this.settingPath = args['setting-path'] || 'web-steps.json'
@@ -46,6 +51,7 @@ export class Args {
     this.forceCompilerConfig = args['force-compiler-config']
     this.majorCommand = args._[0]
     this.cache = args.cache !== 'false'
+    this.env = args.env || process.env.NODE_ENV || 'production'
   }
 }
 

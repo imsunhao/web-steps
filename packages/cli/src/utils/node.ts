@@ -1,6 +1,8 @@
 import { merge } from 'packages/shared'
 import execa from 'execa'
-import { RunOptions } from '../type'
+import { RunOptions, CustomRunOptions } from '../type'
+
+export const customRunOptionKeys: Array<keyof CustomRunOptions> = ['isRead', 'isSilence']
 
 export class Execa {
   static run(bin: string, args: string[] = [], opts: RunOptions = {}) {
@@ -15,6 +17,9 @@ export class Execa {
     }
 
     if (opts.isRead) {
+      customRunOptionKeys.forEach(key => {
+        delete opts[key]
+      })
       console.log({ bin, args, opts: merge({ stdio: 'inherit' }, opts) })
       const childProcess: execa.ExecaChildProcess<string> = {} as any
       return childProcess

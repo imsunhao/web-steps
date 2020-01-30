@@ -7,9 +7,6 @@ const testConfig: TTestConfig = {
     rootDir: resolve(__dirname),
     target: 'web-steps'
   },
-  webSteps: {
-    target: 'SSR'
-  },
   result: {
     config: {
       test: 'use-config-file'

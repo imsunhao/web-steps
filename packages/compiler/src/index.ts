@@ -30,7 +30,7 @@ export class Args {
   /**
    * 编译目标
    */
-  get target(): 'SSR-server' | 'SSR-client' | 'SSR' {
+  get target(): 'SSR-server' | 'SSR-client' | 'SSR' | 'custom' {
     return this.args.target
   }
 
@@ -64,14 +64,20 @@ export async function getInitConfig() {
 
       switch (args.target) {
         case 'SSR-server':
-          webpackConfigs = [processMessageMap.config.src.SSRWebpack.server]
+          webpackConfigs = [processMessageMap.config.src.SSR.server.webpack]
+          break
         case 'SSR-client':
-          webpackConfigs = [processMessageMap.config.src.SSRWebpack.client]
+          webpackConfigs = [processMessageMap.config.src.SSR.client.webpack]
+          break
         case 'SSR':
           webpackConfigs = [
-            processMessageMap.config.src.SSRWebpack.client,
-            processMessageMap.config.src.SSRWebpack.server
+            processMessageMap.config.src.SSR.client.webpack,
+            processMessageMap.config.src.SSR.server.webpack
           ]
+          break
+        case 'custom':
+          webpackConfigs = processMessageMap.config.customBuild
+          break
       }
     } catch (error) {
       console.log(error)

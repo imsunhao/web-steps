@@ -9,17 +9,17 @@ const testConfig: TTestConfig = {
     env: 'production'
   },
   webSteps: {
-    target: 'SSR'
+    target: 'custom'
   },
   result: {
     output: [
       {
-        name: 'client',
-        filePath: resolve(__dirname, './dist/client.js')
+        name: 'test-config-1',
+        filePath: resolve(__dirname, './dist/test-config-1.js')
       },
       {
-        name: 'server',
-        filePath: resolve(__dirname, './dist/server.js')
+        name: 'test-config-2',
+        filePath: resolve(__dirname, './dist/test-config-2.js')
       }
     ]
   },

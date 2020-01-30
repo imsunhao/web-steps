@@ -9,17 +9,17 @@ const testConfig: TTestConfig = {
     target: 'web-steps'
   },
   webSteps: {
-    target: 'custom'
+    target: 'SSR'
   },
   result: {
     output: [
       {
-        name: 'test-config-1',
-        filePath: resolve(__dirname, './dist/test-config-1.js')
+        name: 'client',
+        filePath: resolve(__dirname, './dist/vue-ssr-client-manifest.json')
       },
       {
-        name: 'test-config-2',
-        filePath: resolve(__dirname, './dist/test-config-2.js')
+        name: 'server',
+        filePath: resolve(__dirname, './dist/vue-ssr-server-bundle.json')
       }
     ],
     cache: resolve(__dirname, './node_modules/.web-steps_cache/config.js')

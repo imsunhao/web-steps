@@ -1,3 +1,4 @@
+import webpack from 'webpack'
 export type UserConfig = {
   /**
    * 测试 专用字段
@@ -5,7 +6,7 @@ export type UserConfig = {
    * - 用户设置此字段无意义,如果想审查用户配置,请导出静态配置
    */
   test?: string
-}
+} & Partial<TBaseConfig<'ready'>>
 
 export type StartupOptions = any
 
@@ -41,4 +42,64 @@ export type TSetting = {
 
 export type TOptionsInject = {}
 
-export type TConfig = any
+export type TPlugin = any
+
+export type TWebpackConfig<T extends 'finish' | 'ready'> = T extends 'finish'
+  ? webpack.Configuration
+  : (webpack.Configuration | TGetWebpackConfig)
+
+export type TConfig = TBaseConfig<'finish'>
+type TBaseConfig<T extends 'finish' | 'ready'> = {
+  /**
+   * 根目录 默认值为运行命令的目录
+   */
+  rootDir: string
+
+  /**
+   * 编译选项
+   */
+  compiler: {
+    babelrc?: any
+  }
+
+  /**
+   * 插件系统
+   */
+  plugins: TPlugin[]
+
+  /**
+   * 额外 webpack 配置文件 可以共享使用 web-steps 中的设置
+   */
+  customBuild: Array<TWebpackConfig<T>>
+
+  /**
+   * 源码配置
+   */
+  src: T extends 'finish' ? TSrc<T> : Partial<TSrc<T>>
+}
+
+type TWebpack<T extends 'finish' | 'ready'> = {
+  webpack: TWebpackConfig<T>
+}
+
+type TSrc<T extends 'finish' | 'ready'> = {
+  /**
+   * Server Side Render 配置
+   */
+  SSR: {
+    server: {} & TWebpack<T>
+    client: TWebpack<T>
+  } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
+}
+
+type TSSR<T extends 'finish' | 'ready'> = {
+  base: TWebpack<T>
+
+  /**
+   * 排除三方包
+   * - 防止过度打包,减小打包后的体积
+   */
+  exclude: any
+}
+
+export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
