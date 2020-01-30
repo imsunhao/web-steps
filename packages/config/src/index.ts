@@ -2,7 +2,7 @@ import { Args } from '@types'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import requireFromString from 'require-from-string'
-import { TSetting, TConfig, TOptionsInject } from './type'
+import { TSetting, TConfig, TOptionsInject, StartupOptions } from './type'
 import { getError, catchError } from './utils/error'
 import { nodeProcessSend, merge } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
@@ -20,38 +20,27 @@ export class Config {
   /**
    * 启动参数
    */
-  private args: Args
+  args: Args
 
   setting: TSetting
+
   config: TConfig
-  configConstructor: (inject: TOptionsInject) => TConfig
 
-  resolve(...args: string[]) {
-    if (!this.isInit) throw getError('Config need init first. try await config.init()')
-    return path.resolve.apply(undefined, [this.args.rootDir, ...args])
+  get startupOptions(): StartupOptions {
+    const bind = (fn: any) => (fn instanceof Function ? fn.bind(this) : fn)
+    const keys: Array<keyof Config> = ['resolve', 'args']
+    const startupOptions: Partial<StartupOptions> = {}
+
+    return keys.reduce(
+      (startupOptions, key) => {
+        startupOptions[key] = bind(this[key])
+        return startupOptions
+      },
+      (startupOptions as any) as StartupOptions
+    )
   }
 
-  async init(args: Args) {
-    if (this.isInit) return
-    this.args = args
-    this.isInit = true
-    const main = async () => {
-      this.getSetting()
-      if (!args.cache) {
-        console.log('清空缓存')
-        rmrfSync(this.setting.cache)
-      }
-      this.getConfig()
-    }
-
-    return await main().catch(catchError)
-  }
-
-  async exportStatic() {
-    if (!this.isInit) throw getError('Config need init first. try await config.init()')
-    const main = async () => {}
-    return await main().catch(catchError)
-  }
+  private configConstructor: (inject: TOptionsInject) => TConfig
 
   /**
    * 获取配置文件
@@ -77,12 +66,13 @@ export class Config {
   }
 
   private async compilerConfig(userConfigCachePath: string) {
-    console.log('-----------[compilerConfig]-----------')
     const defaultConfigWebpackConfig = getConfigWebpackConfig(this.setting.entry, this.setting.cache)
     await require('@web-steps/compiler').start({
+      node: false,
       webpackConfigs: [defaultConfigWebpackConfig],
       env: 'production'
     })
+
     await this.getConfigConstructor(userConfigCachePath)
 
     if (__TEST__) {
@@ -113,7 +103,7 @@ export class Config {
       throw getError(`无法找到 ${userConfigCachePath}`)
     }
 
-    this.config = this.configConstructor({})
+    this.config = this.configConstructor(this.startupOptions)
 
     if (__TEST__) {
       nodeProcessSend(process, {
@@ -121,6 +111,33 @@ export class Config {
         payload: this.config
       })
     }
+  }
+
+  resolve(...args: string[]) {
+    if (!this.isInit) throw getError('Config need init first. try await config.init()')
+    return path.resolve.apply(undefined, [this.args.rootDir, ...args])
+  }
+
+  async init(args: Args) {
+    if (this.isInit) return
+    this.args = args
+    this.isInit = true
+    const main = async () => {
+      this.getSetting()
+      if (!args.cache) {
+        console.log('清空缓存')
+        rmrfSync(this.setting.cache)
+      }
+      await this.getConfig()
+    }
+
+    return await main().catch(catchError)
+  }
+
+  async exportStatic() {
+    if (!this.isInit) throw getError('Config need init first. try await config.init()')
+    const main = async () => {}
+    return await main().catch(catchError)
   }
 }
 

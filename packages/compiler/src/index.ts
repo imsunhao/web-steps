@@ -55,6 +55,7 @@ class WebpackConfig implements Configuration {
 
 export async function getInitConfig() {
   let webpackConfigs: Configuration[] = []
+  let node = !args.webpackPath
   if (args.webpackPath) {
     webpackConfigs = [new WebpackConfig()]
   } else {
@@ -81,6 +82,7 @@ export async function getInitConfig() {
   const { env } = args
 
   return {
+    node,
     webpackConfigs,
     env
   }

@@ -11,7 +11,7 @@ export function start(args: Args) {
       childProcess.disconnect()
     } else {
       childProcess.on('message', (payload: ProcessMessage) => {
-        // console.log('[cli] start on message', payload)
+        console.log('[cli] compiler on message', payload)
         if (payload.messageKey === 'exit') {
           childProcess.disconnect()
         } else {

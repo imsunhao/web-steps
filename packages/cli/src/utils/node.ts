@@ -24,7 +24,10 @@ export class Execa {
   }
 
   static runNode(args: string[] = [], opts: RunOptions = {}) {
-    args = __DEBUG_PORT__ ? [`--inspect-brk=${__DEBUG_PORT__}`, ...args] : args
+    if (__DEBUG_PORT__) {
+      args = [`--inspect-brk=${__DEBUG_PORT__}`, ...args]
+      process.env.DEBUG_PORT = parseInt(__DEBUG_PORT__) + 1 + ''
+    }
     return this.run('node', args, opts)
   }
 

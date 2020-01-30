@@ -39,6 +39,7 @@ export class Args {
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2)))
 
+
     this.rootDir = args['root-dir'] || process.cwd()
     this.settingPath = args['setting-path'] || 'web-steps.json'
     this.skipCompilerConfig = args['skip-compiler-config']

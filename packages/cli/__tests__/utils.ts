@@ -41,7 +41,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
     result,
     close
   } = testConfig
-  const env = node.env || 'development'
+  const env = node.env || 'production'
   const cache = typeof testConfig.cache !== 'undefined' ? testConfig.cache : true
   if (skip) return test.todo(caseName)
   const args = minimist(process.argv.slice(3), { string: 'case' })

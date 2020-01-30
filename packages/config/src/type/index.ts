@@ -7,7 +7,9 @@ export type UserConfig = {
   test?: string
 }
 
-export type GetUserConfig = (startupOptions: any) => UserConfig
+export type StartupOptions = any
+
+export type GetUserConfig = (startupOptions: StartupOptions) => UserConfig
 
 export type TSetting = {
   /**

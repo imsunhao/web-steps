@@ -4,7 +4,7 @@ import webpack from 'webpack'
 
 console.log('[compiler] production mode')
 
-async function compiling(webpackConfig: any) {
+function compiling(webpackConfig: any) {
   let resolve: any
   let reject: any
   const p = new Promise<webpack.Stats>((r, j) => {
@@ -14,7 +14,7 @@ async function compiling(webpackConfig: any) {
   const compiler = getCompiler(webpackConfig)
   compiler.plugin('done', stats => compilerDone(stats, resolve, reject, webpackConfig))
   compiler.run((err, stats) => showStats(stats))
-  await p
+  return p
 }
 
 export async function start(webpackConfigs: webpack.Configuration[]) {
