@@ -9,7 +9,7 @@ import { processSend, merge, Log } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 
 import getConfigWebpackConfig from './webpack/default-config.webpack.js'
-import defaultBaseWebpackConfig from './webpack/default-base.webpack.js'
+import getDefaultBaseWebpackConfig from './webpack/default-base.webpack.js'
 import defaultClientWebpackConfig from './webpack/default-client.webpack.js'
 import defaultServerWebpackConfig from './webpack/default-server.webpack.js'
 
@@ -138,11 +138,7 @@ export class Config {
         }
       })
 
-      const baseWebpackConfig = webpackMerge(
-        { mode: this.args.env, context: this.args.rootDir },
-        defaultBaseWebpackConfig,
-        result.base
-      )
+      const baseWebpackConfig = webpackMerge(getDefaultBaseWebpackConfig(this.startupOptions, this.config), result.base)
 
       SSR.base.webpack = baseWebpackConfig
       SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
