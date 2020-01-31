@@ -6,3 +6,5 @@ export type ProcessMessageMap = {
   setting: Config['setting']
   args: Args
 }
+
+export type TLogArg = Pick<Args, 'env'>

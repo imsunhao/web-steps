@@ -103,3 +103,4 @@ type TSSR<T extends 'finish' | 'ready'> = {
 }
 
 export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
+

@@ -4,9 +4,10 @@ import { existsSync, readFileSync } from 'fs'
 import path from 'path'
 import requireFromString from 'require-from-string'
 import { TSetting, TConfig, TOptionsInject, StartupOptions } from './type'
-import { getError, catchError } from './utils/error'
-import { nodeProcessSend, merge } from 'packages/shared'
+
+import { processSend, merge, Log } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
+
 import getConfigWebpackConfig from './webpack/default-config.webpack.js'
 import defaultBaseWebpackConfig from './webpack/default-base.webpack.js'
 import defaultClientWebpackConfig from './webpack/default-client.webpack.js'
@@ -18,6 +19,8 @@ const defaultSetting: TSetting = {
   injectContext: '',
   cache: 'node_modules/.web-steps_cache'
 }
+
+export let log: Log
 
 export class Config {
   private isInit = false
@@ -80,7 +83,7 @@ export class Config {
     this.getUserConfigFromCache(userConfigCachePath)
 
     if (__TEST__) {
-      nodeProcessSend(process, {
+      processSend(process, {
         messageKey: 'cache',
         payload: userConfigCachePath
       })
@@ -104,7 +107,7 @@ export class Config {
     }
 
     if (!this.userConfigConstructor) {
-      throw getError(`无法找到 ${userConfigCachePath}`)
+      log.error(`无法找到 ${userConfigCachePath}`)
     }
 
     this.config = this.userConfigConstructor(this.startupOptions)
@@ -147,7 +150,7 @@ export class Config {
     }
 
     if (__TEST__) {
-      nodeProcessSend(process, {
+      processSend(process, {
         messageKey: 'config',
         payload: this.config
       })
@@ -155,7 +158,7 @@ export class Config {
   }
 
   resolve(...args: string[]) {
-    if (!this.isInit) throw getError('Config need init first. try await config.init()')
+    if (!this.isInit) log.error('Config need init first. try await config.init()')
     return path.resolve.apply(undefined, [this.args.rootDir, ...args])
   }
 
@@ -163,22 +166,23 @@ export class Config {
     if (this.isInit) return
     this.args = args
     this.isInit = true
+    log = new Log('config', args)
     const main = async () => {
       this.getSetting()
       if (!args.cache) {
-        console.log('清空缓存')
+        log.info('清空缓存')
         rmrfSync(this.setting.cache)
       }
       await this.getConfig()
     }
 
-    return await main().catch(catchError)
+    return await main().catch(log.catchError)
   }
 
   async exportStatic() {
-    if (!this.isInit) throw getError('Config need init first. try await config.init()')
+    if (!this.isInit) throw log.error('Config need init first. try await config.init()')
     const main = async () => {}
-    return await main().catch(catchError)
+    return await main().catch(log.catchError)
   }
 }
 

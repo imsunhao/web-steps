@@ -1,93 +1,56 @@
-import { ProcessMessage } from '@types'
-import { ProcessMessageMap } from './type'
-import { ExecaChildProcess } from 'execa'
+import { TLogArg } from './type'
 
-export function nodeProcessSend(p: NodeJS.Process | ExecaChildProcess<string>, payload: ProcessMessage) {
-  if (p.send) {
-    p.send(payload)
+export class Log {
+  private args: TLogArg
+
+  private packageName: string
+  packagePrefix: string
+
+  constructor(packageName: string, args: TLogArg) {
+    this.packageName = packageName
+    this.packagePrefix = `[@web-steps/${this.packageName}]`
+    this.args = args
+
+    if (packageName !== 'cli') {
+      this.debug(`\n\n${this.packagePrefix} start!\n\n`)
+    }
   }
-}
 
-export function getProcessMessageMap() {
-  let resolve: any
-  let reject: any
-  const p = new Promise<ProcessMessageMap>((r, j) => {
-    resolve = r
-    reject = j
-  })
-  // console.log('[getProcessMessageMap]', !!process.send)
-  if (process.send) {
-    const messageMap: ProcessMessageMap = {} as any
-    process.on('message', async ({ messageKey, payload }: ProcessMessage) => {
-      // console.log('[getProcessMessageMap]', messageKey, payload)
-      if (messageKey === 'args') {
-        messageMap.args = payload
-        const c = require('@web-steps/config').config
-        await c.init(messageMap.args)
-        const { config, setting } = c
-        messageMap.config = config
-        messageMap.setting = setting
-        resolve(messageMap)
-      }
-    })
-  } else {
-    reject()
+  info(...args: any[]) {
+    console.log.apply(undefined, args)
   }
-  return p
-}
 
-export function createErrorHandle(name: string) {
-  return {
-    getError(message: string) {
-      return new Error(`[@web-steps/${name}] ${message}`)
-    },
-    catchError(error: Error) {
-      console.error(error)
+  log(...args: any[]) {
+    console.log.apply(undefined, args)
+  }
+
+  debug(...args: any[]) {
+    console.debug.apply(undefined, [...args])
+  }
+
+  success(...args: any[]) {
+    console.log.apply(undefined, [this.packagePrefix, ...args])
+  }
+
+  warn(...args: any[]) {
+    console.error.apply(undefined, args)
+    throw new Error(`${this.packagePrefix} ${args.join(' ')}`)
+  }
+
+  error(...args: any[]) {
+    console.error.apply(undefined, args)
+    throw new Error(`${this.packagePrefix} ${args.join(' ')}`)
+  }
+
+  catchError(...errors: any) {
+    this.debug(`\n\n${this.packagePrefix} catchError!\n\n`)
+    if (this.args.env === 'production') {
       process.exit(1)
     }
   }
 }
 
-export function cloneDeep<T>(data: T): T {
-  if (typeof data !== 'object') return data
-  if (data instanceof Array) {
-    return data.map(d => {
-      return cloneDeep(d)
-    }) as any
-  }
-  return Object.keys(data).reduce((t: any, o) => {
-    t[o] = cloneDeep((data as any)[o])
-    return t
-  }, {}) as any
-}
-
-function mergeBase(src: { [x: string]: any }, target: { [x: string]: any }, { isSimple }: any = {}) {
-  if (typeof target !== 'object' || typeof src !== 'object') return target
-  Object.keys(target).forEach(t => {
-    if (typeof target[t] === 'object' && typeof src[t] === 'object') {
-      if (isSimple) return
-      src[t] = mergeBase(src[t], target[t])
-    } else {
-      src[t] = target[t]
-    }
-  })
-  return src
-}
-
-export function merge(...args: any[]) {
-  return args.reduce((t, o) => {
-    if (!o) return t
-    if (t === o) return t
-    return mergeBase(t, cloneDeep(o))
-  }, args[0])
-}
-
-export function mergeSimple(...args: any[]) {
-  return args.reduce((t, o) => {
-    if (!o) return t
-    if (t === o) return t
-    return mergeBase(t, cloneDeep(o), { isSimple: true })
-  }, args[0])
-}
-
 export * from './type'
+
+export * from './utils/node'
+export * from './utils/lodash'

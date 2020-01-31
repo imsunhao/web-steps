@@ -1,8 +1,8 @@
-import { getCompiler, compilerDone } from './index'
-import { catchError, showStats } from './utils'
+import { getCompiler, compilerDone, showStats } from './utils'
 import webpack from 'webpack'
+import { log } from './'
 
-console.log('[compiler] production mode')
+log.info('[compiler] production mode')
 
 function compiling(webpackConfig: any) {
   let resolve: any
@@ -24,5 +24,5 @@ export async function start(webpackConfigs: webpack.Configuration[]) {
       await compiling(webpackConfig)
     }
   }
-  await main().catch(err => catchError(err))
+  await main().catch(log.catchError)
 }

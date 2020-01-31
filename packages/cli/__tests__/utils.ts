@@ -102,7 +102,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
         done()
       })
     },
-    __DEBUG_PORT__ ? 6000000 : 30000
+    __DEBUG_PORT__ ? 6000000 : 10000
   )
 }
 
