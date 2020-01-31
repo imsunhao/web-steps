@@ -138,8 +138,9 @@ export class Config {
       const baseWebpackConfig = webpackMerge(
         { mode: this.args.env, context: this.args.rootDir },
         defaultBaseWebpackConfig,
-        SSR.base.webpack
+        result.base
       )
+
       SSR.base.webpack = baseWebpackConfig
       SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
       SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)

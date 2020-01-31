@@ -1,12 +1,14 @@
 import { TGetWebpackConfig } from '@web-steps/config'
-import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 
 const getConfig: TGetWebpackConfig = function({ resolve }) {
   return {
-    entry: {
-      client: resolve('./src/entry-client.ts')
+    optimization: {
+      minimize: false
     },
-    plugins: [new CleanWebpackPlugin()]
+    output: {
+      path: resolve('./dist')
+    },
+    externals: ['vue', 'vue-router']
   }
 }
 
