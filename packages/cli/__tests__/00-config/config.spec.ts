@@ -7,6 +7,6 @@ const major = 'config'
 
 describe(major, () => {
   readdirSync(caseDir).forEach(caseName => {
-    testing('test', caseName, require(`./case/${caseName}/test-confg`).default)
+    testing(major, caseName, require(`./case/${caseName}/test-confg`).default)
   })
 })
