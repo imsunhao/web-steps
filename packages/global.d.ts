@@ -2,6 +2,8 @@
 declare var __DEV__: boolean
 declare var __PRODUCTION__: boolean
 declare var __TEST__: boolean
+declare var __NODE_ENV__: 'development' | 'production'
+declare var __WEB_STEPS__: boolean
 
 declare var __DEBUG_PORT__: string
 

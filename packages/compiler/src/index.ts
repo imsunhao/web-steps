@@ -1,30 +1,28 @@
 import { getInitConfig, CompilerConfig } from './utils'
-import { processSend, Log } from 'packages/shared'
+import { processSend, Log, getEnv } from 'packages/shared'
+
+const major = 'compiler'
 
 export let log: Log
 
-export async function start(payload?: CompilerConfig) {
+export async function start(payload?: CompilerConfig, { isConfig }: { isConfig?: boolean } = {}) {
   async function main() {
-    const env: any = payload ? payload.env : process.env.NODE_ENV || 'production'
-    log = new Log('compiler', { env })
-    const { webpackConfigs, node } = payload || (await getInitConfig())
+    const env = getEnv({ env: payload ? payload.env : __NODE_ENV__ })
+    log = new Log(major, { env })
+    const { webpackConfigs } = payload || (await getInitConfig())
 
-    if (env === 'development') {
-      await require('./compiler-development').start(webpackConfigs)
-    } else {
-      await require('./compiler-production').start(webpackConfigs)
-    }
+    await require(`./${major}-${env}`).start(webpackConfigs)
 
-    if (node && __TEST__) {
+    if (!isConfig && __WEB_STEPS__ && __TEST__) {
       processSend(process, {
         messageKey: 'exit',
         payload: {
-          name: 'compiler',
+          name: major,
           code: 0
         }
       })
     }
   }
 
-  await main().catch(log.catchError)
+  await main().catch(err => log.catchError(err))
 }

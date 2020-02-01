@@ -32,9 +32,12 @@ export class Log {
     console.log.apply(undefined, [this.packagePrefix, ...args])
   }
 
+  fatal(...args: any[]) {
+    console.error.apply(undefined, [this.packagePrefix, ...args])
+  }
+
   warn(...args: any[]) {
-    console.error.apply(undefined, args)
-    throw new Error(`${this.packagePrefix} ${args.join(' ')}`)
+    console.warn.apply(undefined, args)
   }
 
   error(...args: any[]) {
@@ -44,6 +47,7 @@ export class Log {
 
   catchError(...errors: any) {
     this.debug(`\n\n${this.packagePrefix} catchError!\n\n`)
+    console.error.apply(undefined, errors)
     if (this.args.env === 'production') {
       process.exit(1)
     }
@@ -54,3 +58,9 @@ export * from './type'
 
 export * from './utils/node'
 export * from './utils/lodash'
+export * from './utils/child-process-config'
+export * from './utils/require'
+
+export function getEnv(payload: { env: string }) {
+  return payload.env !== 'development' ? 'production' : 'development'
+}

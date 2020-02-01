@@ -100,6 +100,9 @@ function createReplacePlugin() {
     __PRODUCTION__: `(process.env.NODE_ENV === 'production')`,
     __TEST__: `(process.env.NODE_ENV === 'test')`,
 
+    __NODE_ENV__: `(process.env.NODE_ENV)`,
+    __WEB_STEPS__: `(!!process.env.WEB_STEPS)`,
+
     __DEBUG_PORT__: `(process.env.DEBUG_PORT)`,
 
     __COMMIT__: `"${process.env.COMMIT}"`,

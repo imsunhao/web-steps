@@ -5,6 +5,9 @@ module.exports = {
     __PRODUCTION__: true,
     __TEST__: true,
 
+    __NODE_ENV__: process.env.NODE_ENV,
+    __WEB_STEPS__: process.env.WEB_STEPS,
+
     __DEBUG_PORT__: process.env.DEBUG_PORT || false,
 
     __VERSION__: require('./package.json').version,

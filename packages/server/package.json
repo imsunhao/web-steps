@@ -13,10 +13,19 @@
     "url": "git+https://github.com/imsunhao/utils.git"
   },
   "keywords": [],
+  "bin": {
+    "web-steps--server": "./bin/web-steps--server"
+  },
   "author": "imsunhao",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/server#readme"
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/server#readme",
+  "dependencies": {
+    "require-from-string": "^2.0.2",
+    "base64url": "^3.0.1",
+    "express": "^4.17.1",
+    "vue-server-renderer": "^2.6.11"
+  }
 }

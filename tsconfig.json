@@ -17,10 +17,10 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
-    "types": ["jest", "node"],
+    "types": ["jest", "puppeteer", "node"],
     "rootDir": ".",
     "paths": {
-      "@vue/*": ["packages/*/src"]
+      "@web-steps/*": ["packages/*/src"]
     }
   },
   "include": ["packages/global.d.ts", "packages/*/src", "packages/*/__tests__"]

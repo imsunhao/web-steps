@@ -48,8 +48,8 @@ export class Execa {
    * 启用 Nodejs 并使用 IPC 进程通讯
    */
   static runCommand(command: string, args: string[] = [], opts: RunOptions = {}) {
-    if (command === 'compiler') command = 'compiler/bin/web-steps--compiler'
-    const path = __TEST__ ? `packages/${command}` : 'node_modules/@web-steps/${command}'
+    command = `${command}/bin/web-steps--${command}`
+    const path = __TEST__ ? `packages/${command}` : `node_modules/@web-steps/${command}`
     return this.runNodeIPC([path, ...args], merge({ stdio: ['inherit', 'inherit', 'inherit', 'ipc'] }, opts))
   }
 }

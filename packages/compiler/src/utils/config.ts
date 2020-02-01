@@ -1,13 +1,11 @@
-import minimist from 'minimist'
-import { readFileSync, existsSync } from 'fs'
+import { existsSync } from 'fs'
 import webpack, { Configuration } from 'webpack'
-import requireFromString from 'require-from-string'
-import { getProcessMessageMap, ProcessMessageMap } from 'packages/shared'
+import { getProcessMessageMap, getInitChildProcessConfig, requireFromPath } from 'packages/shared'
+
+let { processMessageMap, localArgs } = getInitChildProcessConfig()
 
 import { log } from '../'
 import { showCompilerStart } from './'
-
-const localArgs = minimist(process.argv.slice(2))
 
 export class Args {
   get args(): any {
@@ -42,13 +40,10 @@ export class Args {
 
 export const args = new Args()
 
-let processMessageMap: ProcessMessageMap = {} as any
-
 class WebpackConfig implements Configuration {
   constructor() {
     if (existsSync(args.webpackPath)) {
-      const source = readFileSync(args.webpackPath, 'utf-8')
-      const config = requireFromString(source, args.webpackPath)
+      const config = requireFromPath(args.webpackPath)
       Object.keys(config).forEach(key => {
         ;(this as any)[key] = config[key]
       })
@@ -58,8 +53,7 @@ class WebpackConfig implements Configuration {
 
 export async function getInitConfig() {
   let webpackConfigs: Configuration[] = []
-  let node = !args.webpackPath
-  if (args.webpackPath) {
+  if (!__WEB_STEPS__ && args.webpackPath) {
     webpackConfigs = [new WebpackConfig()]
   } else {
     try {
@@ -83,12 +77,11 @@ export async function getInitConfig() {
           break
       }
     } catch (error) {
-      log.error('未能找到 webpack config. 请确保 webpackPath 存在 或者 使用 yarn web-step compiler 编译.')
+      log.error('未能找到 webpack config. 请确保 webpackPath 存在 或者 使用 yarn web-step 启动.')
     }
   }
 
   return {
-    node,
     webpackConfigs
   }
 }

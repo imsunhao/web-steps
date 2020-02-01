@@ -10,13 +10,14 @@
       "request": "launch",
       "program": "${workspaceFolder}/scripts/jest.js",
       "stopOnEntry": false,
-      "args": ["${fileBasename}", "--runInBand", "--detectOpenHandles"],
+      "args": ["${fileBasename}", "--runInBand", "--detectOpenHandles", "--show=true"],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
       "runtimeArgs": ["--nolazy"],
       "env": {
-        "NODE_ENV": "test"
+        "NODE_ENV": "test",
+        "DEBUG_PORT": 32000
       },
       "console": "integratedTerminal",
       "sourceMaps": true

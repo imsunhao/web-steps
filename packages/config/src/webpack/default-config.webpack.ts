@@ -1,3 +1,5 @@
+import nodeExternals from 'webpack-node-externals'
+
 export default function(entryPath: string, outputPath: string) {
   return {
     name: 'config',
@@ -15,8 +17,9 @@ export default function(entryPath: string, outputPath: string) {
       filename: '[name].js',
       libraryTarget: 'commonjs2'
     },
+    externals: [nodeExternals()],
     resolve: {
-      extensions: ['.ts', '.js']
+      extensions: ['.ts', '.js', '.json']
     },
     module: {
       rules: [

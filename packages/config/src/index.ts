@@ -2,10 +2,9 @@ import { Args } from '@types'
 import webpackMerge from 'webpack-merge'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
-import requireFromString from 'require-from-string'
 import { TSetting, TConfig, TOptionsInject, StartupOptions } from './type'
 
-import { processSend, merge, Log } from 'packages/shared'
+import { processSend, merge, Log, requireFromPath } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 
 import getConfigWebpackConfig from './webpack/default-config.webpack.js'
@@ -74,11 +73,14 @@ export class Config {
 
   private async compilerConfig(userConfigCachePath: string) {
     const defaultConfigWebpackConfig = getConfigWebpackConfig(this.setting.entry, this.setting.cache)
-    await require('@web-steps/compiler').start({
-      node: false,
-      webpackConfigs: [defaultConfigWebpackConfig],
-      env: 'production'
-    })
+    await require('@web-steps/compiler').start(
+      {
+        node: false,
+        webpackConfigs: [defaultConfigWebpackConfig],
+        env: 'production'
+      },
+      { isConfig: true }
+    )
 
     this.getUserConfigFromCache(userConfigCachePath)
 
@@ -91,9 +93,7 @@ export class Config {
   }
 
   private getUserConfigFromCache(userConfigCachePath: string) {
-    const source = readFileSync(userConfigCachePath, 'utf-8')
-    const md = requireFromString(source, userConfigCachePath)
-    this.userConfigConstructor = md.__esModule ? md.default : md
+    this.userConfigConstructor = requireFromPath(userConfigCachePath)
   }
 
   private async getConfig() {
@@ -120,29 +120,56 @@ export class Config {
 
     if (this.config.src && this.config.src.SSR) {
       const SSR = this.config.src.SSR
-      const result = {
-        base: {} as any,
-        client: {} as any,
-        server: {} as any
+
+      const fullWebpack = () => {
+        const result = {
+          base: {} as any,
+          client: {} as any,
+          server: {} as any
+        }
+
+        Object.keys(result).forEach((key: keyof typeof result) => {
+          if (SSR[key]) {
+            let webpackConfig: any = SSR[key].webpack
+            if (webpackConfig instanceof Function) {
+              webpackConfig = webpackConfig(this.startupOptions, this.config)
+            }
+            result[key] = webpackConfig || {}
+          } else {
+            SSR[key] = { webpack: {} } as any
+          }
+        })
+
+        const baseWebpackConfig = webpackMerge(
+          getDefaultBaseWebpackConfig(this.startupOptions, this.config),
+          result.base
+        )
+
+        SSR.base.webpack = baseWebpackConfig
+        SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
+        SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
       }
 
-      Object.keys(result).forEach((key: keyof typeof result) => {
-        if (SSR[key]) {
-          let webpackConfig: any = SSR[key].webpack
-          if (webpackConfig instanceof Function) {
-            webpackConfig = webpackConfig(this.startupOptions, this.config)
-          }
-          result[key] = webpackConfig || {}
+      const fullServer = () => {
+        if (SSR.server.lifeCycle) {
         } else {
-          SSR[key] = { webpack: {} } as any
+          SSR.server.lifeCycle = {} as any
         }
-      })
+        if (SSR.server.render) {
+        } else {
+          const outputPath: string = (SSR.server.webpack.output ? SSR.server.webpack.output.path : '') as any
+          if (SSR.server.webpack.output) {
+            SSR.server.render = {
+              bundlePath: path.resolve(outputPath, 'vue-ssr-server-bundle.json'),
+              clientManifestPath: path.resolve(outputPath, 'vue-ssr-client-manifest.json'),
+              templatePath: ''
+            }
+          }
+        }
+      }
 
-      const baseWebpackConfig = webpackMerge(getDefaultBaseWebpackConfig(this.startupOptions, this.config), result.base)
-
-      SSR.base.webpack = baseWebpackConfig
-      SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
-      SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
+      fullWebpack()
+      fullServer()
     }
 
     if (__TEST__) {

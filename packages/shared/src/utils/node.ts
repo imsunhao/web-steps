@@ -29,7 +29,6 @@ export function getProcessMessageMap() {
   })
   const messageMap: ProcessMessageMap = {} as any
   processOnMessage(process, async ({ messageKey, payload }: ProcessMessage) => {
-    debugger
     if (messageKey === 'args') {
       messageMap.args = payload
       const c = require('@web-steps/config').config

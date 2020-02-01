@@ -2,8 +2,6 @@ import { getCompiler, compilerDone, showStats } from './utils'
 import webpack from 'webpack'
 import { log } from './'
 
-log.info('[compiler] production mode')
-
 function compiling(webpackConfig: any) {
   let resolve: any
   let reject: any
@@ -11,6 +9,7 @@ function compiling(webpackConfig: any) {
     resolve = r
     reject = j
   })
+
   const compiler = getCompiler(webpackConfig)
   compiler.plugin('done', stats => compilerDone(stats, resolve, reject, webpackConfig))
   compiler.run((err, stats) => showStats(stats))
@@ -18,6 +17,7 @@ function compiling(webpackConfig: any) {
 }
 
 export async function start(webpackConfigs: webpack.Configuration[]) {
+  log.info('[compiler] production mode')
   async function main() {
     for (let i = 0; i < webpackConfigs.length; i++) {
       const webpackConfig = webpackConfigs[i]

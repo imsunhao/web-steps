@@ -1,4 +1,6 @@
 import webpack from 'webpack'
+import { ServerLifeCycle } from '@web-steps/server'
+
 export type UserConfig = {
   /**
    * 测试 专用字段
@@ -87,9 +89,43 @@ type TSrc<T extends 'finish' | 'ready'> = {
    * Server Side Render 配置
    */
   SSR: {
-    server: {} & TWebpack<T>
+    server: (T extends 'finish' ? TServer<T> : Partial<TServer<T>>) & TWebpack<T> & {}
     client: TWebpack<T>
   } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
+}
+
+type TServer<T extends 'finish' | 'ready'> = {
+  /**
+   * 声明周期钩子函数
+   * - 这里可以添加 中间件
+   * - 控制 服务器端
+   */
+  lifeCycle: T extends 'finish' ? Required<ServerLifeCycle> : ServerLifeCycle
+
+  /**
+   * 渲染配置
+   */
+  render: T extends 'finish' ? TRender : Partial<TRender>
+}
+
+export type TRender = {
+  /**
+   * vue-ssr-server-bundle.json 地址
+   * - 默认为 webpack出口目录下/vue-ssr-server-bundle.json
+   */
+  bundlePath: string
+
+  /**
+   * vue-ssr-client-manifest.json 地址
+   * - 默认为 webpack出口目录下/vue-ssr-client-manifest.json
+   */
+  clientManifestPath: string
+
+  /**
+   * HTML模板地址
+   * - 如果不填写 默认为 一个简单的模板
+   */
+  templatePath: string
 }
 
 type TSSR<T extends 'finish' | 'ready'> = {
@@ -103,4 +139,3 @@ type TSSR<T extends 'finish' | 'ready'> = {
 }
 
 export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
-

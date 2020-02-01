@@ -13,6 +13,7 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
       filename: '[name].[chunkhash].js'
     },
     module: {
+      noParse: /es6-promise\.js$/,
       rules: [
         {
           test: /\.vue$/,
@@ -26,7 +27,15 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
-          use: ['ts-loader']
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                appendTsSuffixTo: [/\.vue$/],
+                transpileOnly: true
+              }
+            }
+          ]
         }
       ]
     },

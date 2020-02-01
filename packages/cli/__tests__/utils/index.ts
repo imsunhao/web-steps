@@ -1,7 +1,9 @@
 import minimist from 'minimist'
 import { existsSync, unlinkSync } from 'fs'
-import { Execa } from '../src/utils/node'
+import execa from 'execa'
+import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
+import { setupPuppeteer } from './e2eUtils'
 
 type TOutput = {
   name: string
@@ -28,6 +30,10 @@ export type TTestConfig = {
     config?: any
     output?: TOutput[]
     cache?: string
+    e2e?: {
+      url: string
+      texts?: Record<string, string>
+    }
   }
   close?: boolean
 }
@@ -86,10 +92,10 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
 
       const resultSet = new Set<string>()
 
-      childProcess.on('message', (message: ProcessMessage) => {
+      childProcess.on('message', async (message: ProcessMessage) => {
         const { messageKey } = message
-        if (args.show) console.log('[父亲] messageKey', messageKey)
-        if (resolveMessageKey(message, result)) {
+        if (args.show) console.log('[单元测试] messageKey', messageKey)
+        if (await resolveMessageKey(message, result, childProcess, args)) {
           resultSet.add(messageKey)
         }
       })
@@ -106,7 +112,12 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
   )
 }
 
-function resolveMessageKey(message: ProcessMessage, r: TTestConfig['result']) {
+async function resolveMessageKey(
+  message: ProcessMessage,
+  r: TTestConfig['result'],
+  childProcess: execa.ExecaChildProcess<string>,
+  args: any
+) {
   const { messageKey, payload } = message
   const msg: keyof TTestConfig['result'] = messageKey as any
   const result: Required<TTestConfig['result']> = r as any
@@ -128,6 +139,27 @@ function resolveMessageKey(message: ProcessMessage, r: TTestConfig['result']) {
             expect(existsSync(filePath)).toBeTruthy()
             return true
           }
+        }
+        break
+      case 'e2e':
+        try {
+          const { url, texts } = result.e2e
+          const { page, text, destroy } = await setupPuppeteer()
+          if (texts) {
+            await page.goto(url, { timeout: 5000 })
+            const textKeys = Object.keys(texts)
+            for (let i = 0; i < textKeys.length; i++) {
+              const key = textKeys[i]
+              const result = await text(key)
+              if (args.show) console.log(`[单元测试] e2e text key = "${key}" result = "${result}"`)
+              expect(result).toBe(texts[key])
+            }
+          }
+          await destroy()
+          childProcess.send({ messageKey: 'e2e' })
+          return true
+        } catch (e) {
+          return false
         }
         break
       default:
