@@ -31,7 +31,7 @@ export function initServer(lifeCycle: ServerLifeCycle, render: TRender) {
 
   APP.get('*', (req, res, next) => {
     beforeRender(req, res, next)
-    const context = getRenderContext(req)
+    const context = getRenderContext(req, res)
     const serverInfos: TServerInfos = [
       `express/${require('express/package.json').version}`,
       `vue/${require('vue/package.json').version}`,
@@ -103,7 +103,7 @@ const createBundleRendererRenderToString: (render: TRender) => Required<ServerLi
 }
 const noop: any = function() {}
 
-function getRenderContext(req: { url: any }) {
+function getRenderContext(req: { url: any }, res: { locals: any }) {
   const injectContext: TServerInjectContext = {}
   const context: TServerContext = {
     injectContext,
@@ -113,6 +113,7 @@ function getRenderContext(req: { url: any }) {
       description: ''
     },
     url: req.url,
+    locals: res.locals,
     nonce: '',
     head: 'TODO'
   }
