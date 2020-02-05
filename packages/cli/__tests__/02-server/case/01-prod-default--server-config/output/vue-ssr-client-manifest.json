@@ -1,0 +1,30 @@
+{
+  "publicPath": "",
+  "all": [
+    "1.9f47bbe75f7d1e56b7e9.js",
+    "client.c37ea2186e7ff0e55b69.js"
+  ],
+  "initial": [
+    "client.c37ea2186e7ff0e55b69.js"
+  ],
+  "async": [
+    "1.9f47bbe75f7d1e56b7e9.js"
+  ],
+  "modules": {
+    "65951f5f": [
+      1
+    ],
+    "99e43162": [
+      1
+    ],
+    "8aef206e": [
+      1
+    ],
+    "8d8756c8": [
+      1
+    ],
+    "35f2d0f2": [
+      0
+    ]
+  }
+}

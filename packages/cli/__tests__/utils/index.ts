@@ -11,7 +11,8 @@ type TOutput = {
 }
 
 export type TTestConfig = {
-  skip: boolean
+  skip?: boolean
+  todo?: boolean
   /**
    * 是否启用缓存
    * - 默认启用
@@ -31,6 +32,7 @@ export type TTestConfig = {
     output?: TOutput[]
     cache?: string
     e2e?: {
+      debug?: boolean
       url: string
       texts?: Record<string, string>
     }
@@ -41,6 +43,7 @@ export type TTestConfig = {
 export function testing(major: string, caseName: string, testConfig: TTestConfig) {
   const {
     skip,
+    todo,
     node,
     node: { target, argv, rootDir },
     webSteps,
@@ -49,7 +52,8 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
   } = testConfig
   const env = node.env || 'production'
   const cache = typeof testConfig.cache !== 'undefined' ? testConfig.cache : true
-  if (skip) return test.todo(caseName)
+  if (todo) return test.todo(caseName)
+  if (skip) return test.skip(caseName, () => {})
   const args = minimist(process.argv.slice(3), { string: 'case' })
   if (args['case']) {
     if (!new RegExp('^' + args['case']).test(caseName)) {
@@ -143,7 +147,14 @@ async function resolveMessageKey(
         break
       case 'e2e':
         try {
-          const { url, texts } = result.e2e
+          const { url, texts, debug: e2eDebug } = result.e2e
+          if (e2eDebug) {
+            if (args.show) {
+              console.log('[e2e] url =', url)
+            }
+            if (__DEBUG_PORT__) debugger
+            else return true
+          }
           const { page, text, destroy } = await setupPuppeteer()
           if (texts) {
             await page.goto(url, { timeout: 5000 })
@@ -151,7 +162,7 @@ async function resolveMessageKey(
             for (let i = 0; i < textKeys.length; i++) {
               const key = textKeys[i]
               const result = await text(key)
-              if (args.show) console.log(`[单元测试] e2e text key = "${key}" result = "${result}"`)
+              if (args.show) console.log(`[单元测试] e2e: text key = "${key}", result = "${result}"`)
               expect(result).toBe(texts[key])
             }
           }
