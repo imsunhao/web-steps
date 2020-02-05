@@ -29,7 +29,6 @@ export default function(entryPath: string, outputPath: string) {
           use: ['ts-loader']
         }
       ]
-    },
-    plugins: []
+    }
   }
 }

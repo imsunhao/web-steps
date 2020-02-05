@@ -17,6 +17,8 @@
       "runtimeArgs": ["--nolazy"],
       "env": {
         "NODE_ENV": "test",
+        "VUE_ENV": "server",
+        "WEB_STEPS": true,
         "DEBUG_PORT": 32000
       },
       "console": "integratedTerminal",

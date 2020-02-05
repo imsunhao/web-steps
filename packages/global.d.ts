@@ -17,6 +17,7 @@ declare var __FEATURE_SUSPENSE__: boolean
 //SSR
 
 declare var __HOST_GLOBAL__: any
+declare var __IS_SERVER__: boolean
 
 type SniffPromise<T> = T extends Promise<infer P> ? P : unknown
 

@@ -13,7 +13,9 @@ module.exports = {
     __VERSION__: require('./package.json').version,
 
     __FEATURE_OPTIONS__: true,
-    __FEATURE_SUSPENSE__: true
+    __FEATURE_SUSPENSE__: true,
+
+    __IS_SERVER__: process.env.VUE_ENV
   },
   coverageDirectory: 'coverage',
   coverageReporters: ['html', 'lcov', 'text'],
