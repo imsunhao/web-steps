@@ -155,17 +155,17 @@ export class Config {
         } else {
           SSR.server.lifeCycle = {} as any
         }
-        if (SSR.server.render) {
-        } else {
-          const outputPath: string = (SSR.server.webpack.output ? SSR.server.webpack.output.path : '') as any
-          if (SSR.server.webpack.output) {
-            SSR.server.render = {
-              bundlePath: path.resolve(outputPath, 'vue-ssr-server-bundle.json'),
-              clientManifestPath: path.resolve(outputPath, 'vue-ssr-client-manifest.json'),
-              templatePath: ''
-            }
+
+        const outputPath: string = (SSR.server.webpack.output ? SSR.server.webpack.output.path : '') as any
+        let render
+        if (SSR.server.webpack.output) {
+          render = {
+            bundlePath: path.resolve(outputPath, 'vue-ssr-server-bundle.json'),
+            clientManifestPath: path.resolve(outputPath, 'vue-ssr-client-manifest.json'),
+            templatePath: ''
           }
         }
+        SSR.server.render = merge(render || {}, SSR.server.render)
       }
 
       fullWebpack()

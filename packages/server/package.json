@@ -23,9 +23,10 @@
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/server#readme",
   "dependencies": {
-    "require-from-string": "^2.0.2",
     "base64url": "^3.0.1",
     "express": "^4.17.1",
+    "http-proxy-middleware": "^0.20.0",
+    "require-from-string": "^2.0.2",
     "vue-server-renderer": "^2.6.11"
   }
 }

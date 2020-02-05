@@ -13,9 +13,7 @@ class RouterHelper {
 
   static async callComponentsHook(router: Router, hookName: string, context: any) {
     const matchedComponents = router.getMatchedComponents()
-    if (!matchedComponents.length) {
-      throw new Error('[@web-steps/helps - RouterHelper] asyncData matchedComponents.length = 0!')
-    }
+    if (!matchedComponents.length) return
     for (let i = 0; i < matchedComponents.length; i++) {
       const component = matchedComponents[i]
       const hook = RouterHelper.getHookFromComponent(component, hookName)
@@ -31,7 +29,10 @@ class RouterHelper {
 }
 
 export class RouterReadyHelper {
-  async asyncData<TContext = any>(router: Router, context: TContext) {
+  /**
+   * 调用 vue 中 asyncData 函数
+   */
+  static async asyncData<TContext = any>(router: Router, context: TContext) {
     const HOOK_NAME = 'asyncData'
     await RouterHelper.callComponentsHook(router, HOOK_NAME, context)
   }

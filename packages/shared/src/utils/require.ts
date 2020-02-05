@@ -7,6 +7,9 @@ export function requireFromPath(path: string) {
     if (/\.json$/.test(path)) {
       source = 'module.exports = ' + source
     }
+    if (/\.html$/.test(path)) {
+      return source
+    }
     const md = requireFromString(source, path)
     return md.__esModule ? md.default : md
   } else {

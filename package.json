@@ -41,6 +41,7 @@
     "@rollup/plugin-json": "^4.0.1",
     "@rollup/plugin-replace": "^2.3.0",
     "@types/express": "^4.17.2",
+    "@types/http-proxy-middleware": "^0.19.3",
     "@types/jest": "^24.0.21",
     "@types/lodash": "^4.14.149",
     "@types/minimist": "^1.2.0",

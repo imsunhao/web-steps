@@ -1,14 +1,15 @@
 import express, { Express } from 'express'
 import { createBundleRenderer } from 'vue-server-renderer'
 import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log } from '../'
-import { DEFAULT_PORT } from '../setting'
+import { DEFAULT_PORT, DEFAULT_TEMPLATE } from '../setting'
 import { randomStringAsBase64Url } from './random'
 import http from 'http'
-import { TRender } from '@web-steps/config'
+import { basename } from 'path'
+import { TServer, TRender, TSetting } from '@web-steps/config'
 import { requireFromPath, processSend } from 'packages/shared'
 
-export function initServer(lifeCycle: ServerLifeCycle, render: TRender) {
-  const requiredLifeCycle = getRequiredLifeCycle(lifeCycle, render)
+export function initServer(server: TServer<'finish'>, setting: TSetting) {
+  const requiredLifeCycle = getRequiredLifeCycle(server)
   const {
     beforeCreated,
     beforeStart,
@@ -24,7 +25,7 @@ export function initServer(lifeCycle: ServerLifeCycle, render: TRender) {
   const APP = express()
 
   beforeCreated(APP)
-  serverCreating(APP)
+  serverCreating(APP, server, setting)
 
   beforeStart(APP)
   start(APP)
@@ -53,7 +54,30 @@ export function initServer(lifeCycle: ServerLifeCycle, render: TRender) {
   return APP
 }
 
-function serverCreating(APP: Express) {}
+function serverCreating(APP: Express, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
+  const serverStatics = () => {
+    if (statics === false) return
+    else if (!statics) {
+      statics = {
+        ['/' + basename(output)]: {
+          path: output
+        }
+      }
+    }
+
+    Object.keys(statics).forEach(eStaticKey => {
+      const eStatic = (statics as any)[eStaticKey]
+      log.info('[statics]', eStaticKey, eStatic.path, eStatic.maxAge)
+      APP.use(
+        eStaticKey,
+        express.static(eStatic.path, {
+          maxAge: eStatic.maxAge || 0
+        })
+      )
+    })
+  }
+  serverStatics()
+}
 
 const serverStart: Required<ServerLifeCycle>['start'] = function(APP) {
   let port = DEFAULT_PORT
@@ -96,7 +120,8 @@ const createBundleRendererRenderToString: (render: TRender) => Required<ServerLi
   clientManifestPath
 }) {
   const renderer = createBundleRenderer(bundlePath, {
-    template: templatePath ? requireFromPath(templatePath) : undefined,
+    inject: true,
+    template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
     clientManifest: requireFromPath(clientManifestPath)
   })
   return renderer.renderToString
@@ -115,7 +140,7 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
     url: req.url,
     locals: res.locals,
     nonce: '',
-    head: 'TODO'
+    head: ''
   }
 
   if (!injectContext.CSP_DISABLED) {
@@ -125,8 +150,8 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
   return context
 }
 
-function getRequiredLifeCycle(
-  {
+function getRequiredLifeCycle({
+  lifeCycle: {
     beforeCreated,
     beforeStart,
     start,
@@ -136,9 +161,9 @@ function getRequiredLifeCycle(
     beforeRenderSend,
     renderSend,
     router
-  }: ServerLifeCycle,
-  render: TRender
-): Required<ServerLifeCycle> {
+  },
+  render
+}: TServer<'finish'>): Required<ServerLifeCycle> {
   return {
     beforeCreated: beforeCreated || noop,
     beforeStart: beforeStart || noop,

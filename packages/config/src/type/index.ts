@@ -1,4 +1,6 @@
 import webpack from 'webpack'
+import serveStatic from 'serve-static'
+import proxy from 'http-proxy-middleware'
 import { ServerLifeCycle } from '@web-steps/server'
 
 export type UserConfig = {
@@ -94,7 +96,7 @@ type TSrc<T extends 'finish' | 'ready'> = {
   } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
 }
 
-type TServer<T extends 'finish' | 'ready'> = {
+export type TServer<T extends 'finish' | 'ready'> = {
   /**
    * 声明周期钩子函数
    * - 这里可以添加 中间件
@@ -106,6 +108,40 @@ type TServer<T extends 'finish' | 'ready'> = {
    * 渲染配置
    */
   render: T extends 'finish' ? TRender : Partial<TRender>
+
+  /**
+   * 静态文件配置
+   * - false 为 不设置
+   * - undefined 为 启用默认配置
+   * - 默认 设置的Output 目录 为 静态文件目录
+   */
+  statics?:
+    | {
+        [key: string]: ServeStaticOptions
+      }
+    | false
+
+  /**
+   * 转发列表
+   * - false 为不启用
+   */
+  proxyTable?:
+    | {
+        [key: string]: proxy.Config
+      }
+    | false
+
+  /**
+   * 注入环境变量
+   * - false 为 不注入
+   * - undefined 为 默认注入
+   * - 默认注入 xxx
+   */
+  env?: string[] | false
+}
+
+interface ServeStaticOptions extends serveStatic.ServeStaticOptions {
+  path: string
 }
 
 export type TRender = {

@@ -2,9 +2,9 @@ import { ServerStart } from './type'
 import { log } from '.'
 import { initServer } from './utils'
 
-export async function start({ lifeCycle, render }: ServerStart) {
+export async function start({ server, setting }: ServerStart) {
   async function main() {
-    initServer(lifeCycle, render)
+    initServer(server, setting)
   }
 
   await main().catch(err => log.catchError(err))

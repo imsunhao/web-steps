@@ -2,7 +2,7 @@ import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
-  skip: true,
+  skip: false,
   cache: false,
   node: {
     rootDir: resolve(__dirname),

@@ -11,6 +11,11 @@ type TOutput = {
 }
 
 export type TTestConfig = {
+  /**
+   * 超时时间
+   * - 默认 10000ms
+   */
+  timeout?: number
   skip?: boolean
   todo?: boolean
   /**
@@ -42,6 +47,7 @@ export type TTestConfig = {
 
 export function testing(major: string, caseName: string, testConfig: TTestConfig) {
   const {
+    timeout,
     skip,
     todo,
     node,
@@ -112,7 +118,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
         done()
       })
     },
-    __DEBUG_PORT__ ? 6000000 : 10000
+    __DEBUG_PORT__ ? 6000000 : (timeout || 10000)
   )
 }
 

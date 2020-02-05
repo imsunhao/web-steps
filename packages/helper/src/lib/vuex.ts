@@ -129,6 +129,29 @@ function checkNamespace(namespace: string[], args: any[]) {
 }
 
 export class VuexStoreHelper<GlobalStates, GlobalGetters> {
+  /**
+   * 向 客户端 注入 vuex 服务器端 初始化的数据
+   *  - When app has finished rendering
+   *  - After the app is rendered, our store is now filled with the state from our components.
+   *  - When we attach the state to the context, and the `template` option
+   *    is used for the renderer, the state will automatically be
+   *    serialized and injected into the HTML as `window.__INITIAL_STATE__`.
+   */
+  static injectStoreState(context: any, store: Store<any>) {
+    const getContextRendered = (rendered?: Function) => {
+      return (...args: any[]) => {
+        if (rendered) rendered.call(this, args)
+        context.state = store.state
+      }
+    }
+    if (context.rendered && context.rendered instanceof Function) {
+      const rendered = context.rendered
+      context.rendered = getContextRendered(rendered)
+    } else {
+      context.rendered = getContextRendered()
+    }
+  }
+
   makeWrapper<T = GlobalStates, G = GlobalGetters>(namespace: keyof GlobalStates | string[] = '' as any) {
     /* ActionTree Fix Start  */
     type ActionObject<S, R> = {

@@ -15,7 +15,7 @@ module.exports = {
     __FEATURE_OPTIONS__: true,
     __FEATURE_SUSPENSE__: true,
 
-    __IS_SERVER__: process.env.VUE_ENV
+    __IS_SERVER__: true
   },
   coverageDirectory: 'coverage',
   coverageReporters: ['html', 'lcov', 'text'],
