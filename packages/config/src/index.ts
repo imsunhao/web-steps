@@ -1,16 +1,26 @@
 import { Args } from '@types'
 import webpackMerge from 'webpack-merge'
-import { existsSync, readFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync, unlinkSync } from 'fs'
 import path from 'path'
 import { TSetting, TConfig, TOptionsInject, StartupOptions } from './type'
 
-import { processSend, merge, Log, requireFromPath } from 'packages/shared'
+import {
+  processSend,
+  mergeBase,
+  cloneDeep,
+  merge,
+  Log,
+  requireFromPath,
+  convertObjToSource,
+  ensureDirectoryExistence,
+  requireSourceString
+} from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 
-import getConfigWebpackConfig from './webpack/default-config.webpack.js'
-import getDefaultBaseWebpackConfig from './webpack/default-base.webpack.js'
-import defaultClientWebpackConfig from './webpack/default-client.webpack.js'
-import defaultServerWebpackConfig from './webpack/default-server.webpack.js'
+import getConfigWebpackConfig from './webpack/default-config.webpack'
+import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
+import defaultClientWebpackConfig from './webpack/default-client.webpack'
+import defaultServerWebpackConfig from './webpack/default-server.webpack'
 
 const defaultSetting: TSetting = {
   entry: 'web-steps.ts',
@@ -34,7 +44,7 @@ export class Config {
 
   get startupOptions(): StartupOptions {
     const bind = (fn: any) => (fn instanceof Function ? fn.bind(this) : fn)
-    const keys: Array<keyof Config> = ['resolve', 'args']
+    const keys: Array<keyof Config> = ['resolve', 'args'] // 需要考虑 getExportConfig
     const startupOptions: Partial<StartupOptions> = {}
 
     return keys.reduce(
@@ -44,6 +54,10 @@ export class Config {
       },
       (startupOptions as any) as StartupOptions
     )
+  }
+
+  get userConfigCachePath() {
+    return this.resolve(this.setting.cache, 'config.js')
   }
 
   private userConfigConstructor: (inject: TOptionsInject) => TConfig
@@ -75,7 +89,6 @@ export class Config {
     const defaultConfigWebpackConfig = getConfigWebpackConfig(this.setting.entry, this.setting.cache)
     await require('@web-steps/compiler').start(
       {
-        node: false,
         webpackConfigs: [defaultConfigWebpackConfig],
         env: 'production'
       },
@@ -97,7 +110,7 @@ export class Config {
   }
 
   private async getConfig() {
-    const userConfigCachePath = this.resolve(this.setting.cache, 'config.js')
+    const userConfigCachePath = this.userConfigCachePath
     if (this.args.forceCompilerConfig) {
       await this.compilerConfig(userConfigCachePath)
     } else if (existsSync(userConfigCachePath)) {
@@ -106,10 +119,26 @@ export class Config {
       await this.compilerConfig(userConfigCachePath)
     }
 
+    this.stuffConfig({
+      defaultBaseWebpackConfig: getDefaultBaseWebpackConfig(this.startupOptions, this.config),
+      defaultClientWebpackConfig,
+      defaultServerWebpackConfig
+    })
+
     if (!this.userConfigConstructor) {
       log.error(`无法找到 ${userConfigCachePath}`)
     }
 
+    if (__TEST__) {
+      processSend(process, {
+        messageKey: 'config',
+        payload: this.config
+      })
+    }
+  }
+
+  private stuffConfig(defaultWebpackConfig: any) {
+    const { defaultClientWebpackConfig, defaultServerWebpackConfig, defaultBaseWebpackConfig } = defaultWebpackConfig
     this.config = this.userConfigConstructor(this.startupOptions)
 
     if (this.config.customBuild) {
@@ -121,7 +150,7 @@ export class Config {
     if (this.config.src && this.config.src.SSR) {
       const SSR = this.config.src.SSR
 
-      const fullWebpack = () => {
+      const stuffWebpack = () => {
         const result = {
           base: {} as any,
           client: {} as any,
@@ -140,17 +169,14 @@ export class Config {
           }
         })
 
-        const baseWebpackConfig = webpackMerge(
-          getDefaultBaseWebpackConfig(this.startupOptions, this.config),
-          result.base
-        )
+        const baseWebpackConfig = webpackMerge(defaultBaseWebpackConfig, result.base)
 
         SSR.base.webpack = baseWebpackConfig
         SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
         SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
       }
 
-      const fullServer = () => {
+      const stuffServer = () => {
         if (SSR.server.lifeCycle) {
         } else {
           SSR.server.lifeCycle = {} as any
@@ -168,15 +194,45 @@ export class Config {
         SSR.server.render = merge(render || {}, SSR.server.render)
       }
 
-      fullWebpack()
-      fullServer()
+      stuffWebpack()
+      stuffServer()
     }
+  }
 
-    if (__TEST__) {
-      processSend(process, {
-        messageKey: 'config',
-        payload: this.config
+  private getExportConfig() {
+    const { args, setting, stuffConfig, userConfigCachePath } = this
+    delete args.args
+
+    let userConfigConstructor = requireSourceString(userConfigCachePath)
+    userConfigConstructor = userConfigConstructor.replace(/^module.exports =/, '')
+    userConfigConstructor = userConfigConstructor.replace(/;$/, '')
+
+    const code = `
+      const path = require('path')
+      const webpackMerge = require('webpack-merge')
+      const merge = ${merge}
+      const mergeBase = ${mergeBase}
+      const cloneDeep = ${cloneDeep}
+      const { base, client, server } = require('@web-steps/config/dist/get-default-webpack-config')
+      const { args, setting } = ${convertObjToSource({ args, setting })}
+      const resolve = function resolve(...paths) {
+        return path.resolve.apply(undefined, [args.rootDir, ...paths])
+      }
+      const context = { startupOptions: { args, resolve } }
+      context.userConfigConstructor = ${userConfigConstructor}.default
+      const stuffConfig = function ${convertObjToSource(stuffConfig)}
+      stuffConfig.call(context, {
+        defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
+        defaultClientWebpackConfig: client,
+        defaultServerWebpackConfig: server
       })
+      delete context.config.src.SSR.base
+      module.exports = { config: context.config, args, setting }
+    `
+    try {
+      return require('prettier').format(code)
+    } catch (error) {
+      return code
     }
   }
 
@@ -204,8 +260,17 @@ export class Config {
 
   async exportStatic() {
     if (!this.isInit) throw log.error('Config need init first. try await config.init()')
-    const main = async () => {}
-    return await main().catch(log.catchError)
+    const main = async () => {
+      const exportPath = path.resolve(this.setting.output, 'export_config.js')
+      ensureDirectoryExistence(exportPath)
+      if (existsSync(exportPath)) unlinkSync(exportPath)
+      writeFileSync(exportPath, this.getExportConfig(), { encoding: 'utf-8', flag: 'w' })
+      log.success('export config = ' + exportPath)
+      if (__TEST__) {
+        processSend(process, { messageKey: 'export_config' })
+      }
+    }
+    return await main().catch(err => log.catchError(err))
   }
 }
 

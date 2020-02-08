@@ -11,7 +11,7 @@ export type MajorCommandKey =
   | 'create'
   | 'test'
   | 'compiler'
-export type MinorCommandKey = 'upload' | 'download'
+export type MinorCommandKey = 'upload' | 'download' | 'export'
 
 export type RunOptions = execa.Options<string> & CustomRunOptions
 

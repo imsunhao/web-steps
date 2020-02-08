@@ -4,6 +4,7 @@ import execa from 'execa'
 import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 import { setupPuppeteer } from './e2eUtils'
+import { requireFromPath } from '@web-steps/shared'
 
 type TOutput = {
   name: string
@@ -16,6 +17,7 @@ export type TTestConfig = {
    * - 默认 10000ms
    */
   timeout?: number
+  vscodeDebug?: boolean
   skip?: boolean
   todo?: boolean
   /**
@@ -34,6 +36,10 @@ export type TTestConfig = {
   }
   result: {
     config?: any
+    export_config?: {
+      path: string
+      result: any
+    }
     output?: TOutput[]
     cache?: string
     e2e?: {
@@ -47,6 +53,7 @@ export type TTestConfig = {
 
 export function testing(major: string, caseName: string, testConfig: TTestConfig) {
   const {
+    vscodeDebug,
     timeout,
     skip,
     todo,
@@ -59,7 +66,8 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
   const env = node.env || 'production'
   const cache = typeof testConfig.cache !== 'undefined' ? testConfig.cache : true
   if (todo) return test.todo(caseName)
-  if (skip) return test.skip(caseName, () => {})
+  if (skip || (process.env.VSCODE && !vscodeDebug)) return test.skip(caseName, () => {})
+  if (process.env.VSCODE) debugger
   const args = minimist(process.argv.slice(3), { string: 'case' })
   if (args['case']) {
     if (!new RegExp('^' + args['case']).test(caseName)) {
@@ -118,7 +126,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
         done()
       })
     },
-    __DEBUG_PORT__ ? 6000000 : (timeout || 10000)
+    __DEBUG_PORT__ ? 6000000 : timeout || 10000
   )
 }
 
@@ -136,6 +144,12 @@ async function resolveMessageKey(
     switch (msg) {
       case 'config': {
         expect(payload).toMatchObject(result.config)
+        return true
+      }
+      case 'export_config': {
+        const { path: exportPath, result: epxortResult } = result.export_config
+        expect(existsSync(exportPath)).toBeTruthy()
+        expect(requireFromPath(exportPath)).toMatchObject(epxortResult)
         return true
       }
       case 'cache': {

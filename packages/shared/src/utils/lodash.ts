@@ -1,4 +1,4 @@
-function mergeBase(src: { [x: string]: any }, target: { [x: string]: any }) {
+export function mergeBase(src: { [x: string]: any }, target: { [x: string]: any }) {
   if (typeof target !== 'object' || typeof src !== 'object') return target
   Object.keys(target).forEach(t => {
     if (typeof target[t] === 'object' && typeof src[t] === 'object') {
@@ -29,4 +29,12 @@ export function cloneDeep<T>(data: T): T {
     t[o] = cloneDeep((data as any)[o])
     return t
   }, {}) as any
+}
+
+export function has(obj: any, paths: string[] | string): boolean {
+  if (typeof paths === 'string') paths = paths.split('.')
+  if (!paths.length) return true
+  const path = paths.shift()
+  if (typeof obj[path] === 'undefined') return false
+  return has(obj[path], paths)
 }

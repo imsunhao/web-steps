@@ -2,7 +2,7 @@ import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
-  skip: false,
+  skip: true,
   node: {
     rootDir: resolve(__dirname),
     target: 'web-steps'

@@ -19,6 +19,7 @@
         "NODE_ENV": "test",
         "VUE_ENV": "server",
         "WEB_STEPS": true,
+        "VSCODE": true,
         "DEBUG_PORT": 32000
       },
       "console": "integratedTerminal",
