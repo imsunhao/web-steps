@@ -1,8 +1,10 @@
 import { Args } from '@types'
+import webpack from 'webpack'
 import webpackMerge from 'webpack-merge'
 import { existsSync, readFileSync, writeFileSync, unlinkSync } from 'fs'
+import fs from 'fs'
 import path from 'path'
-import { TSetting, TConfig, TOptionsInject, StartupOptions } from './type'
+import { TSetting, TConfig, TOptionsInject, StartupOptions, TGetConfigPayload } from './type'
 
 import {
   processSend,
@@ -21,6 +23,7 @@ import getConfigWebpackConfig from './webpack/default-config.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import defaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
+import { ServerLifeCycle } from '@web-steps/server'
 
 const defaultSetting: TSetting = {
   entry: 'web-steps.ts',
@@ -42,6 +45,10 @@ export class Config {
 
   config: TConfig
 
+  get isDev() {
+    return this.args.env === 'development'
+  }
+
   get startupOptions(): StartupOptions {
     const bind = (fn: any) => (fn instanceof Function ? fn.bind(this) : fn)
     const keys: Array<keyof Config> = ['resolve', 'args'] // 需要考虑 getExportConfig
@@ -57,10 +64,14 @@ export class Config {
   }
 
   get userConfigCachePath() {
-    return this.resolve(this.setting.cache, 'config.js')
+    return {
+      config: this.resolve(this.setting.cache, 'config.js'),
+      lifeCycle: this.resolve(this.setting.cache, 'life-cycle.js')
+    }
   }
 
   private userConfigConstructor: (inject: TOptionsInject) => TConfig
+  private userLifeCycleConstructor: (inject: TOptionsInject) => Required<ServerLifeCycle>
 
   /**
    * 获取配置文件
@@ -85,61 +96,91 @@ export class Config {
     // console.log('[getSetting]', this.setting)
   }
 
-  private async compilerConfig(userConfigCachePath: string) {
-    const defaultConfigWebpackConfig = getConfigWebpackConfig(this.setting.entry, this.setting.cache)
-    await require('@web-steps/compiler').start(
-      {
-        webpackConfigs: [defaultConfigWebpackConfig],
-        env: 'production'
-      },
-      { isConfig: true }
-    )
+  private getDefaultLifeCycleConfigWebpackConfig() {
+    let lifeCycle: string = this.config.src.SSR.server.lifeCycle as any
+    if (!fs.existsSync(lifeCycle) && !fs.existsSync(lifeCycle + '.ts') && !fs.existsSync(lifeCycle + '.js')) return
+    return getConfigWebpackConfig('life-cycle', lifeCycle, this.setting.cache)
+  }
 
-    this.getUserConfigFromCache(userConfigCachePath)
+  private async compiler(payload: TGetConfigPayload) {
+    let skipLifeCycle = false
+    if (payload.target === 'base') {
+      const defaultConfigWebpackConfig = getConfigWebpackConfig('config', this.setting.entry, this.setting.cache)
+      await require('@web-steps/compiler').start(
+        {
+          webpackConfigs: [defaultConfigWebpackConfig],
+          env: 'production'
+        },
+        { isConfig: true }
+      )
+    }
+    if (!this.isDev && payload.target === 'SSR') {
+      const defaultLifeCycleConfigWebpackConfig = this.getDefaultLifeCycleConfigWebpackConfig()
+      if (defaultLifeCycleConfigWebpackConfig) {
+        await require('@web-steps/compiler').start(
+          {
+            webpackConfigs: [defaultLifeCycleConfigWebpackConfig],
+            env: 'production'
+          },
+          { isConfig: true }
+        )
+      } else {
+        skipLifeCycle = true
+      }
+    }
+
+    if (!this.getUserConfigFromCache(payload, { skipLifeCycle }))
+      return log.error('[compilerConfig] 无法在 cache 中找到 配置文件')
 
     if (__TEST__) {
       processSend(process, {
         messageKey: 'cache',
-        payload: userConfigCachePath
+        payload: payload.target
       })
     }
   }
 
-  private getUserConfigFromCache(userConfigCachePath: string) {
-    this.userConfigConstructor = requireFromPath(userConfigCachePath)
+  private getUserConfigFromCache(payload: TGetConfigPayload, { skipLifeCycle }: Record<string, boolean> = {}) {
+    const { config, lifeCycle } = this.userConfigCachePath
+    try {
+      if (payload.target === 'base') {
+        this.userConfigConstructor = requireFromPath(config)
+      } else if (!skipLifeCycle && !this.isDev && payload.target === 'SSR') {
+        this.userLifeCycleConstructor = requireFromPath(lifeCycle)
+      }
+      return true
+    } catch (e) {
+      return false
+    }
   }
 
-  private async getConfig() {
-    const userConfigCachePath = this.userConfigCachePath
+  private async getConfig(payload: TGetConfigPayload) {
     if (this.args.forceCompilerConfig) {
-      await this.compilerConfig(userConfigCachePath)
-    } else if (existsSync(userConfigCachePath)) {
-      this.getUserConfigFromCache(userConfigCachePath)
+      await this.compiler(payload)
+    } else if (this.getUserConfigFromCache(payload)) {
     } else if (!this.args.skipCompilerConfig) {
-      await this.compilerConfig(userConfigCachePath)
+      await this.compiler(payload)
     }
 
-    this.stuffConfig({
-      defaultBaseWebpackConfig: getDefaultBaseWebpackConfig(this.startupOptions, this.config),
-      defaultClientWebpackConfig,
-      defaultServerWebpackConfig
-    })
-
-    if (!this.userConfigConstructor) {
-      log.error(`无法找到 ${userConfigCachePath}`)
-    }
-
-    if (__TEST__) {
-      processSend(process, {
-        messageKey: 'config',
-        payload: this.config
+    if (payload.target === 'base') {
+      this.stuffConfig({
+        defaultBaseWebpackConfig: getDefaultBaseWebpackConfig(this.startupOptions, this.config),
+        defaultClientWebpackConfig,
+        defaultServerWebpackConfig
       })
+      if (!this.userConfigConstructor) {
+        log.error('无法找到配置文件')
+      }
+    } else if (payload.target === 'SSR') {
+      this.stuffServer()
     }
   }
 
   private stuffConfig(defaultWebpackConfig: any) {
     const { defaultClientWebpackConfig, defaultServerWebpackConfig, defaultBaseWebpackConfig } = defaultWebpackConfig
     this.config = this.userConfigConstructor(this.startupOptions)
+    const target = this.startupOptions.args.target
+    const resolve = this.startupOptions.resolve
 
     if (this.config.customBuild) {
       this.config.customBuild = this.config.customBuild.map(webpackConfig => {
@@ -147,7 +188,10 @@ export class Config {
       })
     }
 
-    if (this.config.src && this.config.src.SSR) {
+    if (!this.config.src) this.config.src = {} as any
+
+    if (target === 'SSR') {
+      if (!this.config.src.SSR) this.config.src.SSR = {} as any
       const SSR = this.config.src.SSR
 
       const stuffWebpack = () => {
@@ -173,25 +217,44 @@ export class Config {
 
         SSR.base.webpack = baseWebpackConfig
         SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
+        if (this.isDev) {
+          const clientConfig = SSR.client.webpack
+          const addWebpackHotMiddleware = () => {
+            const getEntry = (entry: string | string[] | webpack.Entry | webpack.EntryFunc) => {
+              if (typeof entry === 'string') entry = [entry]
+              if (entry instanceof Array) {
+                // 'eventsource-polyfill' IE 支持
+                entry.unshift('webpack-hot-middleware/client')
+                return entry
+              }
+              return false
+            }
+            const entry = getEntry(clientConfig.entry)
+            if (entry) {
+              clientConfig.entry = entry
+            } else if (clientConfig.entry instanceof Function) {
+              log.error('config 目前不支持 clientConfig.entry instanceof Function')
+            } else {
+              const configEntry: webpack.Entry = clientConfig.entry as any
+              clientConfig.entry = Object.keys(clientConfig.entry).reduce(
+                (entry, key) => {
+                  entry[key] = getEntry(configEntry[key])
+                  return entry
+                },
+                {} as any
+              )
+            }
+            clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
+          }
+
+          addWebpackHotMiddleware()
+
+          clientConfig.output.filename = '[id].[name].[hash:5].js'
+        }
         SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
       }
-
       const stuffServer = () => {
-        if (SSR.server.lifeCycle) {
-        } else {
-          SSR.server.lifeCycle = {} as any
-        }
-
-        const outputPath: string = (SSR.server.webpack.output ? SSR.server.webpack.output.path : '') as any
-        let render
-        if (SSR.server.webpack.output) {
-          render = {
-            bundlePath: path.resolve(outputPath, 'vue-ssr-server-bundle.json'),
-            clientManifestPath: path.resolve(outputPath, 'vue-ssr-client-manifest.json'),
-            templatePath: ''
-          }
-        }
-        SSR.server.render = merge(render || {}, SSR.server.render)
+        if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
       }
 
       stuffWebpack()
@@ -199,33 +262,84 @@ export class Config {
     }
   }
 
+  private stuffServer() {
+    const SSR = this.config.src.SSR
+    if (!this.isDev) {
+      if (this.userLifeCycleConstructor) {
+        SSR.server.lifeCycle = this.userLifeCycleConstructor(this.startupOptions)
+      } else {
+        SSR.server.lifeCycle = {} as any
+      }
+    } else {
+      const defaultLifeCycleConfigWebpackConfig: any = this.getDefaultLifeCycleConfigWebpackConfig()
+      SSR.server.lifeCycle = defaultLifeCycleConfigWebpackConfig || ({} as any)
+    }
+
+    const outputPath: string = (SSR.server.webpack.output ? SSR.server.webpack.output.path : '') as any
+    let render
+    if (SSR.server.webpack.output) {
+      render = {
+        bundlePath: path.resolve(outputPath, 'vue-ssr-server-bundle.json'),
+        clientManifestPath: path.resolve(outputPath, 'vue-ssr-client-manifest.json'),
+        templatePath: ''
+      }
+    }
+    SSR.server.render = merge(render || {}, SSR.server.render)
+  }
+
   private getExportConfig() {
-    const { args, setting, stuffConfig, userConfigCachePath } = this
+    const {
+      args,
+      setting,
+      stuffConfig,
+      userConfigCachePath,
+      isDev,
+      stuffServer,
+      getDefaultLifeCycleConfigWebpackConfig
+    } = this
     delete args.args
 
-    let userConfigConstructor = requireSourceString(userConfigCachePath)
+    let userConfigConstructor = requireSourceString(userConfigCachePath.config)
     userConfigConstructor = userConfigConstructor.replace(/^module.exports =/, '')
     userConfigConstructor = userConfigConstructor.replace(/;$/, '')
 
+    let userLifeCycleConstructor = undefined
+    if (!isDev) {
+      try {
+        userLifeCycleConstructor = requireSourceString(userConfigCachePath.lifeCycle)
+        userLifeCycleConstructor = userLifeCycleConstructor.replace(/^module.exports =/, '')
+        userLifeCycleConstructor = userLifeCycleConstructor.replace(/;$/, '')
+        userLifeCycleConstructor += '.default'
+      } catch (e) {}
+    }
+
     const code = `
+      const webpack = require('webpack')
       const path = require('path')
+      const fs__default = require('fs')
       const webpackMerge = require('webpack-merge')
       const merge = ${merge}
       const mergeBase = ${mergeBase}
       const cloneDeep = ${cloneDeep}
       const { base, client, server } = require('@web-steps/config/dist/get-default-webpack-config')
-      const { args, setting } = ${convertObjToSource({ args, setting })}
+      const { args, setting, isDev } = ${convertObjToSource({ args, setting, isDev })}
       const resolve = function resolve(...paths) {
         return path.resolve.apply(undefined, [args.rootDir, ...paths])
       }
-      const context = { startupOptions: { args, resolve } }
+      const context = { startupOptions: { args, resolve }, isDev }
       context.userConfigConstructor = ${userConfigConstructor}.default
+      context.userLifeCycleConstructor = ${userLifeCycleConstructor}
       const stuffConfig = function ${convertObjToSource(stuffConfig)}
+      const stuffServer = function ${convertObjToSource(stuffServer)}
+      context.getDefaultLifeCycleConfigWebpackConfig = function ${convertObjToSource(
+        getDefaultLifeCycleConfigWebpackConfig
+      )}
       stuffConfig.call(context, {
         defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
         defaultClientWebpackConfig: client,
         defaultServerWebpackConfig: server
       })
+      stuffServer.call(context)
       delete context.config.src.SSR.base
       module.exports = { config: context.config, args, setting }
     `
@@ -252,10 +366,18 @@ export class Config {
         log.info('清空缓存')
         rmrfSync(this.setting.cache)
       }
-      await this.getConfig()
+      await this.getConfig({ target: 'base' })
+      await this.getConfig({ target: args.target })
+
+      if (__TEST__) {
+        processSend(process, {
+          messageKey: 'config',
+          payload: this.config
+        })
+      }
     }
 
-    return await main().catch(log.catchError)
+    return await main().catch(e => log.catchError(e))
   }
 
   async exportStatic() {

@@ -12,7 +12,9 @@ const testConfig: TTestConfig = {
     target: 'custom'
   },
   result: {
-    cache: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    cache: {
+      base: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    }
   },
   close: true
 }

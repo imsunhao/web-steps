@@ -25,6 +25,16 @@ export class Args {
   majorCommand: MajorCommandKey
   minorCommand: MinorCommandKey
 
+  /**
+   * 系统运行
+   */
+  env: 'production' | 'development'
+
+  /**
+   * 目标
+   */
+  target: 'SSR-server' | 'SSR-client' | 'SSR' | 'custom'
+
   /// config
   /**
    * 跳过 config 编译
@@ -34,12 +44,6 @@ export class Args {
    * 强制 config 编译
    */
   forceCompilerConfig: boolean
-
-  /// compiler
-  /**
-   * 系统运行
-   */
-  env: 'production' | 'development'
 
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2)))
@@ -53,6 +57,7 @@ export class Args {
     this.minorCommand = args._[1]
     this.cache = args.cache !== 'false'
     this.env = args.env || process.env.NODE_ENV || 'production'
+    this.target = this.args.target || 'SSR'
   }
 }
 

@@ -22,7 +22,9 @@ const testConfig: TTestConfig = {
         filePath: resolve(__dirname, './dist/test-config-2.js')
       }
     ],
-    cache: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    cache: {
+      base: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    }
   },
   close: true
 }

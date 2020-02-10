@@ -24,5 +24,5 @@ export async function start(webpackConfigs: webpack.Configuration[]) {
       await compiling(webpackConfig)
     }
   }
-  await main().catch(log.catchError)
+  await main().catch(e => log.catchError(e))
 }

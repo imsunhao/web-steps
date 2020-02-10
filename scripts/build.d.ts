@@ -7,3 +7,7 @@ declare module '@web-steps/config' {
   type TGetWebpackConfig = AnyFunction
   const config: any
 }
+
+declare module '@web-steps/compiler' {
+  const start: any
+}

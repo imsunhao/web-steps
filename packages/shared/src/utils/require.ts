@@ -1,23 +1,20 @@
 import requireFromString from 'require-from-string'
-import { readFileSync, existsSync } from 'fs'
 
-export function requireSourceString(path: string) {
-  if (existsSync(path)) {
-    let source = readFileSync(path, 'utf-8')
+export function requireSourceString(path: string, opts: any = { fs: require('fs') }) {
+  if (opts.fs.existsSync(path)) {
+    let source = opts.fs.readFileSync(path, 'utf-8')
     if (/\.json$/.test(path)) {
       source = 'module.exports = ' + source
     }
-    if (/\.html$/.test(path)) {
-      return source
-    }
     return source
-  } else {
-    new Error(`[@web-steps/shared] requireSourceString ${path} is not exists!`)
   }
 }
 
-export function requireFromPath(path: string) {
-  const source = requireSourceString(path)
+export function requireFromPath(path: string, opts: any = { fs: require('fs') }) {
+  const source = requireSourceString(path, opts)
+  if (/\.html$/.test(path)) {
+    return source
+  }
   const md = requireFromString(source, path)
   return md.__esModule ? md.default : md
 }

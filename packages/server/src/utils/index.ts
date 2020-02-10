@@ -8,50 +8,55 @@ import { basename } from 'path'
 import { TServer, TRender, TSetting } from '@web-steps/config'
 import { requireFromPath, processSend } from 'packages/shared'
 
+type RequiredServerLifeCycle = Required<ServerLifeCycle>
+
 export function initServer(server: TServer<'finish'>, setting: TSetting) {
-  const requiredLifeCycle = getRequiredLifeCycle(server)
-  const {
-    beforeCreated,
-    beforeStart,
-    start,
-    beforeRender,
-    renderContext,
-    renderToString,
-    beforeRenderSend,
-    renderSend,
-    router
-  } = requiredLifeCycle
+  const service = new Service(server, setting)
+  service.start()
+  return service.APP
+}
 
-  const APP = express()
+export class Service {
+  lifeCycle: RequiredServerLifeCycle
+  server: TServer<'finish'>
+  setting: TSetting
+  APP: Express
 
-  beforeCreated(APP)
-  serverCreating(APP, server, setting)
+  constructor(server: TServer<'finish'>, setting: TSetting) {
+    this.lifeCycle = getRequiredLifeCycle(server)
+    this.server = server
+    this.setting = setting
+    this.APP = express()
+  }
 
-  beforeStart(APP)
-  start(APP)
+  start() {
+    this.lifeCycle.beforeCreated(this.APP)
+    serverCreating(this.APP, this.server, this.setting)
 
-  APP.get('*', (req, res, next) => {
-    beforeRender(req, res, next)
-    const context = getRenderContext(req, res)
-    const serverInfos: TServerInfos = [
-      `express/${require('express/package.json').version}`,
-      `vue/${require('vue/package.json').version}`,
-      `web-steps/${__VERSION__}`
-    ]
-    renderContext(context, { serverInfos, req, res })
-    res.setHeader('Content-Type', 'text/html')
-    res.setHeader('Server', serverInfos)
+    this.lifeCycle.beforeStart(this.APP)
+    this.lifeCycle.start(this.APP)
 
-    renderToString(context, (err, html) => {
-      beforeRenderSend(err, html, next)
-      renderSend(html, req, res, next)
-      next()
+    this.APP.get('*', (req, res, next) => {
+      this.lifeCycle.beforeRender(req, res, next)
+      const context = getRenderContext(req, res)
+      const serverInfos: TServerInfos = [
+        `express/${require('express/package.json').version}`,
+        `vue/${require('vue/package.json').version}`,
+        `web-steps/${__VERSION__}`
+      ]
+      this.lifeCycle.renderContext(context, { serverInfos, req, res })
+      res.setHeader('Content-Type', 'text/html')
+      res.setHeader('Server', serverInfos)
+
+      this.lifeCycle.renderToString(context, (err, html) => {
+        this.lifeCycle.beforeRenderSend(err, html, next)
+        this.lifeCycle.renderSend(html, req, res, next)
+        next()
+      })
     })
-  })
 
-  router(APP)
-
-  return APP
+    this.lifeCycle.router(this.APP)
+  }
 }
 
 function serverCreating(APP: Express, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
@@ -79,7 +84,7 @@ function serverCreating(APP: Express, { statics, proxyTable, env }: TServer<'fin
   serverStatics()
 }
 
-const serverStart: Required<ServerLifeCycle>['start'] = function(APP) {
+const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
   let port = DEFAULT_PORT
   const WAIT_TIME = 1000
   const MAX = 60
@@ -102,29 +107,37 @@ const serverStart: Required<ServerLifeCycle>['start'] = function(APP) {
 
   SERVER.on('listening', function() {
     log.info(`server started at ${port}`)
-    if (__TEST__ && __WEB_STEPS__) {
-      processSend(process, { messageKey: 'e2e' })
-    }
   })
 
   start()
 
   return SERVER
 }
-const serverRenderSend: Required<ServerLifeCycle>['renderSend'] = function(html, req, res) {
+const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res) {
   res.end(html)
 }
-const createBundleRendererRenderToString: (render: TRender) => Required<ServerLifeCycle>['renderToString'] = function({
+const createBundleRendererRenderToString: (render: TRender) => RequiredServerLifeCycle['renderToString'] = function({
   bundlePath,
   templatePath,
   clientManifestPath
 }) {
-  const renderer = createBundleRenderer(bundlePath, {
-    inject: true,
-    template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-    clientManifest: requireFromPath(clientManifestPath)
-  })
-  return renderer.renderToString
+  try {
+    const renderer = createBundleRenderer(bundlePath, {
+      inject: true,
+      template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
+      clientManifest: requireFromPath(clientManifestPath)
+    })
+    if (__TEST__ && __WEB_STEPS__) {
+      processSend(process, { messageKey: 'e2e' })
+    }
+    return renderer.renderToString
+  } catch (error) {
+    const renderToString: any = (context: any, fn: any) => {
+      fn(undefined, '<h1>等待webpack中...</h1>')
+      return
+    }
+    return renderToString
+  }
 }
 const noop: any = function() {}
 
@@ -163,7 +176,7 @@ function getRequiredLifeCycle({
     router
   },
   render
-}: TServer<'finish'>): Required<ServerLifeCycle> {
+}: TServer<'finish'>): RequiredServerLifeCycle {
   return {
     beforeCreated: beforeCreated || noop,
     beforeStart: beforeStart || noop,
@@ -178,3 +191,4 @@ function getRequiredLifeCycle({
 }
 
 export * from './config'
+export * from './random'

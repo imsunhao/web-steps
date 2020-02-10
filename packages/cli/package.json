@@ -23,10 +23,14 @@
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/cli#readme",
   "dependencies": {
-    "@web-steps/config": "^0.0.1-alpha.2",
     "@web-steps/compiler": "^0.0.1-alpha.2",
-    "@web-steps/server": "^0.0.1-alpha.2",
+    "@web-steps/config": "^0.0.1-alpha.2",
     "@web-steps/helper": "^0.0.1-alpha.2",
+    "@web-steps/server": "^0.0.1-alpha.2",
     "execa": "^4.0.0"
+  },
+  "devDependencies": {
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0"
   }
 }

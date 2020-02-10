@@ -1,8 +1,8 @@
 import nodeExternals from 'webpack-node-externals'
 
-export default function(entryPath: string, outputPath: string) {
+export default function(name: string, entryPath: string, outputPath: string) {
   return {
-    name: 'config',
+    name,
     mode: 'production',
     devtool: false,
     target: 'node',
@@ -10,7 +10,7 @@ export default function(entryPath: string, outputPath: string) {
       minimize: false
     },
     entry: {
-      config: entryPath
+      [name]: entryPath
     },
     output: {
       path: outputPath,

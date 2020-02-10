@@ -1,5 +1,48 @@
-import minimist from 'minimist'
+import { log } from './'
+import { config } from '@web-steps/config'
+import { Args, ProcessMessage, TSSRMessageBus } from '@types'
+import { processOnMessage, MessageBus } from 'packages/shared'
+import { start as serverStart } from '@web-steps/server'
+import { start as compilerStart } from '@web-steps/compiler'
 
-const args = minimist(process.argv.slice(2))
+export function start(args: Args) {
+  async function main() {
+    args.env = 'development'
+    const env = args.env
 
-console.log('[dev]', args)
+    await config.init(args)
+
+    if (args.target === 'SSR') {
+      const messageBus = new MessageBus<TSSRMessageBus>()
+      const SSR = config.config.src.SSR
+      serverStart(
+        {
+          server: SSR.server,
+          setting: config.setting,
+          env
+        },
+        { messageBus }
+      )
+      compilerStart(
+        {
+          webpackConfigs: [SSR.client.webpack, SSR.server.webpack, SSR.server.lifeCycle as any],
+          env
+        },
+        { messageBus }
+      )
+    }
+
+    if (!process.send || !__TEST__) {
+    } else {
+      processOnMessage(process, (payload: ProcessMessage) => {
+        log.debug(log.packagePrefix, 'process', payload.messageKey)
+        if (payload.messageKey === 'e2e') {
+          process.exit(0)
+        }
+      })
+    }
+
+    await new Promise(r => {})
+  }
+  main().catch(log.catchError)
+}

@@ -62,6 +62,8 @@ export * from './utils/child-process-config'
 export * from './utils/require'
 export * from './utils/toString'
 export * from './utils/fs'
+export * from './utils/uuid'
+export * from './utils/message-bus'
 
 export function getEnv(payload: { env: string }) {
   return payload.env !== 'development' ? 'production' : 'development'

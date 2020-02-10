@@ -2,6 +2,7 @@ import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import proxy from 'http-proxy-middleware'
 import { ServerLifeCycle } from '@web-steps/server'
+import { Args } from '@types'
 
 export type UserConfig = {
   /**
@@ -15,6 +16,7 @@ export type UserConfig = {
 export type StartupOptions = any
 
 export type GetUserConfig = (startupOptions: StartupOptions) => UserConfig
+export type GetUserServerConfig = (startupOptions: StartupOptions) => ServerLifeCycle
 
 export type TSetting = {
   /**
@@ -98,11 +100,11 @@ type TSrc<T extends 'finish' | 'ready'> = {
 
 export type TServer<T extends 'finish' | 'ready'> = {
   /**
-   * 声明周期钩子函数
-   * - 这里可以添加 中间件
-   * - 控制 服务器端
+   * 声明周期钩子函数, 控制 服务器 生命周期
+   * - 入口路径 默认 rootDir/server/life-cycle
+   * - dev 模式 支持 服务器 热重载
    */
-  lifeCycle: T extends 'finish' ? Required<ServerLifeCycle> : ServerLifeCycle
+  lifeCycle: T extends 'finish' ? Required<ServerLifeCycle> : string
 
   /**
    * 渲染配置
@@ -175,3 +177,7 @@ type TSSR<T extends 'finish' | 'ready'> = {
 }
 
 export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
+
+export type TGetConfigPayload = {
+  target: Args['target'] | 'base'
+}

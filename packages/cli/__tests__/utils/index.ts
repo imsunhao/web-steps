@@ -41,7 +41,7 @@ export type TTestConfig = {
       result: any
     }
     output?: TOutput[]
-    cache?: string
+    cache?: Record<string, string>
     e2e?: {
       debug?: boolean
       url: string
@@ -153,7 +153,8 @@ async function resolveMessageKey(
         return true
       }
       case 'cache': {
-        expect(existsSync(result.cache)).toBeTruthy()
+        if (!result.cache[payload]) return true
+        expect(existsSync(result.cache[payload])).toBeTruthy()
         return true
       }
       case 'output':

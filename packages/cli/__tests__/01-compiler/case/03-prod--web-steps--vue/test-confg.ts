@@ -22,7 +22,9 @@ const testConfig: TTestConfig = {
         filePath: resolve(__dirname, './dist/vue-ssr-server-bundle.json')
       }
     ],
-    cache: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    cache: {
+      base: resolve(__dirname, './node_modules/.web-steps_cache/config.js')
+    }
   },
   close: true
 }

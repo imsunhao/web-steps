@@ -2,8 +2,7 @@ import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
-  vscodeDebug: true,
-  skip: false,
+  skip: true,
   node: {
     rootDir: resolve(__dirname),
     target: 'web-steps',
@@ -23,6 +22,9 @@ const testConfig: TTestConfig = {
                 webpack: {
                   mode: 'production'
                 }
+              },
+              server: {
+                lifeCycle: {}
               }
             }
           }
