@@ -7,6 +7,7 @@ import json from '@rollup/plugin-json'
 if (!process.env.TARGET) {
   throw new Error('TARGET package must be specified via --environment flag.')
 }
+const isDev = process.env.NODE_ENV === 'development'
 
 const masterVersion = require('./package.json').version
 const packagesDir = path.resolve(__dirname, 'packages')
@@ -68,6 +69,7 @@ function createConfig(format, output, plugins = []) {
   const files = fs
     .readdirSync(srcDir)
     .filter(p => {
+      if (isDev && /get-default-webpack-config/.test(p)) return false
       return /\.ts/.test(p)
     })
     .map(path => resolve('src/' + path))

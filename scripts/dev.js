@@ -28,7 +28,7 @@ targets.forEach(target => {
   const pkgDir = path.resolve(`packages/${target}`)
   const pkg = require(`${pkgDir}/package.json`)
 
-  const env = (pkg.buildOptions && pkg.buildOptions.env) || (devOnly ? 'development' : 'production')
+  const env = 'development'
   execa(
     'rollup',
     [
