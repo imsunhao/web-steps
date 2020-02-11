@@ -10,17 +10,14 @@ import { requireFromPath, processSend } from 'packages/shared'
 
 type RequiredServerLifeCycle = Required<ServerLifeCycle>
 
-export function initServer(server: TServer<'finish'>, setting: TSetting) {
-  const service = new Service(server, setting)
-  service.start()
-  return service.APP
-}
-
 export class Service {
   lifeCycle: RequiredServerLifeCycle
   server: TServer<'finish'>
   setting: TSetting
   APP: Express
+  SERVER: http.Server
+
+  compilersWatching: any[] = []
 
   constructor(server: TServer<'finish'>, setting: TSetting) {
     this.lifeCycle = getRequiredLifeCycle(server)
@@ -34,7 +31,7 @@ export class Service {
     serverCreating(this.APP, this.server, this.setting)
 
     this.lifeCycle.beforeStart(this.APP)
-    this.lifeCycle.start(this.APP)
+    this.SERVER = this.lifeCycle.start(this.APP)
 
     this.APP.get('*', (req, res, next) => {
       this.lifeCycle.beforeRender(req, res, next)
@@ -56,6 +53,11 @@ export class Service {
     })
 
     this.lifeCycle.router(this.APP)
+  }
+
+  close() {
+    this.compilersWatching.map(watching => watching.close())
+    if (this.SERVER) this.SERVER.close()
   }
 }
 

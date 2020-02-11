@@ -29,6 +29,8 @@ class DevService extends Service {
     } = this.server
     const requireOptions = { fs: this.fileSystem }
     if (this.SSR.bundle && this.SSR.clientManifest) {
+      this.SSR.bundle = false
+      this.SSR.clientManifest = false
       log.info(`updated by ${key} time: ${new Date().toLocaleString()}`)
       this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, requireOptions), {
         inject: true,
@@ -58,15 +60,15 @@ export async function start({ server, setting }: ServerStart, opts?: { messageBu
     messageBus.on('SSR-compiler', ({ compiler, webpackConfig: { name, output: { publicPath } } }) => {
       if (name === 'client') {
         service.lifeCycle.beforeStart = APP => {
-          APP.use(
-            require('webpack-dev-middleware')(compiler, {
-              publicPath,
-              noInfo: true,
-              logLevel: 'warn',
-              fs: service.fileSystem,
-              writeToDisk: false
-            })
-          )
+          const devMiddleware = require('webpack-dev-middleware')(compiler, {
+            publicPath,
+            noInfo: true,
+            logLevel: 'warn',
+            fs: service.fileSystem,
+            writeToDisk: false
+          })
+          APP.use(devMiddleware)
+          service.compilersWatching.push(devMiddleware.context.watching)
           APP.use(require('webpack-hot-middleware')(compiler, { heartbeat: 5000 }))
         }
         compiler.plugin('done', stats => {
@@ -75,13 +77,18 @@ export async function start({ server, setting }: ServerStart, opts?: { messageBu
         })
         service.start()
       } else if (name === 'server') {
-        compiler.watch({}, (err, stats) => {
+        const serverWatching = compiler.watch({}, (err, stats) => {
           service.SSR.bundle = true
           service.updateBundleRenderer('bundle')
         })
+        service.compilersWatching.push(serverWatching)
       } else if (name === 'life-cycle') {
         service.updateLifeCycle()
       }
+    })
+
+    process.addListener('beforeExit', () => {
+      service.close()
     })
   }
 
