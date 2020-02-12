@@ -11,6 +11,7 @@ const testConfig: TTestConfig = {
   },
   result: {
     e2e: {
+      debug: true,
       url: 'http://127.0.0.1:8080',
       texts: {
         '#test1': 'home Page',

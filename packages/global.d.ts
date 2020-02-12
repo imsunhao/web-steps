@@ -21,6 +21,10 @@ declare var __IS_SERVER__: boolean
 
 type SniffPromise<T> = T extends Promise<infer P> ? P : unknown
 
+// webpack
+
+declare var __webpack_require__: any
+
 declare module '*.vue' {
   import Vue from 'vue'
   export default Vue

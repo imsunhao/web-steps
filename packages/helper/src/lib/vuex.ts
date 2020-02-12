@@ -204,9 +204,9 @@ export class VuexStoreHelper<GlobalStates, GlobalGetters> {
         let result
         for (let index = 0; index < args.length; index++) {
           const key = args[index]
-          if (!result) result = context.state[key]
+          if (typeof result === 'undefined') result = context.state[key]
           else result = result[key]
-          if (!result) return
+          if (typeof result === 'undefined') return
         }
         return result
       }

@@ -4,6 +4,9 @@ import { Tstore } from './type'
 export const mutations = globalHelper.makeMutations({
   SET_USER: (state, user?: Tstore.state['user']) => {
     state.user = user
+  },
+  ADD_NUMBER: (state, number: number) => {
+    state.count += number
   }
 })
 

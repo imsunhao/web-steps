@@ -10,6 +10,7 @@ declare namespace VuexStore {
      * vuex state
      */
     type state = {
+      count: number
       user: {
         test: string
       }

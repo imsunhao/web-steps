@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper#readme"
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper#readme",
+  "devDependencies": {
+    "@types/webpack-env": "^1.15.1"
+  }
 }
