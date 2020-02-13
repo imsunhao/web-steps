@@ -26,7 +26,7 @@ export class Args {
    * 编译目标
    */
   get target(): 'SSR-server' | 'SSR-client' | 'SSR' | 'custom' {
-    return this.args.target
+    return this.args.target || (processMessageMap.args ? processMessageMap.args.target : 'SSR')
   }
 
   /**

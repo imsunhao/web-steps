@@ -11,3 +11,7 @@ declare module '@web-steps/config' {
 declare module '@web-steps/compiler' {
   const start: any
 }
+
+declare module '@web-steps/helper' {
+  type TRemoveCodeBlockOptions = any
+}

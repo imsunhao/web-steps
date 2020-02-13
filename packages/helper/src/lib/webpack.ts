@@ -1,8 +1,8 @@
 // import loaderUtils from 'loader-utils'
 // import { TRemoveCodeBlockOptions } from '..'
 
-export class WebpackHelper {
-  static hotReload(
+export const webpackHelper = {
+  hotReload(
     webpackModule: any,
     getWebpackRequrieContext: () => any,
     hotUpdateCallback: (inject: { requrie: (path: string) => any }) => void
@@ -19,5 +19,6 @@ export class WebpackHelper {
       hotUpdateCallback({ requrie })
     })
   }
-
 }
+
+export type WebpackHelper = typeof webpackHelper

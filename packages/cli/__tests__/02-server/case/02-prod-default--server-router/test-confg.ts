@@ -1,7 +1,10 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
 
+const debug = false
+
 const testConfig: TTestConfig = {
+  vscodeDebug: debug,
   skip: false,
   node: {
     target: 'web-steps',
@@ -10,7 +13,7 @@ const testConfig: TTestConfig = {
   },
   result: {
     e2e: {
-      debug: false,
+      debug,
       url: 'http://127.0.0.1:8080',
       texts: {
         '#test1': 'home Page',
