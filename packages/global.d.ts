@@ -29,3 +29,8 @@ declare module '*.vue' {
   import Vue from 'vue'
   export default Vue
 }
+
+declare module 'svgson' {
+  const parseSync: any
+  const stringify: any
+}
