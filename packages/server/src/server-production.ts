@@ -1,10 +1,10 @@
 import { ServerStart } from './type'
 import { log } from '.'
-import { Service } from './utils'
+import { Service, APP } from './utils'
 
 export async function start({ server, setting }: ServerStart) {
   async function main() {
-    const service = new Service(server, setting)
+    const service = new Service(server, setting, new APP())
     service.start()
 
     process.addListener('beforeExit', () => {

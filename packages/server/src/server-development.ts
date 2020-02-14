@@ -1,65 +1,33 @@
 import { ServerStart } from './type'
 import { log } from '.'
-import { Service } from './utils'
+import { DevService, DevAPP } from './utils/dev'
 import { SSRMessageBus } from '@types'
-import { createBundleRenderer } from 'vue-server-renderer'
-import MFS from 'memory-fs'
-import { DEFAULT_TEMPLATE } from './setting'
-import { requireFromPath, processSend } from 'packages/shared'
-
-class DevService extends Service {
-  SSR = {
-    clientManifest: false,
-    bundle: false
-  }
-
-  fileSystem: MFS
-
-  readFileSync(filePath: string) {
-    try {
-      return this.fileSystem.readFileSync(filePath, 'utf-8')
-    } catch (e) {
-      log.error('[readFileSync]', e)
-    }
-  }
-
-  updateBundleRenderer(key: 'clientManifest' | 'bundle' | 'template') {
-    const {
-      render: { templatePath, clientManifestPath, bundlePath }
-    } = this.server
-    const requireOptions = { fs: this.fileSystem }
-    if (this.SSR.bundle && this.SSR.clientManifest) {
-      this.SSR.bundle = false
-      this.SSR.clientManifest = false
-      log.info(`updated by ${key} time: ${new Date().toLocaleString()}`)
-      this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, requireOptions), {
-        inject: true,
-        template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-        clientManifest: requireFromPath(clientManifestPath, requireOptions)
-      }).renderToString
-      if (__TEST__ && __WEB_STEPS__) {
-        processSend(process, { messageKey: 'e2e' })
-      }
-    }
-  }
-
-  updateLifeCycle() {
-    log.log('updateLifeCycle')
-  }
-}
+import { Stats } from 'webpack'
 
 export async function start({ server, setting }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
   async function main() {
     const { messageBus } = opts
-    const service = new DevService(server, setting)
+    const service = new DevService(server, setting, new DevAPP())
 
     messageBus.on('memory-fs', ({ mfs }) => {
       service.fileSystem = mfs
     })
 
+    messageBus.on('config', ({ config }) => {
+      service.config = config
+    })
+
     messageBus.on('SSR-compiler', ({ compiler, webpackConfig: { name, output: { publicPath } } }) => {
-      if (name === 'client') {
-        service.lifeCycle.beforeStart = APP => {
+      if (name === 'life-cycle') {
+        service.server.lifeCycle = {} as any
+        const lifeCycleWatching = compiler.watch({}, (err, stats) => {
+          if (showWebpackCompilerError(stats)) {
+            service.updateLifeCycle()
+          }
+        })
+        service.compilersWatching.push(lifeCycleWatching)
+      } else if (name === 'client') {
+        service.lifeCycle.devMiddleware = APP => {
           const devMiddleware = require('webpack-dev-middleware')(compiler, {
             publicPath,
             noInfo: true,
@@ -72,18 +40,20 @@ export async function start({ server, setting }: ServerStart, opts?: { messageBu
           APP.use(require('webpack-hot-middleware')(compiler, { heartbeat: 5000 }))
         }
         compiler.plugin('done', stats => {
-          service.SSR.clientManifest = true
-          service.updateBundleRenderer('clientManifest')
+          if (showWebpackCompilerError(stats)) {
+            service.SSR.clientManifest = true
+            service.updateBundleRenderer('clientManifest')
+          }
         })
-        service.start()
       } else if (name === 'server') {
+        service.start()
         const serverWatching = compiler.watch({}, (err, stats) => {
-          service.SSR.bundle = true
-          service.updateBundleRenderer('bundle')
+          if (showWebpackCompilerError(stats)) {
+            service.SSR.bundle = true
+            service.updateBundleRenderer('bundle')
+          }
         })
         service.compilersWatching.push(serverWatching)
-      } else if (name === 'life-cycle') {
-        service.updateLifeCycle()
       }
     })
 
@@ -93,6 +63,21 @@ export async function start({ server, setting }: ServerStart, opts?: { messageBu
   }
 
   await main().catch(err => log.catchError(err))
+}
+
+export function showWebpackCompilerError(stats: Stats) {
+  if (stats.hasWarnings()) {
+    stats.compilation.warnings.forEach(warning => {
+      log.warn(warning.message)
+    })
+  }
+  if (stats.hasErrors()) {
+    stats.compilation.errors.forEach(error => {
+      log.log(error.message)
+    })
+    return false
+  }
+  return true
 }
 
 export * from './type'

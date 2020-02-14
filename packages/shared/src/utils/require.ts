@@ -6,7 +6,7 @@ export function requireSourceString(path: string, opts: any = { fs: require('fs'
     if (/\.json$/.test(path)) {
       source = 'module.exports = ' + source
     }
-    return source
+    return source + ''
   }
 }
 

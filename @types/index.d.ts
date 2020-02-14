@@ -20,6 +20,11 @@ declare namespace WebSteps {
     'memory-fs': (payload: { mfs: MFS }) => void
 
     /**
+     * 完整的配置文件
+     */
+    config: (payload: { config: TConfig }) => void
+
+    /**
      * SSR compiler 准备就绪
      */
     'SSR-compiler': (payload: { compiler: webpack.Compiler; webpackConfig: webpack.Configuration }) => void

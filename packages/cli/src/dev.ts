@@ -25,11 +25,12 @@ export function start(args: Args) {
       )
       compilerStart(
         {
-          webpackConfigs: [SSR.client.webpack, SSR.server.webpack, SSR.server.lifeCycle as any],
+          webpackConfigs: [SSR.server.lifeCycle as any, SSR.client.webpack, SSR.server.webpack],
           env
         },
         { messageBus }
       )
+      messageBus.emit('config', { config })
     }
 
     if (!process.send || !__TEST__) {

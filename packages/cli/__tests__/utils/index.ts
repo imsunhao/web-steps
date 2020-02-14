@@ -193,7 +193,6 @@ async function resolveMessageKey(
         } catch (e) {
           return false
         }
-        break
       default:
         break
     }

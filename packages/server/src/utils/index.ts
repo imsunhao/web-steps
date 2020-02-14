@@ -1,6 +1,6 @@
-import express, { Express } from 'express'
+import express from 'express'
 import { createBundleRenderer } from 'vue-server-renderer'
-import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log } from '../'
+import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log, TAPP } from '../'
 import { DEFAULT_PORT, DEFAULT_TEMPLATE } from '../setting'
 import { randomStringAsBase64Url } from './random'
 import http from 'http'
@@ -10,49 +10,83 @@ import { requireFromPath, processSend } from 'packages/shared'
 
 type RequiredServerLifeCycle = Required<ServerLifeCycle>
 
+export class APP implements TAPP {
+  express: TAPP['express']
+  use: TAPP['use']
+  render: TAPP['render']
+
+  constructor() {
+    this.express = express()
+    this.init()
+  }
+
+  protected init() {
+    const { express: e } = this
+    this.use = e.use.bind(e)
+    this.render = e.get.bind(e)
+  }
+}
+
 export class Service {
   lifeCycle: RequiredServerLifeCycle
   server: TServer<'finish'>
   setting: TSetting
-  APP: Express
+  app: TAPP
   SERVER: http.Server
 
   compilersWatching: any[] = []
 
-  constructor(server: TServer<'finish'>, setting: TSetting) {
+  constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP) {
     this.lifeCycle = getRequiredLifeCycle(server)
     this.server = server
     this.setting = setting
-    this.APP = express()
+    this.app = app
   }
 
-  start() {
-    this.lifeCycle.beforeCreated(this.APP)
-    serverCreating(this.APP, this.server, this.setting)
+  start(app = this.app, { isHotReload } = { isHotReload: false }) {
+    app.status = 'beforeCreated'
+    this.lifeCycle.beforeCreated(app)
 
-    this.lifeCycle.beforeStart(this.APP)
-    this.SERVER = this.lifeCycle.start(this.APP)
+    if (!isHotReload) {
+      app.status = 'creating'
+      this.lifeCycle.creating(app, this.server, this.setting)
+      app.status = 'devMiddleware'
+      this.lifeCycle.devMiddleware(app)
+    }
 
-    this.APP.get('*', (req, res, next) => {
-      this.lifeCycle.beforeRender(req, res, next)
-      const context = getRenderContext(req, res)
-      const serverInfos: TServerInfos = [
-        `express/${require('express/package.json').version}`,
-        `vue/${require('vue/package.json').version}`,
-        `web-steps/${__VERSION__}`
-      ]
-      this.lifeCycle.renderContext(context, { serverInfos, req, res })
-      res.setHeader('Content-Type', 'text/html')
-      res.setHeader('Server', serverInfos)
+    app.status = 'beforeStart'
+    this.lifeCycle.beforeStart(app)
 
-      this.lifeCycle.renderToString(context, (err, html) => {
-        this.lifeCycle.beforeRenderSend(err, html, next)
-        this.lifeCycle.renderSend(html, req, res, next)
-        next()
+    if (!isHotReload) {
+      app.status = 'start'
+      this.SERVER = this.lifeCycle.start(app)
+
+      app.render((req, res, next) => {
+        this.lifeCycle.beforeRender(req, res, next)
+
+        const context = getRenderContext(req, res)
+        const serverInfos: TServerInfos = [
+          `express/${require('express/package.json').version}`,
+          `vue/${require('vue/package.json').version}`,
+          `web-steps/${__VERSION__}`
+        ]
+
+        this.lifeCycle.renderContext(context, { serverInfos, req, res })
+
+        res.setHeader('Content-Type', 'text/html')
+        res.setHeader('Server', serverInfos)
+
+        this.lifeCycle.renderToString(context, (err, html) => {
+          this.lifeCycle.beforeRenderSend(err, html, next)
+          this.lifeCycle.renderSend(html, req, res, next)
+        })
       })
-    })
+    }
 
-    this.lifeCycle.router(this.APP)
+    app.status = 'router'
+    this.lifeCycle.router(app)
+
+    app.status = undefined
   }
 
   close() {
@@ -61,7 +95,7 @@ export class Service {
   }
 }
 
-function serverCreating(APP: Express, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
+function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
   const serverStatics = () => {
     if (statics === false) return
     else if (!statics) {
@@ -91,7 +125,7 @@ const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
   const WAIT_TIME = 1000
   const MAX = 60
   let index = 0
-  const SERVER = http.createServer(APP)
+  const SERVER = http.createServer(APP.express)
   const start = () => {
     SERVER.listen(port)
   }
@@ -115,9 +149,11 @@ const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
 
   return SERVER
 }
-const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res) {
-  res.end(html)
+
+const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res, next) {
+  res.send(html)
 }
+
 const createBundleRendererRenderToString: (render: TRender) => RequiredServerLifeCycle['renderToString'] = function({
   bundlePath,
   templatePath,
@@ -141,7 +177,8 @@ const createBundleRendererRenderToString: (render: TRender) => RequiredServerLif
     return renderToString
   }
 }
-const noop: any = function() {}
+
+export const noop: any = function() {}
 
 function getRenderContext(req: { url: any }, res: { locals: any }) {
   const injectContext: TServerInjectContext = {}
@@ -168,6 +205,7 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
 function getRequiredLifeCycle({
   lifeCycle: {
     beforeCreated,
+    creating,
     beforeStart,
     start,
     beforeRender,
@@ -181,6 +219,8 @@ function getRequiredLifeCycle({
 }: TServer<'finish'>): RequiredServerLifeCycle {
   return {
     beforeCreated: beforeCreated || noop,
+    creating: creating || serverCreating,
+    devMiddleware: noop,
     beforeStart: beforeStart || noop,
     start: start || serverStart,
     beforeRender: beforeRender || noop,
