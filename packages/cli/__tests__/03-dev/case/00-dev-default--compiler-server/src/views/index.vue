@@ -4,6 +4,8 @@
   <p id="state">{{ stateTest }}</p>
   <p id="hasUser">{{ hasUser }}</p>
   <p id="count">{{ count + '' }}</p>
+  <p id="get">{{ get + '' }}</p>
+  <p id="post">{{ post + '' }}</p>
   <button id="add" @click="add">+</button>
 </div>
 </template>
@@ -13,7 +15,11 @@ import { dispatch, getGetter, getState, commit } from '../store'
 
 export default {
   async asyncData({ store, locals: { test } }) {
-    await dispatch(store, 'FETCH_USER', { test })
+    await Promise.all([
+      dispatch(store, 'FETCH_USER', { test }),
+      dispatch(store, 'API_POST', undefined),
+      dispatch(store, 'API_GET', undefined)
+    ])
   },
   data() {
     return {
@@ -26,6 +32,12 @@ export default {
     },
     count() {
       return getState(this.$store, 'count')
+    },
+    get() {
+      return getState(this.$store, 'api', 'get')
+    },
+    post() {
+      return getState(this.$store, 'api', 'post')
     },
     hasUser() {
       return getGetter(this.$store, 'hasUser')

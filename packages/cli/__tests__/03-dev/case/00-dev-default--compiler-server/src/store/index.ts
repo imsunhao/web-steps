@@ -12,6 +12,10 @@ import { WebpackHelper } from '@web-steps/helper'
 function state(): Tstore.state {
   return {
     count: 0,
+    api: {
+      get: false,
+      post: false
+    },
     user: {
       test: '1111111'
     }

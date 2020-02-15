@@ -11,6 +11,10 @@ declare namespace VuexStore {
      */
     type state = {
       count: number
+      api: {
+        get: boolean
+        post: boolean
+      }
       user: {
         test: string
       }

@@ -1,6 +1,6 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
-const debug = true
+const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
@@ -17,7 +17,9 @@ const testConfig: TTestConfig = {
         '#test1': 'home Page',
         '#state': 'from server asyncData',
         '#count': '0',
-        '#hasUser': 'true'
+        '#hasUser': 'true',
+        '#get': 'true',
+        '#post': 'true'
       }
     }
   },
