@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/cli",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-alpha.5",
   "description": "@web-steps/cli",
   "main": "index.js",
   "files": [
