@@ -1,3 +1,50 @@
+## [0.0.1-alpha.4](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.2...v0.0.1-alpha.4) (2020-02-16)
+
+
+### Bug Fixes
+
+* 防止 server端 next后 未返回 ([15a0a81](https://github.com/imsunhao/utils/commit/15a0a819861bbf26824bac24a4107f83c0b13b7c))
+
+
+### Features
+
+* [helper] 添加 createAxiosHelper ([0ec7790](https://github.com/imsunhao/utils/commit/0ec7790f6a40af831824dc38cfc53ee4dafad446))
+* TODO 01-prod-default--server-config ([d46c475](https://github.com/imsunhao/utils/commit/d46c4750b4e10355d098ed05aa088b0550e90f3d))
+* 优化 测试代码 结构 ([afa89ac](https://github.com/imsunhao/utils/commit/afa89acceba8c454472178eb0ca871d5faddd062))
+* 优化代码 ([f19c790](https://github.com/imsunhao/utils/commit/f19c79094164c992a62ed73902a375c123232b27))
+* 初步 完成 dev ([2a0515a](https://github.com/imsunhao/utils/commit/2a0515aaeee5d668fa12b3c7067f0fa01f0c0e1a))
+* 初步 建立项目依赖关系,发现开发存在许多不方便的地方 ([76a3f85](https://github.com/imsunhao/utils/commit/76a3f85c1eb27a6e019e775e73bd0b001d79e013))
+* 初步完成 web-step->config->compiler ([7ff87a8](https://github.com/imsunhao/utils/commit/7ff87a8a56eef197e8aebfeda1a7c64b0c851111))
+* 完善 web-steps compiler ([30b1565](https://github.com/imsunhao/utils/commit/30b1565f94cec859659e57cdd7a1f43d58c98f7d))
+* 完善 服务端 热加载 ([c5ea51a](https://github.com/imsunhao/utils/commit/c5ea51a32f63099ccda29d8b0e91f8190324ee70))
+* 完成 server prod [SSR] ([a6ecaea](https://github.com/imsunhao/utils/commit/a6ecaeaa5e8a6c8b3c25ff879f4f1640e9ba417e))
+* 完成 server-router-vuex ([650fe70](https://github.com/imsunhao/utils/commit/650fe7094b7c4f89fece3768075793e564831c8e))
+* 完成 web-step->config->compiler ([da2d95b](https://github.com/imsunhao/utils/commit/da2d95bd35c1a07fb0bc2b57b985706bf9a4be46))
+* 完成 web-step->config->compiler[SSR, Vue] ([1f417aa](https://github.com/imsunhao/utils/commit/1f417aaf6262f494b1f905f3498b7d45c1475435))
+* 开放config 移除test ([10e02f0](https://github.com/imsunhao/utils/commit/10e02f006d97190e77b645794f2adeb665f397d9))
+* 引入 helper 模块 ([048e8e2](https://github.com/imsunhao/utils/commit/048e8e230b7f60dc85d2a7c61fc986e19aa3eb52))
+* 添加 compiler 基础 ([8497cd8](https://github.com/imsunhao/utils/commit/8497cd8a89d550ae115c972401ebbad20657ad3c))
+* 添加 config export 功能 ([f0ff911](https://github.com/imsunhao/utils/commit/f0ff91131be2fadfe93dc095e2c0b23b61b5e5ff))
+* 添加 configConstructor 概念 ([0ddcbad](https://github.com/imsunhao/utils/commit/0ddcbad4a98e019391e019a3f9c5d9c0df7253db))
+* 添加 getBaseConfig 测试 ([d302d50](https://github.com/imsunhao/utils/commit/d302d5028d0c9dafa8d6a2cc187dfa9d0c5d3161))
+* 添加 Log 类, 统一管理 日志信息 ([6df68cb](https://github.com/imsunhao/utils/commit/6df68cbdc033bd4cec6ce8cf3382ef969bc06356))
+* 添加 minor command ([b1466fe](https://github.com/imsunhao/utils/commit/b1466fe67017e6e1b692b95bd4203cf618d08903))
+* 添加 node进程关闭时 关闭 Service ([fbb151b](https://github.com/imsunhao/utils/commit/fbb151bb30a0dd7830a5d0fb15357e00fb3571e6))
+* 添加 RemoveCodeBlock ([6608dad](https://github.com/imsunhao/utils/commit/6608dad3563c86431b6742fea8439af28fd8f5e5))
+* 添加 res.locals 概念 ([a20bb29](https://github.com/imsunhao/utils/commit/a20bb298a34f7a76dbbe765fe1f1a52bee62c9ae))
+* 添加 setting config 读取基础 与 单元测试 ([f9ce093](https://github.com/imsunhao/utils/commit/f9ce09370b4e1f1a391f8b9db09c8b97afbad1d8))
+* 添加 shared 概念, 存放 共享代码 ([bb82c68](https://github.com/imsunhao/utils/commit/bb82c68af898b3f09fa48512eae21e9fff90c27e))
+* 添加 StartupOptions 概念 ([58d1384](https://github.com/imsunhao/utils/commit/58d1384f5f31062b644dfda4fd29d2bcba05b580))
+* 添加 svg-icon-loader 基础 ([c876e58](https://github.com/imsunhao/utils/commit/c876e5871ad33d041168dbe55b1cbe6a1c64cd00))
+* 添加 vuex-hot-reload ([0aa8220](https://github.com/imsunhao/utils/commit/0aa8220594e09115a1aaccb066b9f4a2ee394515))
+* 调整 ProcessMessage 类型 与 process.send 类型增强 ([ea4fdc1](https://github.com/imsunhao/utils/commit/ea4fdc1f202079bc8d64c89f893c29ad4feafd8d))
+* 调整 代码结构 ([09f7bf7](https://github.com/imsunhao/utils/commit/09f7bf7a092ccef8e4839294d3511dc2c524e5a8))
+* 调整 单元测试 结构 ([8ca6aff](https://github.com/imsunhao/utils/commit/8ca6affa630b6ed6d3d5503667ac96af7271ae95))
+* 重命名所有的测试名称 ([a4e2b6d](https://github.com/imsunhao/utils/commit/a4e2b6d78fc0338c92616025e7870ae19f849645))
+* 防止 dev模式 无限循环 打包 ([47bef50](https://github.com/imsunhao/utils/commit/47bef50ca578890afb594d9ab4a62d55550de200))
+
+
+
 ## [0.0.1-alpha.3](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.2...v0.0.1-alpha.3) (2020-02-16)
 
 
