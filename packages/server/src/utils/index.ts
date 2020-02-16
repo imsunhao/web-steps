@@ -62,7 +62,13 @@ export class Service {
       this.SERVER = this.lifeCycle.start(app)
 
       app.render((req, res, next) => {
-        this.lifeCycle.beforeRender(req, res, next)
+        let isNext = false
+        const n = () => {
+          isNext = true
+          next()
+        }
+        this.lifeCycle.beforeRender(req, res, n)
+        if (isNext) return
 
         const context = getRenderContext(req, res)
         const serverInfos: TServerInfos = [
@@ -77,8 +83,9 @@ export class Service {
         res.setHeader('Server', serverInfos)
 
         this.lifeCycle.renderToString(context, (err, html) => {
-          this.lifeCycle.beforeRenderSend(err, html, next)
-          this.lifeCycle.renderSend(html, req, res, next)
+          this.lifeCycle.beforeRenderSend(err, html, n)
+          if (isNext) return
+          this.lifeCycle.renderSend(html, req, res, n)
         })
       })
     }

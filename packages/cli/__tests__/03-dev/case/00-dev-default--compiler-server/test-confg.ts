@@ -1,6 +1,6 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
-const debug = false
+const debug = true
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
