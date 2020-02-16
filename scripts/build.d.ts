@@ -1,6 +1,7 @@
 type AnyFunction = (...args: any[]) => any
 
 declare module '@web-steps/config' {
+  type Config = any
   type TSetting = any
   type TServer<T> = any
   type TRender = any
