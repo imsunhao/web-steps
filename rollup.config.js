@@ -78,7 +78,7 @@ function createConfig(format, output, plugins = []) {
     input: files,
     // Global and Browser ESM builds inlines everything so that they can be
     // used alone.
-    external: knownExternals.concat(Object.keys(pkg.dependencies || [])),
+    external: knownExternals.concat(Object.keys(pkg.dependencies || []), Object.keys(pkg.peerDependencies || [])),
     plugins: [
       json({
         namedExports: false

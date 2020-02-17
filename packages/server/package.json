@@ -29,5 +29,13 @@
     "http-proxy-middleware": "^0.20.0",
     "require-from-string": "^2.0.2",
     "vue-server-renderer": "^2.6.11"
+  },
+  "devDependencies": {
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0"
+  },
+  "peerDependencies": {
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0"
   }
 }
