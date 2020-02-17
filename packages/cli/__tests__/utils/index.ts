@@ -59,12 +59,12 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
     todo,
     node,
     node: { target, argv, rootDir },
+    cache,
     webSteps,
     result,
     close
   } = testConfig
   const env = node.env || 'production'
-  const cache = typeof testConfig.cache !== 'undefined' ? testConfig.cache : true
   if (todo) return test.todo(caseName)
   if (skip || (process.env.VSCODE && !vscodeDebug)) return test.skip(caseName, () => {})
   if (process.env.VSCODE) debugger
@@ -92,7 +92,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
             'packages/cli/bin/web-steps',
             major,
             `--root-dir=${rootDir}`,
-            !cache ? `--cache=${cache}` : '',
+            `--cache=${cache}`,
             webSteps ? `--target=${webSteps.target}` : '',
             `--env=${env}`
           ]

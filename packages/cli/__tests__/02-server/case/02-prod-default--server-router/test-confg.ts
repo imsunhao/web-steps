@@ -6,6 +6,7 @@ const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
+  cache: true,
   node: {
     target: 'web-steps',
     rootDir: resolve(__dirname),
