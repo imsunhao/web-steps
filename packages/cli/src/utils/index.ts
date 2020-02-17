@@ -55,8 +55,8 @@ export class Args {
     args._ = args._.filter((arg: any) => !!arg)
     this.majorCommand = args._[0]
     this.minorCommand = args._[1]
-    this.cache = args.cache !== 'false'
     this.env = args.env || process.env.NODE_ENV || 'production'
+    this.cache = args.cache === 'false' ? false : this.env !== 'production'
     this.target = this.args.target || 'SSR'
   }
 }
