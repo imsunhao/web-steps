@@ -20,6 +20,7 @@ import {
 import { sync as rmrfSync } from 'rimraf'
 
 import getConfigWebpackConfig from './webpack/default-config.webpack'
+import getDllWebpackConfig from './webpack/default-dll.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import defaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
@@ -66,11 +67,13 @@ export class Config {
   get userConfigCachePath() {
     return {
       config: this.resolve(this.setting.cache, 'config.js'),
-      lifeCycle: this.resolve(this.setting.cache, 'life-cycle.js')
+      lifeCycle: this.resolve(this.setting.cache, 'life-cycle.js'),
+      DLLManifest: this.resolve(this.setting.cache, 'vue-ssr-dll-manifest.json')
     }
   }
 
   private userConfigConstructor: (inject: TOptionsInject) => TConfig
+  private userDLLManifest?: any
   private userLifeCycleConstructor: (inject: TOptionsInject) => Required<ServerLifeCycle>
 
   /**
@@ -113,8 +116,20 @@ export class Config {
         },
         { isConfig: true }
       )
-    }
-    if (!this.isDev && payload.target === 'SSR') {
+    } else if (payload.target === 'dll') {
+      const defaultDllConfigWebpackConfig = getDllWebpackConfig({
+        entry: this.config.src.DLL,
+        outputPath: this.setting.cache,
+        context: this.config.rootDir
+      })
+      await require('@web-steps/compiler').start(
+        {
+          webpackConfigs: [defaultDllConfigWebpackConfig],
+          env: 'production'
+        },
+        { isConfig: true }
+      )
+    } else if (!this.isDev && payload.target === 'SSR') {
       const defaultLifeCycleConfigWebpackConfig = this.getDefaultLifeCycleConfigWebpackConfig()
       if (defaultLifeCycleConfigWebpackConfig) {
         await require('@web-steps/compiler').start(
@@ -141,10 +156,12 @@ export class Config {
   }
 
   private getUserConfigFromCache(payload: TGetConfigPayload, { skipLifeCycle }: Record<string, boolean> = {}) {
-    const { config, lifeCycle } = this.userConfigCachePath
+    const { config, lifeCycle, DLLManifest } = this.userConfigCachePath
     try {
       if (payload.target === 'base') {
         this.userConfigConstructor = requireFromPath(config)
+      } else if (payload.target === 'dll') {
+        this.userDLLManifest = requireFromPath(DLLManifest)
       } else if (!skipLifeCycle && !this.isDev && payload.target === 'SSR') {
         this.userLifeCycleConstructor = requireFromPath(lifeCycle)
       }
@@ -171,6 +188,8 @@ export class Config {
       if (!this.userConfigConstructor) {
         log.error('无法找到配置文件')
       }
+    } else if (payload.target === 'dll') {
+      this.stuffConfigByDll(this.userDLLManifest, this.setting)
     } else if (payload.target === 'SSR') {
       this.stuffServer()
     }
@@ -181,6 +200,10 @@ export class Config {
     this.config = this.userConfigConstructor(this.startupOptions)
     const target = this.startupOptions.args.target
     const resolve = this.startupOptions.resolve
+
+    if (!this.config.rootDir) {
+      this.config.rootDir = this.startupOptions.args.rootDir
+    }
 
     if (this.config.customBuild) {
       this.config.customBuild = this.config.customBuild.map(webpackConfig => {
@@ -262,6 +285,20 @@ export class Config {
     }
   }
 
+  private stuffConfigByDll(userDLLManifest: any, setting: TSetting) {
+    if (!this.config.src.DLL) return
+    Object.keys(this.config.src.DLL).forEach(key => {
+      const manifestPath = path.resolve(setting.cache, `${key}.manifest.json`)
+      this.config.src.SSR.client.webpack.plugins.push(
+        new webpack.DllReferencePlugin({
+          context: this.config.rootDir || '',
+          manifest: requireFromPath(manifestPath)
+        })
+      )
+    })
+    this.config.src.DLL = userDLLManifest.all
+  }
+
   private stuffServer() {
     const SSR = this.config.src.SSR
     if (!this.isDev) {
@@ -295,7 +332,9 @@ export class Config {
       userConfigCachePath,
       isDev,
       stuffServer,
-      getDefaultLifeCycleConfigWebpackConfig
+      stuffConfigByDll,
+      getDefaultLifeCycleConfigWebpackConfig,
+      userDLLManifest
     } = this
     delete args.args
 
@@ -316,7 +355,11 @@ export class Config {
     const code = `
       const webpack = require('webpack')
       const path = require('path')
+      const path__default = path
       const fs__default = require('fs')
+      const requireFromString = require('require-from-string')
+      const requireSourceString = ${requireSourceString}
+      const requireFromPath = ${requireFromPath}
       const webpackMerge = require('webpack-merge')
       const merge = ${merge}
       const mergeBase = ${mergeBase}
@@ -330,17 +373,24 @@ export class Config {
       context.userConfigConstructor = ${userConfigConstructor}.default
       context.userLifeCycleConstructor = ${userLifeCycleConstructor}
       const stuffConfig = function ${convertObjToSource(stuffConfig)}
+      const stuffConfigByDll = function ${stuffConfigByDll}
       const stuffServer = function ${convertObjToSource(stuffServer)}
       context.getDefaultLifeCycleConfigWebpackConfig = function ${convertObjToSource(
         getDefaultLifeCycleConfigWebpackConfig
       )}
+
       stuffConfig.call(context, {
         defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
         defaultClientWebpackConfig: client,
         defaultServerWebpackConfig: server
       })
+
+      stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)}, setting)
+
       stuffServer.call(context)
+
       delete context.config.src.SSR.base
+
       module.exports = { config: context.config, args, setting }
     `
     try {
@@ -350,7 +400,7 @@ export class Config {
     }
   }
 
-  resolve(...args: string[]) {
+  resolve(...args: string[]): string {
     if (!this.isInit) log.error('Config need init first. try await config.init()')
     return path.resolve.apply(undefined, [this.args.rootDir, ...args])
   }
@@ -367,6 +417,9 @@ export class Config {
         rmrfSync(this.setting.cache)
       }
       await this.getConfig({ target: 'base' })
+      if (this.config.src.DLL) {
+        await this.getConfig({ target: 'dll' })
+      }
       await this.getConfig({ target: args.target })
 
       if (__TEST__) {
@@ -397,5 +450,7 @@ export class Config {
 }
 
 export const config = new Config()
+
+export let defaultTemplatePath = ''
 
 export * from './type'

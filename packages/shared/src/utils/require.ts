@@ -15,6 +15,10 @@ export function requireFromPath(path: string, opts: any = { fs: require('fs') })
   if (/\.html$/.test(path)) {
     return source
   }
-  const md = requireFromString(source, path)
-  return md.__esModule ? md.default : md
+  try {
+    const md = requireFromString(source, path)
+    return md.__esModule ? md.default : md
+  } catch (error) {
+    throw new Error(`[requireFromPath] ${path} is undefined!`)
+  }
 }

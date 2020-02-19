@@ -1,10 +1,11 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
-const debug = true
+const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
   cache: true,
+  timeout: 20000,
   node: {
     target: 'web-steps',
     rootDir: resolve(__dirname)

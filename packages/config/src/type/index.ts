@@ -94,9 +94,18 @@ type TSrc<T extends 'finish' | 'ready'> = {
    */
   SSR: {
     server: (T extends 'finish' ? TServer<T> : Partial<TServer<T>>) & TWebpack<T> & {}
-    client: TWebpack<T>
+    client: (T extends 'finish' ? TClient : Partial<TClient>) & TWebpack<T>
   } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
+
+  /**
+   * webpack - dll模块
+   * - 可以为空, 不启用
+   * - 内容: 名称 - 第三方包名称 例如 Vue: ['vue']
+   */
+  DLL?: T extends 'finish' ? string[] : Record<string, string[]>
 }
+
+export type TClient = {}
 
 export type TServer<T extends 'finish' | 'ready'> = {
   /**
@@ -177,7 +186,10 @@ type TSSR<T extends 'finish' | 'ready'> = {
 }
 
 export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
+export type TGetDLLWebpackConfig = (
+  options: { entry: any; outputPath: string; context: string }
+) => webpack.Configuration
 
 export type TGetConfigPayload = {
-  target: Args['target'] | 'base'
+  target: Args['target'] | 'base' | 'dll'
 }

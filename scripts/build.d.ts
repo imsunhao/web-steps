@@ -6,7 +6,9 @@ declare module '@web-steps/config' {
   type TServer<T> = any
   type TRender = any
   type TGetWebpackConfig = AnyFunction
+  type TGetDLLWebpackConfig = AnyFunction
   const config: any
+  const defaultTemplatePath: any
 }
 
 declare module '@web-steps/compiler' {

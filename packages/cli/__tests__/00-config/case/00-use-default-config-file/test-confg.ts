@@ -3,6 +3,7 @@ import { resolve } from 'path'
 
 const testConfig: TTestConfig = {
   skip: false,
+  cache: true,
   node: {
     rootDir: resolve(__dirname),
     target: 'web-steps'

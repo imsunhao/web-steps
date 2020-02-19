@@ -23,7 +23,9 @@ export class APP implements TAPP {
   protected init() {
     const { express: e } = this
     this.use = e.use.bind(e)
-    this.render = e.get.bind(e)
+    this.render = (...args: any) => {
+      e.get.apply(e, ['*', ...args])
+    }
   }
 }
 
@@ -44,6 +46,7 @@ export class Service {
   }
 
   start(app = this.app, { isHotReload } = { isHotReload: false }) {
+    debugger
     app.status = 'beforeCreated'
     this.lifeCycle.beforeCreated(app)
 

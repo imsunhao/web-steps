@@ -14,7 +14,7 @@ type TOutput = {
 export type TTestConfig = {
   /**
    * 超时时间
-   * - 默认 10000ms
+   * - 默认 15000ms
    */
   timeout?: number
   vscodeDebug?: boolean
@@ -126,7 +126,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
         done()
       })
     },
-    __DEBUG_PORT__ ? 6000000 : timeout || 10000
+    __DEBUG_PORT__ ? 6000000 : timeout || 15000
   )
 }
 
@@ -169,15 +169,17 @@ async function resolveMessageKey(
       case 'e2e':
         try {
           const { url, texts, debug: e2eDebug } = result.e2e
-          if (e2eDebug) {
+          if (e2eDebug && __DEBUG_PORT__) {
             if (args.show) {
               console.log('[e2e] url =', url)
             }
             if (__DEBUG_PORT__) debugger
             else return true
           }
+          if (args.show) console.log('setupPuppeteer start!')
           const { page, text, destroy } = await setupPuppeteer()
           if (texts) {
+            if (args.show) console.log('page.goto')
             await page.goto(url, { timeout: 5000 })
             const textKeys = Object.keys(texts)
             for (let i = 0; i < textKeys.length; i++) {
@@ -187,10 +189,12 @@ async function resolveMessageKey(
               expect(result).toBe(texts[key])
             }
           }
+          if (args.show) console.log('destroy')
           await destroy()
           childProcess.send({ messageKey: 'e2e' })
           return true
         } catch (e) {
+          childProcess.send({ messageKey: 'e2e' })
           return false
         }
       default:

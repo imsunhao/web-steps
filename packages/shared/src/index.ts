@@ -46,8 +46,8 @@ export class Log {
   }
 
   catchError(...errors: any) {
-    this.debug(`\n\n${this.packagePrefix} catchError!\n\n`)
     console.error.apply(undefined, errors)
+    this.debug(`\n\n${this.packagePrefix} catchError!\n\n`)
     if (this.args.env === 'production') {
       process.exit(1)
     }

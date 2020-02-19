@@ -1,0 +1,14 @@
+{
+  "publicPath": "",
+  "all": [
+    "Vue.dll.ba8b48d92c6d571ce0b4.js",
+    "VueRouter.dll.6c1b719a2fbf024644e9.js",
+    "Vuex.dll.c32572a2cbdef26c588b.js"
+  ],
+  "initial": [
+    "VueRouter.dll.6c1b719a2fbf024644e9.js",
+    "Vuex.dll.c32572a2cbdef26c588b.js",
+    "Vue.dll.ba8b48d92c6d571ce0b4.js"
+  ],
+  "async": []
+}
