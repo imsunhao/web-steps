@@ -21,6 +21,11 @@ const testConfig: TTestConfig = {
         '#hasUser': 'true',
         '#get': 'true',
         '#post': 'true'
+      },
+      async action({ text, click }) {
+        await click('#add')
+        const count = await text('#count')
+        expect(count).toEqual('1')
       }
     }
   },

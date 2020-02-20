@@ -5,6 +5,7 @@ import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 import { setupPuppeteer } from './e2eUtils'
 import { requireFromPath } from '@web-steps/shared'
+import { ClickOptions } from 'puppeteer-core'
 
 type TOutput = {
   name: string
@@ -46,6 +47,7 @@ export type TTestConfig = {
       debug?: boolean
       url: string
       texts?: Record<string, string>
+      action?: (opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void> }) => Promise<any>
     }
   }
   close?: boolean
@@ -168,7 +170,7 @@ async function resolveMessageKey(
         break
       case 'e2e':
         try {
-          const { url, texts, debug: e2eDebug } = result.e2e
+          const { url, texts, debug: e2eDebug, action } = result.e2e
           if (e2eDebug && __DEBUG_PORT__) {
             if (args.show) {
               console.log('[e2e] url =', url)
@@ -177,7 +179,7 @@ async function resolveMessageKey(
             else return true
           }
           if (args.show) console.log('setupPuppeteer start!')
-          const { page, text, destroy } = await setupPuppeteer()
+          const { page, text, click, destroy } = await setupPuppeteer()
           if (texts) {
             if (args.show) console.log('page.goto')
             await page.goto(url, { timeout: 5000 })
@@ -189,6 +191,7 @@ async function resolveMessageKey(
               expect(result).toBe(texts[key])
             }
           }
+          if (action) await action({ text, click })
           if (args.show) console.log('destroy')
           await destroy()
           childProcess.send({ messageKey: 'e2e' })
