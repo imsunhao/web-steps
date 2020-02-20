@@ -14,11 +14,13 @@ export function start(args: Args) {
 
     if (args.target === 'SSR') {
       const messageBus = new MessageBus<TSSRMessageBus>()
-      const SSR = config.config.src.SSR
+      const src = config.config.src
+      const SSR = src.SSR
       serverStart(
         {
           server: SSR.server,
           setting: config.setting,
+          dll: src.DLL,
           env
         },
         { messageBus }

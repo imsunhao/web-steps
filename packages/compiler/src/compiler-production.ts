@@ -18,11 +18,19 @@ function compiling(webpackConfig: any) {
 
 export async function start(webpackConfigs: webpack.Configuration[]) {
   log.info('[compiler] production mode')
+
   async function main() {
+    const result: webpack.Stats[] = []
     for (let i = 0; i < webpackConfigs.length; i++) {
       const webpackConfig = webpackConfigs[i]
-      await compiling(webpackConfig)
+      result.push(await compiling(webpackConfig))
     }
+    return result
   }
-  await main().catch(e => log.catchError(e))
+
+  try {
+    return await main()
+  } catch (e) {
+    log.catchError(e)
+  }
 }

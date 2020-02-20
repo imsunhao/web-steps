@@ -5,7 +5,7 @@ import { DEFAULT_PORT, DEFAULT_TEMPLATE } from '../setting'
 import { randomStringAsBase64Url } from './random'
 import http from 'http'
 import { basename } from 'path'
-import { TServer, TRender, TSetting } from '@web-steps/config'
+import { TServer, TRender, TSetting, TDLL } from '@web-steps/config'
 import { requireFromPath, processSend } from 'packages/shared'
 
 type RequiredServerLifeCycle = Required<ServerLifeCycle>
@@ -35,18 +35,36 @@ export class Service {
   setting: TSetting
   app: TAPP
   SERVER: http.Server
+  DLL: TDLL
 
   compilersWatching: any[] = []
 
-  constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP) {
-    this.lifeCycle = getRequiredLifeCycle(server)
+  static getClientManifestAfterAddDll(clientManifest: any, DLL: TDLL) {
+    if (DLL) {
+      const dll: string[] = DLL as any
+      try {
+        dll.forEach((js: string) => {
+          clientManifest.all.push(js)
+        })
+        dll.reverse().forEach((js: string) => {
+          clientManifest.initial.unshift(js)
+        })
+      } catch (error) {
+        log.error('[getClientManifestAfterAddDll]', error)
+      }
+    }
+    return clientManifest
+  }
+
+  constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP, DLL: TDLL) {
+    this.DLL = DLL
+    this.lifeCycle = getRequiredLifeCycle(server, DLL)
     this.server = server
     this.setting = setting
     this.app = app
   }
 
   start(app = this.app, { isHotReload } = { isHotReload: false }) {
-    debugger
     app.status = 'beforeCreated'
     this.lifeCycle.beforeCreated(app)
 
@@ -164,16 +182,15 @@ const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, r
   res.send(html)
 }
 
-const createBundleRendererRenderToString: (render: TRender) => RequiredServerLifeCycle['renderToString'] = function({
-  bundlePath,
-  templatePath,
-  clientManifestPath
-}) {
+const createBundleRendererRenderToString: (
+  render: TRender,
+  DLL: TDLL
+) => RequiredServerLifeCycle['renderToString'] = function({ bundlePath, templatePath, clientManifestPath }, DLL) {
   try {
     const renderer = createBundleRenderer(bundlePath, {
       inject: true,
       template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-      clientManifest: requireFromPath(clientManifestPath)
+      clientManifest: Service.getClientManifestAfterAddDll(requireFromPath(clientManifestPath), DLL)
     })
     if (__TEST__ && __WEB_STEPS__) {
       processSend(process, { messageKey: 'e2e' })
@@ -212,21 +229,24 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
   return context
 }
 
-function getRequiredLifeCycle({
-  lifeCycle: {
-    beforeCreated,
-    creating,
-    beforeStart,
-    start,
-    beforeRender,
-    renderContext,
-    renderToString,
-    beforeRenderSend,
-    renderSend,
-    router
-  },
-  render
-}: TServer<'finish'>): RequiredServerLifeCycle {
+function getRequiredLifeCycle(
+  {
+    lifeCycle: {
+      beforeCreated,
+      creating,
+      beforeStart,
+      start,
+      beforeRender,
+      renderContext,
+      renderToString,
+      beforeRenderSend,
+      renderSend,
+      router
+    },
+    render
+  }: TServer<'finish'>,
+  DLL: TDLL
+): RequiredServerLifeCycle {
   return {
     beforeCreated: beforeCreated || noop,
     creating: creating || serverCreating,
@@ -235,7 +255,7 @@ function getRequiredLifeCycle({
     start: start || serverStart,
     beforeRender: beforeRender || noop,
     renderContext: renderContext || noop,
-    renderToString: renderToString || createBundleRendererRenderToString(render),
+    renderToString: renderToString || createBundleRendererRenderToString(render, DLL),
     beforeRenderSend: beforeRenderSend || noop,
     renderSend: renderSend || serverRenderSend,
     router: router || noop

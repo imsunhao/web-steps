@@ -2,16 +2,17 @@ import webpack from 'webpack'
 import { join } from 'path'
 import { TGetDLLWebpackConfig } from '@web-steps/config'
 
-const ManifestPlugin = require('@web-steps/helper/dist/manifest-plugin')
-
-const getDllConfig: TGetDLLWebpackConfig = function({ entry, outputPath, context }) {
+const getDllWebpackConfig: TGetDLLWebpackConfig = function({ entry, outputPath, context, refs }) {
+  const libraryName = '[name]_[hash]_DLL'
   const config: webpack.Configuration = {
     name: 'dll',
-    mode: 'production',
+    mode: 'development',
     entry,
+    context,
     output: {
       path: outputPath,
-      filename: '[name].dll.[chunkhash].js'
+      filename: '[name].dll.[hash].js',
+      library: libraryName
     },
     resolve: {
       extensions: ['.js']
@@ -23,16 +24,25 @@ const getDllConfig: TGetDLLWebpackConfig = function({ entry, outputPath, context
     },
     plugins: [
       new webpack.DllPlugin({
-        context,
         path: join(outputPath, '[name].manifest.json'),
-        name: '[name]'
-      }),
-      new ManifestPlugin({
-        filename: 'vue-ssr-dll-manifest.json'
+        name: libraryName
       })
     ]
+  }
+
+  if (refs) {
+    const keys = Object.keys(refs)
+    keys.forEach(name => {
+      const manifest = refs[name]
+      config.plugins.push(
+        new webpack.DllReferencePlugin({
+          context,
+          manifest
+        })
+      )
+    })
   }
   return config
 }
 
-export default getDllConfig
+export default getDllWebpackConfig

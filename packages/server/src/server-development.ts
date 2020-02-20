@@ -4,10 +4,10 @@ import { DevService, DevAPP } from './utils/dev'
 import { SSRMessageBus } from '@types'
 import { Stats } from 'webpack'
 
-export async function start({ server, setting }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
+export async function start({ server, setting, dll }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
   async function main() {
     const { messageBus } = opts
-    const service = new DevService(server, setting, new DevAPP())
+    const service = new DevService(server, setting, new DevAPP(), dll)
 
     messageBus.on('memory-fs', ({ mfs }) => {
       service.fileSystem = mfs

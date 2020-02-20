@@ -5,6 +5,7 @@ declare module '@web-steps/config' {
   type TSetting = any
   type TServer<T> = any
   type TRender = any
+  type TDLL = any
   type TGetWebpackConfig = AnyFunction
   type TGetDLLWebpackConfig = AnyFunction
   const config: any

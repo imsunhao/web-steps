@@ -117,18 +117,46 @@ export class Config {
         { isConfig: true }
       )
     } else if (payload.target === 'dll') {
-      const defaultDllConfigWebpackConfig = getDllWebpackConfig({
-        entry: this.config.src.DLL,
-        outputPath: this.setting.cache,
-        context: this.config.rootDir
-      })
-      await require('@web-steps/compiler').start(
-        {
-          webpackConfigs: [defaultDllConfigWebpackConfig],
-          env: 'production'
-        },
-        { isConfig: true }
-      )
+      const VUE_SSR_DLL_MANIFEST: any = {
+        publicPath: '',
+        all: []
+      }
+      const DLL = this.config.src.DLL
+      const keys = Object.keys(DLL)
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        let item = DLL[key]
+        if (typeof item === 'string') {
+          item = DLL[key] = { name: item }
+        }
+        item.refs = item.refs || []
+
+        const entry = { [key]: [item.name] }
+        const refs = item.refs.reduce(
+          (obj, ref) => {
+            obj[ref] = requireFromPath(path.resolve(this.setting.output, `${ref}.manifest.json`))
+            return obj
+          },
+          {} as any
+        )
+        const defaultDllConfigWebpackConfig = getDllWebpackConfig({
+          entry,
+          outputPath: this.setting.output,
+          context: this.config.rootDir,
+          refs
+        })
+        const statsList: webpack.Stats[] = await require('@web-steps/compiler').start(
+          {
+            webpackConfigs: [defaultDllConfigWebpackConfig],
+            env: 'production'
+          },
+          { isConfig: true }
+        )
+        const stats = statsList[0]
+        VUE_SSR_DLL_MANIFEST.all = VUE_SSR_DLL_MANIFEST.all.concat(Object.keys(stats.compilation.assets))
+      }
+
+      fs.writeFileSync(this.userConfigCachePath.DLLManifest, JSON.stringify(VUE_SSR_DLL_MANIFEST, null, 2), 'utf-8')
     } else if (!this.isDev && payload.target === 'SSR') {
       const defaultLifeCycleConfigWebpackConfig = this.getDefaultLifeCycleConfigWebpackConfig()
       if (defaultLifeCycleConfigWebpackConfig) {
@@ -287,12 +315,15 @@ export class Config {
 
   private stuffConfigByDll(userDLLManifest: any, setting: TSetting) {
     if (!this.config.src.DLL) return
+
     Object.keys(this.config.src.DLL).forEach(key => {
-      const manifestPath = path.resolve(setting.cache, `${key}.manifest.json`)
+      const manifestPath = path.resolve(setting.output, `${key}.manifest.json`)
+      const manifest = requireFromPath(manifestPath)
       this.config.src.SSR.client.webpack.plugins.push(
         new webpack.DllReferencePlugin({
           context: this.config.rootDir || '',
-          manifest: requireFromPath(manifestPath)
+          manifest,
+          name: manifest.name
         })
       )
     })

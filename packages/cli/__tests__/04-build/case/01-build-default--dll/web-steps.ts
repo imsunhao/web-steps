@@ -16,9 +16,9 @@ const getConfig: GetUserConfig = function({ resolve }) {
         }
       },
       DLL: {
-        Vue: ['vue'],
-        Vuex: ['vuex'],
-        VueRouter: ['vue-router']
+        Vue: 'vue',
+        Vuex: { name: 'vuex', refs: ['Vue'] },
+        VueRouter: { name: 'vue-router', refs: ['Vue'] }
       }
     }
   }

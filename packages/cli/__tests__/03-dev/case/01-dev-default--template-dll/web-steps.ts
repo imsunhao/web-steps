@@ -9,12 +9,7 @@ const getConfig: GetUserConfig = function({ resolve }) {
       SSR: {
         base: { webpack: getBaseConfig },
         client: { webpack: getClientConfig },
-        server: {
-          webpack: getServerConfig,
-          render: {
-            templatePath: resolve('index.template.html')
-          }
-        }
+        server: { webpack: getServerConfig }
       },
       DLL: {
         Vue: 'vue',

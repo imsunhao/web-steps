@@ -12,7 +12,7 @@ export async function start(payload?: CompilerConfig, opts: { isConfig?: boolean
     log = new Log(major, { env })
     const { webpackConfigs } = payload || (await getInitConfig())
 
-    await require(`./${major}-${env}`).start(webpackConfigs, opts)
+    const result = await require(`./${major}-${env}`).start(webpackConfigs, opts)
 
     if (!isConfig && __WEB_STEPS__ && __TEST__) {
       processSend(process, {
@@ -23,7 +23,13 @@ export async function start(payload?: CompilerConfig, opts: { isConfig?: boolean
         }
       })
     }
+
+    return result
   }
 
-  await main().catch(err => log.catchError(err))
+  try {
+    return await main()
+  } catch (e) {
+    log.catchError(e)
+  }
 }

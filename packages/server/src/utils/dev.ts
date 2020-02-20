@@ -38,7 +38,10 @@ export class DevService extends Service {
       this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, requireOptions), {
         inject: true,
         template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-        clientManifest: requireFromPath(clientManifestPath, requireOptions)
+        clientManifest: DevService.getClientManifestAfterAddDll(
+          requireFromPath(clientManifestPath, requireOptions),
+          this.DLL
+        )
       }).renderToString
       if (__TEST__ && __WEB_STEPS__) {
         processSend(process, { messageKey: 'e2e' })

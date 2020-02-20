@@ -100,10 +100,21 @@ type TSrc<T extends 'finish' | 'ready'> = {
   /**
    * webpack - dll模块
    * - 可以为空, 不启用
-   * - 内容: 名称 - 第三方包名称 例如 Vue: ['vue']
+   * - 内容: 名称 - 第三方包名称
+   * 例如
+   * ```
+   * {
+   *   Vue: 'vue'
+   *   Vuex: { name: 'vuex', ref: 'Vue'}
+   * }
+   * ```
    */
-  DLL?: T extends 'finish' ? string[] : Record<string, string[]>
+  DLL?: T extends 'finish' ? TDLL : Record<string, string | Required<TDLLEntry>>
 }
+
+type TDLLEntry = { name: string; refs?: string[] }
+
+export type TDLL = Record<string, TDLLEntry>
 
 export type TClient = {}
 
@@ -187,7 +198,7 @@ type TSSR<T extends 'finish' | 'ready'> = {
 
 export type TGetWebpackConfig = (startupOptions: StartupOptions, config: TConfig) => webpack.Configuration
 export type TGetDLLWebpackConfig = (
-  options: { entry: any; outputPath: string; context: string }
+  options: { entry: any; outputPath: string; context: string; refs?: Record<string, any> }
 ) => webpack.Configuration
 
 export type TGetConfigPayload = {

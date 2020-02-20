@@ -1,6 +1,6 @@
 import { getInitChildProcessConfig, getProcessMessageMap } from 'packages/shared'
 import { log } from '..'
-import { TServer, TSetting } from '@web-steps/config'
+import { TServer, TSetting, TDLL } from '@web-steps/config'
 
 let { processMessageMap, localArgs } = getInitChildProcessConfig()
 
@@ -24,18 +24,21 @@ export const args = new Args()
 export async function getInitConfig() {
   let server: TServer<'finish'>
   let setting: TSetting
+  let dll: TDLL
   if (!__WEB_STEPS__ && false) {
   } else {
     try {
       processMessageMap = await getProcessMessageMap()
       server = processMessageMap.config.src.SSR.server
       setting = processMessageMap.setting
+      dll = processMessageMap.config.src.DLL
     } catch (error) {
       log.error('未能找到 processMessageMap. 请确保 TODO 存在 或者 使用 yarn web-step 启动.')
     }
   }
   return {
     server,
-    setting
+    setting,
+    dll
   }
 }
