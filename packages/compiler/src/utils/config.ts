@@ -58,19 +58,17 @@ export async function getInitConfig() {
   } else {
     try {
       processMessageMap = await getProcessMessageMap()
+      const SSR = processMessageMap.config.src.SSR
 
       switch (args.target) {
         case 'SSR-server':
-          webpackConfigs = [processMessageMap.config.src.SSR.server.webpack]
+          webpackConfigs = [SSR.server.webpack]
           break
         case 'SSR-client':
-          webpackConfigs = [processMessageMap.config.src.SSR.client.webpack]
+          webpackConfigs = [SSR.client.webpack]
           break
         case 'SSR':
-          webpackConfigs = [
-            processMessageMap.config.src.SSR.client.webpack,
-            processMessageMap.config.src.SSR.server.webpack
-          ]
+          webpackConfigs = [SSR.client.webpack, SSR.server.webpack]
           break
         case 'custom':
           webpackConfigs = processMessageMap.config.customBuild
