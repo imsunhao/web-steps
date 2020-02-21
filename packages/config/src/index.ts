@@ -191,6 +191,10 @@ export class Config {
         this.userConfigConstructor = requireFromPath(config)
       } else if (payload.target === 'dll') {
         this.userDLLManifest = requireFromPath(DLLManifest)
+        Object.keys(this.config.src.DLL).forEach(key => {
+          const manifestPath = path.resolve(this.setting.output, `${key}.manifest.json`)
+          if (!fs.existsSync(manifestPath)) throw 'false'
+        })
       } else if (!skipLifeCycle && !this.isDev && payload.target === 'SSR') {
         this.userLifeCycleConstructor = requireFromPath(lifeCycle)
       }

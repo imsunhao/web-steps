@@ -4,7 +4,7 @@ const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
-  cache: false,
+  cache: true,
   timeout: 20000,
   node: {
     target: 'web-steps',
