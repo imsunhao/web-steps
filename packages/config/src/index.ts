@@ -23,7 +23,7 @@ import { sync as rmrfSync } from 'rimraf'
 import getConfigWebpackConfig from './webpack/default-config.webpack'
 import getDllWebpackConfig from './webpack/default-dll.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
-import defaultClientWebpackConfig from './webpack/default-client.webpack'
+import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
 import { ServerLifeCycle } from '@web-steps/server'
 
@@ -215,7 +215,7 @@ export class Config {
     if (payload.target === 'base') {
       this.stuffConfig({
         defaultBaseWebpackConfig: getDefaultBaseWebpackConfig(this.startupOptions, this.config),
-        defaultClientWebpackConfig,
+        defaultClientWebpackConfig: getDefaultClientWebpackConfig(this.startupOptions, this.config),
         defaultServerWebpackConfig
       })
       if (!this.userConfigConstructor) {
@@ -417,7 +417,7 @@ export class Config {
 
       stuffConfig.call(context, {
         defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
-        defaultClientWebpackConfig: client,
+        defaultClientWebpackConfig: client.default(context.startupOptions, { args }),
         defaultServerWebpackConfig: server
       })
 

@@ -452,7 +452,7 @@ context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleCon
 
 stuffConfig.call(context, {
   defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
-  defaultClientWebpackConfig: client,
+  defaultClientWebpackConfig: client.default(context.startupOptions, { args }),
   defaultServerWebpackConfig: server
 });
 

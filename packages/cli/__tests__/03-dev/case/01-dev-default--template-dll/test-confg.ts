@@ -22,10 +22,18 @@ const testConfig: TTestConfig = {
         '#get': 'true',
         '#post': 'true'
       },
-      async action({ text, click }) {
+      async action({ text, click, page }) {
         await click('#add')
         const count = await text('#count')
         expect(count).toEqual('1')
+
+        const color = await page.evaluate(() => {
+          const element = document.getElementById('test1')
+          element.focus()
+          return window.getComputedStyle(element).getPropertyValue('color')
+        })
+
+        expect(color).toEqual('rgb(255, 0, 0)')
       }
     }
   },

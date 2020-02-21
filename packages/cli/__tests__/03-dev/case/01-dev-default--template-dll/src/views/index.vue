@@ -50,3 +50,10 @@ export default {
   }
 }
 </script>
+
+
+<style lang="scss">
+#test1 {
+  color: red;
+}
+</style>

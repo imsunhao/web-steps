@@ -1,4 +1,5 @@
 import { VueLoaderPlugin } from 'vue-loader'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { TGetWebpackConfig } from '@web-steps/config'
 
 const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
@@ -39,7 +40,12 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
         }
       ]
     },
-    plugins: [new VueLoaderPlugin()]
+    plugins: [
+      new VueLoaderPlugin(),
+      new MiniCssExtractPlugin({
+        filename: '[contenthash].css'
+      })
+    ]
   }
 }
 

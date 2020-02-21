@@ -8,6 +8,18 @@ const webpackConfig: webpack.Configuration = {
   output: {
     libraryTarget: 'commonjs2'
   },
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: 'null-loader'
+      },
+      {
+        test: /\.css$/,
+        use: 'null-loader'
+      }
+    ]
+  },
   externals: [nodeExternals()],
   performance: {
     maxEntrypointSize: 1024 * 1024 * 6,

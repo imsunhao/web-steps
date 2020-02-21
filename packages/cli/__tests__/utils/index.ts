@@ -5,7 +5,7 @@ import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 import { setupPuppeteer } from './e2eUtils'
 import { requireFromPath } from '@web-steps/shared'
-import { ClickOptions } from 'puppeteer-core'
+import { ClickOptions, Page } from 'puppeteer-core'
 
 type TOutput = {
   name: string
@@ -47,7 +47,7 @@ export type TTestConfig = {
       debug?: boolean
       url: string
       texts?: Record<string, string>
-      action?: (opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void> }) => Promise<any>
+      action?: (opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void>, page: Page }) => Promise<any>
     }
   }
   close?: boolean
@@ -191,7 +191,7 @@ async function resolveMessageKey(
               expect(result).toBe(texts[key])
             }
           }
-          if (action) await action({ text, click })
+          if (action) await action({ text, click, page })
           if (args.show) console.log('destroy')
           await destroy()
           childProcess.send({ messageKey: 'e2e' })

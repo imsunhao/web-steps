@@ -11,7 +11,7 @@ export function start(args: Args) {
     const env = args.env
 
     await config.init(args, {
-      getSettingCallBack(c) {
+      getSettingCallBack(c: any) {
         if (!getCache(args)) {
           log.info('清空 输出目录:', c.setting.output)
           rmrfSync(c.setting.output)
