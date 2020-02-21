@@ -16,12 +16,6 @@ export class Args {
    */
   settingPath: string
 
-  /**
-   * 是否启用缓存
-   * - 默认 启用
-   */
-  cache: boolean
-
   majorCommand: MajorCommandKey
   minorCommand: MinorCommandKey
 
@@ -56,12 +50,6 @@ export class Args {
     this.majorCommand = args._[0]
     this.minorCommand = args._[1]
     this.env = args.env || process.env.NODE_ENV || 'production'
-
-    let cache = this.env !== 'production'
-    args.cache = (args.cache || '').toLowerCase()
-    if (args.cache === 'false') cache = false
-    else if (args.cache === 'true') cache = true
-    this.cache = cache
 
     this.target = this.args.target || 'SSR'
   }

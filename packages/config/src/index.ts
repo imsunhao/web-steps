@@ -15,7 +15,8 @@ import {
   requireFromPath,
   convertObjToSource,
   ensureDirectoryExistence,
-  requireSourceString
+  requireSourceString,
+  getCache
 } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 
@@ -436,15 +437,16 @@ export class Config {
     return path.resolve.apply(undefined, [this.args.rootDir, ...args])
   }
 
-  async init(args: Args) {
+  async init(args: Args, opts: { getSettingCallBack?: (config: Config) => void } = {}) {
     if (this.isInit) return
     this.args = args
     this.isInit = true
     log = new Log('config', args)
     const main = async () => {
       this.getSetting()
-      if (!args.cache) {
-        log.info('清空缓存')
+      if (opts.getSettingCallBack) opts.getSettingCallBack(this)
+      if (!getCache(args)) {
+        log.info('清空 缓存:', this.setting.cache)
         rmrfSync(this.setting.cache)
       }
       await this.getConfig({ target: 'base' })

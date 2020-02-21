@@ -76,7 +76,6 @@ const { args, setting, isDev } = {
     majorCommand: "config",
     minorCommand: "export",
     env: "production",
-    cache: true,
     target: "SSR"
   },
   setting: {
