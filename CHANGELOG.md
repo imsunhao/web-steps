@@ -1,3 +1,23 @@
+## [0.0.1-alpha.6](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.5...v0.0.1-alpha.6) (2020-02-21)
+
+
+### Bug Fixes
+
+* [test]修复 config --case=07 ([bf3dc89](https://github.com/imsunhao/utils/commit/bf3dc89de6403f57157c44465691b095265e8110))
+
+
+### Features
+
+* [e2e] 添加 action功能 ([4809645](https://github.com/imsunhao/utils/commit/480964554cf8bd2959d8624af8147c181b9d7097))
+* 修复 ts缺少的类型 ([9726be3](https://github.com/imsunhao/utils/commit/9726be300c30ba8187c0990938ea9b75b3337a0d))
+* 更新 依赖版本 ([afb42f4](https://github.com/imsunhao/utils/commit/afb42f4f46fec5466032c4540d2395ce235e68ae))
+* 添加 build 命令 ([8cf4950](https://github.com/imsunhao/utils/commit/8cf49507b78a4b59958eb198182c3d53b6b7166a))
+* 添加 dll 概念 ([c4ddb56](https://github.com/imsunhao/utils/commit/c4ddb568aa9b31be02b90e73b7824a084c37be80))
+* 调整 cache 逻辑 ([f6949dd](https://github.com/imsunhao/utils/commit/f6949dd8fd220cefbf4db269bbb740897b84193d))
+* 调整 DLL方案 现在支持依赖DLL ([aa67625](https://github.com/imsunhao/utils/commit/aa6762512429f8ce8af01a8f347cfb5d2a14295f))
+
+
+
 ## [0.0.1-alpha.5](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.2...v0.0.1-alpha.5) (2020-02-16)
 
 

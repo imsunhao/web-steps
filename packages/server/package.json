@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/server",
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1-alpha.6",
   "description": "@web-steps/server",
   "main": "index.js",
   "files": [
@@ -31,12 +31,12 @@
     "vue-server-renderer": "^2.6.11"
   },
   "devDependencies": {
-    "@web-steps/config": "^0.0.1-alpha.2",
+    "@web-steps/config": "0.0.1-alpha.6",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0"
   },
   "peerDependencies": {
-    "@web-steps/config": "^0.0.1-alpha.2",
+    "@web-steps/config": "0.0.1-alpha.6",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0"
   }
