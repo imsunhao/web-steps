@@ -11,7 +11,7 @@ const testConfig: TTestConfig = {
   },
   result: {
     export_config: {
-      path: resolve(__dirname, './temp/export_config.js'),
+      path: resolve(__dirname, './output/export_config.js'),
       result: {
         config: {
           rootDir: resolve(__dirname),

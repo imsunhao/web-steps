@@ -1,6 +1,6 @@
 {
   "entry": "config.ts",
-  "output": "temp",
+  "output": "output",
   "injectContext": "",
   "cache": ".web-steps_cache"
 }
