@@ -91,7 +91,7 @@ const { args, setting, isDev } = {
 const resolve = function resolve(...paths) {
   return path.resolve.apply(undefined, [args.rootDir, ...paths]);
 };
-const context = { startupOptions: { args, resolve }, isDev };
+const context = { startupOptions: { args, resolve }, isDev, setting };
 context.userConfigConstructor = /******/ (function(modules) {
   // webpackBootstrap
   /******/ // The module cache
@@ -334,7 +334,12 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
       });
       const baseWebpackConfig = webpackMerge(
         defaultBaseWebpackConfig,
-        result.base
+        result.base,
+        {
+          output: {
+            path: this.setting.output
+          }
+        }
       );
       SSR.base.webpack = baseWebpackConfig;
       SSR.client.webpack = webpackMerge(
@@ -390,11 +395,11 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
     stuffServer();
   }
 };
-const stuffConfigByDll = function stuffConfigByDll(userDLLManifest, setting) {
+const stuffConfigByDll = function stuffConfigByDll(userDLLManifest) {
   if (!this.config.src.DLL) return;
   Object.keys(this.config.src.DLL).forEach(key => {
     const manifestPath = path__default.resolve(
-      setting.output,
+      this.setting.output,
       `${key}.manifest.json`
     );
     const manifest = requireFromPath(manifestPath);
@@ -456,24 +461,20 @@ stuffConfig.call(context, {
   defaultServerWebpackConfig: server
 });
 
-stuffConfigByDll.call(
-  context,
-  {
-    publicPath: "",
-    all: [
-      "Vue.dll.ba8b48d92c6d571ce0b4.js",
-      "VueRouter.dll.6c1b719a2fbf024644e9.js",
-      "Vuex.dll.c32572a2cbdef26c588b.js"
-    ],
-    initial: [
-      "VueRouter.dll.6c1b719a2fbf024644e9.js",
-      "Vuex.dll.c32572a2cbdef26c588b.js",
-      "Vue.dll.ba8b48d92c6d571ce0b4.js"
-    ],
-    async: []
-  },
-  setting
-);
+stuffConfigByDll.call(context, {
+  publicPath: "",
+  all: [
+    "Vue.dll.ba8b48d92c6d571ce0b4.js",
+    "VueRouter.dll.6c1b719a2fbf024644e9.js",
+    "Vuex.dll.c32572a2cbdef26c588b.js"
+  ],
+  initial: [
+    "VueRouter.dll.6c1b719a2fbf024644e9.js",
+    "Vuex.dll.c32572a2cbdef26c588b.js",
+    "Vue.dll.ba8b48d92c6d571ce0b4.js"
+  ],
+  async: []
+});
 
 stuffServer.call(context);
 

@@ -47,7 +47,9 @@ export type TTestConfig = {
       debug?: boolean
       url: string
       texts?: Record<string, string>
-      action?: (opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void>, page: Page }) => Promise<any>
+      action?: (
+        opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void>; page: Page; show: boolean }
+      ) => Promise<any>
     }
   }
   close?: boolean
@@ -191,7 +193,7 @@ async function resolveMessageKey(
               expect(result).toBe(texts[key])
             }
           }
-          if (action) await action({ text, click, page })
+          if (action) await action({ text, click, page, show: args.show })
           if (args.show) console.log('destroy')
           await destroy()
           childProcess.send({ messageKey: 'e2e' })

@@ -1,5 +1,5 @@
 import { Args as TArgs } from '../packages/cli/src'
-import { Config as TConfig } from '../packages/config/src'
+import { Config as TConfig, TDLL } from '../packages/config/src'
 import { MessageBus } from 'packages/shared'
 import webpack from 'webpack'
 import MFS from 'memory-fs'
@@ -31,6 +31,13 @@ declare namespace WebSteps {
   }
 
   type SSRMessageBus = MessageBus<TSSRMessageBus>
+
+  type TStartConfig = {
+    resolve: (...args: string[]) => string
+    rootDir: string
+    server: any
+    DLL: TDLL
+  }
 }
 
 export = WebSteps

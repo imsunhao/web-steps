@@ -12,11 +12,11 @@ const testConfig: TTestConfig = {
     output: [
       {
         name: 'client',
-        filePath: resolve(__dirname, './dist/vue-ssr-client-manifest.json')
+        filePath: resolve(__dirname, './dist/web-steps/vue-ssr-client-manifest.json')
       },
       {
         name: 'server',
-        filePath: resolve(__dirname, './dist/vue-ssr-server-bundle.json')
+        filePath: resolve(__dirname, './dist/web-steps/vue-ssr-server-bundle.json')
       }
     ],
     cache: {

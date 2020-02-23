@@ -1,7 +1,7 @@
 import { Args } from '@types'
 import webpack from 'webpack'
 import webpackMerge from 'webpack-merge'
-import { existsSync, readFileSync, writeFileSync, unlinkSync } from 'fs'
+import { existsSync, writeFileSync, unlinkSync } from 'fs'
 import fs from 'fs'
 import path from 'path'
 import { TSetting, TConfig, TOptionsInject, StartupOptions, TGetConfigPayload } from './type'
@@ -16,7 +16,8 @@ import {
   convertObjToSource,
   ensureDirectoryExistence,
   requireSourceString,
-  getCache
+  getCache,
+  getSetting
 } from 'packages/shared'
 import { sync as rmrfSync } from 'rimraf'
 
@@ -26,13 +27,6 @@ import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
 import { ServerLifeCycle } from '@web-steps/server'
-
-const defaultSetting: TSetting = {
-  entry: 'web-steps.ts',
-  output: 'dist/web-steps',
-  injectContext: '',
-  cache: 'node_modules/.web-steps_cache'
-}
 
 export let log: Log
 
@@ -53,7 +47,7 @@ export class Config {
 
   get startupOptions(): StartupOptions {
     const bind = (fn: any) => (fn instanceof Function ? fn.bind(this) : fn)
-    const keys: Array<keyof Config> = ['resolve', 'args'] // 需要考虑 getExportConfig
+    const keys: Array<keyof Config> = ['resolve', 'args'] // 需要考虑 getExportConfig, startConfig
     const startupOptions: Partial<StartupOptions> = {}
 
     return keys.reduce(
@@ -65,40 +59,18 @@ export class Config {
     )
   }
 
-  get userConfigCachePath() {
+  get userConfigPath() {
     return {
       config: this.resolve(this.setting.cache, 'config.js'),
       lifeCycle: this.resolve(this.setting.cache, 'life-cycle.js'),
-      DLLManifest: this.resolve(this.setting.cache, 'vue-ssr-dll-manifest.json')
+      DLLManifest: this.resolve(this.setting.cache, 'vue-ssr-dll-manifest.json'),
+      startConfig: this.resolve(this.setting.output, 'start-config.js')
     }
   }
 
   private userConfigConstructor: (inject: TOptionsInject) => TConfig
   private userDLLManifest?: any
   private userLifeCycleConstructor: (inject: TOptionsInject) => Required<ServerLifeCycle>
-
-  /**
-   * 获取配置文件
-   */
-  private getSetting() {
-    const settingPath = this.resolve(this.args.settingPath)
-    let setting: TSetting = defaultSetting
-    if (existsSync(settingPath)) {
-      const jsonString = readFileSync(settingPath, { encoding: 'utf-8' })
-      setting = merge({}, defaultSetting, JSON.parse(jsonString))
-    }
-    this.setting = Object.keys(setting).reduce(
-      (configFile, key: keyof TSetting) => {
-        const path = setting[key] || defaultSetting[key]
-        if (path) {
-          configFile[key] = this.resolve(path)
-        }
-        return configFile
-      },
-      {} as TSetting
-    )
-    // console.log('[getSetting]', this.setting)
-  }
 
   private getDefaultLifeCycleConfigWebpackConfig() {
     let lifeCycle: string = this.config.src.SSR.server.lifeCycle as any
@@ -157,7 +129,7 @@ export class Config {
         VUE_SSR_DLL_MANIFEST.all = VUE_SSR_DLL_MANIFEST.all.concat(Object.keys(stats.compilation.assets))
       }
 
-      fs.writeFileSync(this.userConfigCachePath.DLLManifest, JSON.stringify(VUE_SSR_DLL_MANIFEST, null, 2), 'utf-8')
+      fs.writeFileSync(this.userConfigPath.DLLManifest, JSON.stringify(VUE_SSR_DLL_MANIFEST, null, 2), 'utf-8')
     } else if (!this.isDev && payload.target === 'SSR') {
       const defaultLifeCycleConfigWebpackConfig = this.getDefaultLifeCycleConfigWebpackConfig()
       if (defaultLifeCycleConfigWebpackConfig) {
@@ -185,7 +157,7 @@ export class Config {
   }
 
   private getUserConfigFromCache(payload: TGetConfigPayload, { skipLifeCycle }: Record<string, boolean> = {}) {
-    const { config, lifeCycle, DLLManifest } = this.userConfigCachePath
+    const { config, lifeCycle, DLLManifest } = this.userConfigPath
     try {
       if (payload.target === 'base') {
         this.userConfigConstructor = requireFromPath(config)
@@ -222,7 +194,7 @@ export class Config {
         log.error('无法找到配置文件')
       }
     } else if (payload.target === 'dll') {
-      this.stuffConfigByDll(this.userDLLManifest, this.setting)
+      this.stuffConfigByDll(this.userDLLManifest)
     } else if (payload.target === 'SSR') {
       this.stuffServer()
     }
@@ -269,7 +241,11 @@ export class Config {
           }
         })
 
-        const baseWebpackConfig = webpackMerge(defaultBaseWebpackConfig, result.base)
+        const baseWebpackConfig = webpackMerge(defaultBaseWebpackConfig, result.base, {
+          output: {
+            path: this.setting.output
+          }
+        })
 
         SSR.base.webpack = baseWebpackConfig
         SSR.client.webpack = webpackMerge(baseWebpackConfig, defaultClientWebpackConfig, result.client)
@@ -318,11 +294,11 @@ export class Config {
     }
   }
 
-  private stuffConfigByDll(userDLLManifest: any, setting: TSetting) {
+  private stuffConfigByDll(userDLLManifest: any) {
     if (!this.config.src.DLL) return
 
     Object.keys(this.config.src.DLL).forEach(key => {
-      const manifestPath = path.resolve(setting.output, `${key}.manifest.json`)
+      const manifestPath = path.resolve(this.setting.output, `${key}.manifest.json`)
       const manifest = requireFromPath(manifestPath)
       this.config.src.SSR.client.webpack.plugins.push(
         new webpack.DllReferencePlugin({
@@ -365,7 +341,7 @@ export class Config {
       args,
       setting,
       stuffConfig,
-      userConfigCachePath,
+      userConfigPath: userConfigCachePath,
       isDev,
       stuffServer,
       stuffConfigByDll,
@@ -405,7 +381,7 @@ export class Config {
       const resolve = function resolve(...paths) {
         return path.resolve.apply(undefined, [args.rootDir, ...paths])
       }
-      const context = { startupOptions: { args, resolve }, isDev }
+      const context = { startupOptions: { args, resolve }, isDev, setting }
       context.userConfigConstructor = ${userConfigConstructor}.default
       context.userLifeCycleConstructor = ${userLifeCycleConstructor}
       const stuffConfig = function ${convertObjToSource(stuffConfig)}
@@ -421,7 +397,7 @@ export class Config {
         defaultServerWebpackConfig: server
       })
 
-      stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)}, setting)
+      stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)})
 
       stuffServer.call(context)
 
@@ -447,7 +423,7 @@ export class Config {
     this.isInit = true
     log = new Log('config', args)
     const main = async () => {
-      this.getSetting()
+      this.setting = getSetting(this.args, this.resolve.bind(this))
       if (opts.getSettingCallBack) opts.getSettingCallBack(this)
       if (!getCache(args)) {
         log.info('清空 缓存:', this.setting.cache)

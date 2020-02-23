@@ -1,5 +1,3 @@
-import './public-path-setup'
-
 const __HOST_GLOBAL__: any = window
 
 import { createApp } from './app'

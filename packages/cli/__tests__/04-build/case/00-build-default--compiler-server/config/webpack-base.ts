@@ -6,8 +6,7 @@ const getConfig: TGetWebpackConfig = function({ resolve }) {
       minimize: false
     },
     output: {
-      path: resolve('./dist'),
-      publicPath: '/output/'
+      publicPath: '/web-steps/'
     }
   }
 }

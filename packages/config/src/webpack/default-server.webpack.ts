@@ -11,6 +11,19 @@ const webpackConfig: webpack.Configuration = {
   module: {
     rules: [
       {
+        test: /\.(ts|js|vue)$/,
+        enforce: 'pre',
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: '@web-steps/helper/dist/remove-code-block.js',
+            options: {
+              VUE_ENV: 'server'
+            }
+          }
+        ]
+      },
+      {
         test: /\.scss$/,
         use: 'null-loader'
       },

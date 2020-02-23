@@ -145,6 +145,7 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
       )
     })
   }
+
   serverStatics()
 }
 

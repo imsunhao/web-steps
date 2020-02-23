@@ -25,5 +25,5 @@ export function start(args: Args) {
       })
     }
   }
-  main().catch(log.catchError)
+  main().catch(e => log.catchError(e))
 }

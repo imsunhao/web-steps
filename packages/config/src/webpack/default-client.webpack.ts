@@ -11,6 +11,19 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function({ args: { env 
     module: {
       rules: [
         {
+          test: /\.(ts|js|vue)$/,
+          enforce: 'pre',
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: '@web-steps/helper/dist/remove-code-block.js',
+              options: {
+                VUE_ENV: 'client'
+              }
+            }
+          ]
+        },
+        {
           test: /\.scss$/,
           use: [
             isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',

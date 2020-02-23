@@ -1,5 +1,4 @@
 import { TLogArg } from './type'
-import { Args } from '@types'
 
 export class Log {
   private args: TLogArg
@@ -65,20 +64,4 @@ export * from './utils/toString'
 export * from './utils/fs'
 export * from './utils/uuid'
 export * from './utils/message-bus'
-
-export function getEnv(payload: { env: string }) {
-  return payload.env !== 'development' ? 'production' : 'development'
-}
-
-/**
- * 是否启用缓存
- * - 默认 启用
- */
-export function getCache(_this: Args): boolean {
-  const args = _this.args
-  let cache = _this.env !== 'production'
-  args.cache = (args.cache || '').toLowerCase()
-  if (args.cache === 'false') cache = false
-  else if (args.cache === 'true') cache = true
-  return cache
-}
+export * from './utils/config'

@@ -9,5 +9,5 @@ export function start(args: Args) {
       await config.exportStatic()
     }
   }
-  main().catch(log.catchError)
+  main().catch(e => log.catchError(e))
 }

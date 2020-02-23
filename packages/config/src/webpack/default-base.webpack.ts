@@ -10,7 +10,6 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
       extensions: ['.ts', '.js', '.vue', '.json']
     },
     output: {
-      path: './dist',
       filename: '[name].[chunkhash].js'
     },
     module: {
