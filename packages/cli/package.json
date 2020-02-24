@@ -23,16 +23,11 @@
     "url": "https://github.com/imsunhao/utils/issues"
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/cli#readme",
-  "dependencies": {
+  "devDependencies": {
     "execa": "^4.0.0"
   },
-  "devDependencies": {
-    "@web-steps/compiler": "0.0.1-alpha.6",
-    "@web-steps/config": "0.0.1-alpha.6",
-    "@web-steps/helper": "0.0.1-alpha.6",
-    "@web-steps/server": "0.0.1-alpha.6"
-  },
   "peerDependencies": {
+    "execa": "^4.0.0",
     "@web-steps/compiler": "0.0.1-alpha.6",
     "@web-steps/config": "0.0.1-alpha.6",
     "@web-steps/helper": "0.0.1-alpha.6",

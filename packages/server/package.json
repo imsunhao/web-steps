@@ -31,7 +31,6 @@
     "vue-server-renderer": "^2.6.11"
   },
   "devDependencies": {
-    "@web-steps/config": "0.0.1-alpha.6",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0"
   },

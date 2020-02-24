@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { Options } from 'execa'
 
 export type MajorCommandKey =
   | 'dev'
@@ -13,7 +13,7 @@ export type MajorCommandKey =
   | 'compiler'
 export type MinorCommandKey = 'upload' | 'download' | 'export'
 
-export type RunOptions = execa.Options<string> & CustomRunOptions
+export type RunOptions = Options<string> & CustomRunOptions
 
 export type CustomRunOptions = {
   /**

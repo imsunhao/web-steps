@@ -48,7 +48,12 @@ export type TTestConfig = {
       url: string
       texts?: Record<string, string>
       action?: (
-        opts: { text: any; click: (selector: string, options?: ClickOptions) => Promise<void>; page: Page; show: boolean }
+        opts: {
+          text: any
+          click: (selector: string, options?: ClickOptions) => Promise<void>
+          page: Page
+          show: boolean
+        }
       ) => Promise<any>
     }
   }

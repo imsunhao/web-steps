@@ -1,5 +1,5 @@
 import { merge } from 'packages/shared'
-import execa from 'execa'
+import { ExecaChildProcess } from 'execa'
 import { RunOptions, CustomRunOptions } from '../type'
 import { log } from '../'
 
@@ -22,10 +22,11 @@ export class Execa {
         delete opts[key]
       })
       log.log({ bin, args, opts: merge({ stdio: 'inherit' }, opts) })
-      const childProcess: execa.ExecaChildProcess<string> = {} as any
+      const childProcess: ExecaChildProcess<string> = {} as any
       return childProcess
     }
 
+    const execa: (...args: any) => ExecaChildProcess<string> = require('execa')
     return execa(bin, args, merge({ env: process.env, stdio: 'inherit' }, opts))
   }
 
