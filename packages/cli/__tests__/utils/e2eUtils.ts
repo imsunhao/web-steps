@@ -1,8 +1,8 @@
 import puppeteer from 'puppeteer-core'
 
 const puppeteerOptions: puppeteer.LaunchOptions = process.env.CI
-  ? { args: ['--no-sandbox', '--disable-setuid-sandbox'] }
-  : {}
+  ? { args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'] }
+  : { args: ['--ignore-certificate-errors'] }
 
 puppeteerOptions.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
@@ -15,8 +15,7 @@ export async function setupPuppeteer() {
 
   page.on('console', e => {
     if (e.type() === 'error') {
-      const err = e.args()[0] as any
-      console.error(`Error from Puppeteer-loaded page:\n`, err._remoteObject.description)
+      console.error(`Error from Puppeteer-loaded page:\n`, e)
     }
   })
 
