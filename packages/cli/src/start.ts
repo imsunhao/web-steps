@@ -45,8 +45,8 @@ export function start(args: Args) {
 
 function requrieFromString(source: string) {
   try {
-    const md = requireFromString(source)
-    return md.__esModule ? md.default : md
+    const ex = requireFromString(source)
+    return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex
   } catch (error) {
     log.error(`[requrieFromString] ${path} not find!`)
   }
