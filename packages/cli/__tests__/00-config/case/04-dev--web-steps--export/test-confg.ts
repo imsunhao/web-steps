@@ -23,24 +23,13 @@ const testConfig: TTestConfig = {
               client: {
                 webpack: {
                   entry: {
-                    client: [
-                      'webpack-hot-middleware/client',
-                      '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/04-dev--web-steps--export/src/entry-client.ts'
-                    ]
+                    client: ['webpack-hot-middleware/client', resolve(__dirname, 'src/entry-client.ts')]
                   },
                   mode: 'development'
                 }
               }
             }
           }
-        },
-        setting: {
-          entry:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/04-dev--web-steps--export/config.ts',
-          output:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/04-dev--web-steps--export/temp',
-          cache:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/04-dev--web-steps--export/.web-steps_cache'
         }
       }
     }

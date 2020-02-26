@@ -32,13 +32,6 @@ export type TSetting = {
   output: string
 
   /**
-   * 注入自定义数据
-   * - 注入的上下文 配置文件目录
-   * - 没有默认值
-   */
-  injectContext: string
-
-  /**
    * web-steps 缓存目录
    * - 存放配置文件
    * - 默认值 node_modules/web-steps_cache
@@ -55,11 +48,40 @@ export type TWebpackConfig<T extends 'finish' | 'ready'> = T extends 'finish'
   : (webpack.Configuration | TGetWebpackConfig)
 
 export type TConfig = TBaseConfig<'finish'>
+
+export type TDirOptions = {
+  path: string
+  filters?: RegExp[]
+}
+
 type TBaseConfig<T extends 'finish' | 'ready'> = {
   /**
    * 根目录 默认值为运行命令的目录
    */
   rootDir: string
+
+  /**
+   * 注入自定义数据
+   * - 注入的上下文 配置文件目录
+   * - 默认值 ./inject-context.js
+   */
+  injectContext: string
+
+  /**
+   * 公共资源库
+   * - 资源库 一对多 服务器
+   * - 默认值 path: './common-asset'
+   * - 默认值 filters: undefined
+   */
+  'common-asset': TDirOptions
+
+  /**
+   * 资源库
+   * - 资源库 一对一 服务器
+   * - 默认值 path: './public'
+   * - 默认值 filters: undefined
+   */
+  public: TDirOptions
 
   /**
    * 编译选项

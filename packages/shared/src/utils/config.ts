@@ -24,7 +24,6 @@ export function getCache(_this: Args): boolean {
 const defaultSetting: TSetting = {
   entry: 'web-steps.ts',
   output: 'dist/web-steps',
-  injectContext: '',
   cache: 'node_modules/.web-steps_cache'
 }
 

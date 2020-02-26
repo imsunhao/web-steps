@@ -36,6 +36,12 @@ export type TTestConfig = {
     target: 'SSR' | 'SSR-client' | 'SSR-server' | 'custom'
   }
   result: {
+    build?: {
+      'files-manifest'?: {
+        path: string
+        content: any
+      }
+    }
     config?: any
     export_config?: {
       path: string
@@ -175,6 +181,14 @@ async function resolveMessageKey(
           }
         }
         break
+      case 'build':
+        const filesManifest = result.build['files-manifest']
+        if (filesManifest) {
+          expect(existsSync(filesManifest.path)).toBeTruthy()
+          expect(requireFromPath(filesManifest.path)).toMatchObject(filesManifest.content)
+        }
+        childProcess.send({ messageKey: 'exit' })
+        return true
       case 'e2e':
         try {
           const { url, texts, debug: e2eDebug, action } = result.e2e

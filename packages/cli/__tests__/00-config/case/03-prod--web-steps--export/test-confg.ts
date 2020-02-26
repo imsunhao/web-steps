@@ -28,14 +28,6 @@ const testConfig: TTestConfig = {
               }
             }
           }
-        },
-        setting: {
-          entry:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/03-prod--web-steps--export/config.ts',
-          output:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/03-prod--web-steps--export/temp',
-          cache:
-            '/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/03-prod--web-steps--export/.web-steps_cache'
         }
       }
     }

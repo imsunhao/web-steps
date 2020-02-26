@@ -5,6 +5,10 @@ import getServerConfig from './config/webpack-server'
 
 const getConfig: GetUserConfig = function({ resolve }) {
   return {
+    public: {
+      path: resolve('./public'),
+      filters: [/.txt$/]
+    },
     src: {
       SSR: {
         base: { webpack: getBaseConfig },

@@ -5,8 +5,11 @@ import { SSRMessageBus } from '@types'
 const major = 'compiler'
 
 export let log: Log
-export async function start(payload?: CompilerConfig, opts: { isConfig?: boolean; messageBus?: SSRMessageBus } = {}) {
-  const { isConfig } = opts
+export async function start(
+  payload?: CompilerConfig,
+  opts: { notTestExit?: boolean; messageBus?: SSRMessageBus } = {}
+) {
+  const { notTestExit } = opts
   async function main() {
     const env = getEnv({ env: payload ? payload.env : __NODE_ENV__ })
     log = new Log(major, { env })
@@ -14,7 +17,7 @@ export async function start(payload?: CompilerConfig, opts: { isConfig?: boolean
 
     const result = await require(`./${major}-${env}`).start(webpackConfigs, opts)
 
-    if (!isConfig && __WEB_STEPS__ && __TEST__) {
+    if (!notTestExit && __WEB_STEPS__ && __TEST__) {
       processSend(process, {
         messageKey: 'exit',
         payload: {

@@ -1,5 +1,6 @@
-import { Args, TStartConfig } from '@types'
-import { config } from '@web-steps/config'
+import { Stats } from 'webpack'
+import { Args, TStartConfig, TFILES_MANIFEST, ProcessMessage } from '@types'
+import { config, TConfig } from '@web-steps/config'
 import { log } from './'
 import { start as compilerStart } from '@web-steps/compiler'
 import { sync as rmrfSync } from 'rimraf'
@@ -9,7 +10,10 @@ import {
   ensureDirectoryExistence,
   requireSourceString,
   convertObjToSource,
-  getResolve
+  getResolve,
+  getDirFilesPath,
+  processSend,
+  processOnMessage
 } from 'packages/shared'
 import { writeFileSync, existsSync } from 'fs'
 import path from 'path'
@@ -28,21 +32,79 @@ export function start(args: Args) {
       }
     })
 
+    const rootDir = config.args.rootDir
+    const relative = (to: string) => {
+      return path.relative(rootDir, to)
+    }
+
+    const FILES_MANIFEST: TFILES_MANIFEST = {
+      base: [relative(config.userConfigPath.startConfig)],
+      dll: [],
+      SSR: [],
+      template: [],
+      public: [],
+      'common-asset': []
+    }
+
+    const DLL: string[] = config.config.src.DLL as any
+    if (DLL) {
+      FILES_MANIFEST.dll = DLL.map(dll => relative(path.resolve(config.setting.output, dll)))
+    }
+
+    const getStaticFilePath = (key: keyof TConfig & keyof TFILES_MANIFEST) => {
+      const dirOption = config.config[key]
+      const dirPath = dirOption.path
+      const filePathList = getDirFilesPath(dirPath, dirOption)
+      if (filePathList) {
+        FILES_MANIFEST[key] = filePathList.map(filePath => relative(filePath))
+      } else {
+        log.warn(`[Static Dir] 未找到 ${key}`)
+      }
+    }
+
+    getStaticFilePath('public')
+    getStaticFilePath('common-asset')
+
     if (args.target === 'SSR') {
       const SSR = config.config.src.SSR
-      await exportSSRStartConfig()
-      await compilerStart({
-        webpackConfigs: [SSR.client.webpack, SSR.server.webpack],
-        env
+      await exportSSRStartConfig(DLL)
+      const statsList: Stats[] = await compilerStart(
+        {
+          webpackConfigs: [SSR.client.webpack, SSR.server.webpack],
+          env
+        },
+        { notTestExit: true }
+      )
+
+      const templatePath = SSR.server.render.templatePath
+      if (templatePath) {
+        FILES_MANIFEST.template.push(relative(templatePath))
+      }
+
+      statsList.forEach(stats => {
+        FILES_MANIFEST.SSR = FILES_MANIFEST.SSR.concat(
+          Object.keys(stats.compilation.assets).map(asset => relative(path.resolve(config.setting.output, asset)))
+        )
+      })
+    }
+
+    writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')
+
+    if (!process.send || !__TEST__) {
+    } else {
+      processSend(process, { messageKey: 'build' })
+      processOnMessage(process, (payload: ProcessMessage) => {
+        log.debug(log.packagePrefix, 'process', payload.messageKey)
+        if (payload.messageKey === 'exit') {
+          process.exit(0)
+        }
       })
     }
   }
   main().catch(e => log.catchError(e))
 }
 
-async function exportSSRStartConfig() {
-  const DLL = config.config.src.DLL
-
+async function exportSSRStartConfig(DLL: any) {
   const server = cloneDeep(config.config.src.SSR.server)
   if (existsSync(config.userConfigPath.lifeCycle)) {
     server.lifeCycle = requireSourceString(config.userConfigPath.lifeCycle) as any
@@ -83,7 +145,9 @@ async function exportSSRStartConfig() {
       }
     `
     try {
-      return require('prettier').format(code)
+      return require('prettier').format(code, {
+        parser: 'babylon'
+      })
     } catch (error) {
       return code
     }

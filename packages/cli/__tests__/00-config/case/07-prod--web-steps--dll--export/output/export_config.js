@@ -304,6 +304,18 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
   if (!this.config.rootDir) {
     this.config.rootDir = this.startupOptions.args.rootDir;
   }
+  if (!this.config["common-asset"]) {
+    this.config["common-asset"] = {
+      path: resolve("./common-asset")
+    };
+  }
+  if (!this.config.public) {
+    this.config.public = {
+      path: resolve("./public")
+    };
+  }
+  if (!this.config.injectContext)
+    this.config.injectContext = resolve("./inject-context.js");
   if (this.config.customBuild) {
     this.config.customBuild = this.config.customBuild.map(webpackConfig => {
       return webpackConfig instanceof Function

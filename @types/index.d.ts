@@ -38,6 +38,8 @@ declare namespace WebSteps {
     server: any
     DLL: TDLL
   }
+
+  type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'common-asset' | 'template', string[]>
 }
 
 export = WebSteps

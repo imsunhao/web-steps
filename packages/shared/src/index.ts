@@ -37,7 +37,7 @@ export class Log {
   }
 
   warn(...args: any[]) {
-    console.warn.apply(undefined, args)
+    console.log.apply(undefined, [this.packagePrefix, 'warning', ...args])
   }
 
   error(...args: any[]) {

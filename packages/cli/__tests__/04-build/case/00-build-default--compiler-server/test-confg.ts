@@ -1,6 +1,6 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
-const debug = false
+const debug = true
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
@@ -22,6 +22,18 @@ const testConfig: TTestConfig = {
     cache: {
       base: resolve(__dirname, './node_modules/.web-steps_cache/config.js'),
       SSR: resolve(__dirname, './node_modules/.web-steps_cache/life-cycle.js')
+    },
+    build: {
+      'files-manifest': {
+        path: resolve(__dirname, './dist/web-steps/files-manifest.json'),
+        content: {
+          base: ['dist/web-steps/start-config.js'],
+          dll: [],
+          template: ['index.template.html'],
+          public: ['public/text.txt'],
+          'common-asset': []
+        }
+      }
     }
   },
   close: true

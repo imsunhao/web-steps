@@ -64,6 +64,7 @@ export class Config {
       config: this.resolve(this.setting.cache, 'config.js'),
       lifeCycle: this.resolve(this.setting.cache, 'life-cycle.js'),
       DLLManifest: this.resolve(this.setting.cache, 'vue-ssr-dll-manifest.json'),
+      FILESManifest: this.resolve(this.setting.output, 'files-manifest.json'),
       startConfig: this.resolve(this.setting.output, 'start-config.js')
     }
   }
@@ -87,7 +88,7 @@ export class Config {
           webpackConfigs: [defaultConfigWebpackConfig],
           env: 'production'
         },
-        { isConfig: true }
+        { notTestExit: true }
       )
     } else if (payload.target === 'dll') {
       const VUE_SSR_DLL_MANIFEST: any = {
@@ -123,7 +124,7 @@ export class Config {
             webpackConfigs: [defaultDllConfigWebpackConfig],
             env: 'production'
           },
-          { isConfig: true }
+          { notTestExit: true }
         )
         const stats = statsList[0]
         VUE_SSR_DLL_MANIFEST.all = VUE_SSR_DLL_MANIFEST.all.concat(Object.keys(stats.compilation.assets))
@@ -138,7 +139,7 @@ export class Config {
             webpackConfigs: [defaultLifeCycleConfigWebpackConfig],
             env: 'production'
           },
-          { isConfig: true }
+          { notTestExit: true }
         )
       } else {
         skipLifeCycle = true
@@ -209,6 +210,20 @@ export class Config {
     if (!this.config.rootDir) {
       this.config.rootDir = this.startupOptions.args.rootDir
     }
+
+    if (!this.config['common-asset']) {
+      this.config['common-asset'] = {
+        path: resolve('./common-asset')
+      }
+    }
+
+    if (!this.config.public) {
+      this.config.public = {
+        path: resolve('./public')
+      }
+    }
+
+    if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.js')
 
     if (this.config.customBuild) {
       this.config.customBuild = this.config.customBuild.map(webpackConfig => {
@@ -406,7 +421,9 @@ export class Config {
       module.exports = { config: context.config, args, setting }
     `
     try {
-      return require('prettier').format(code)
+      return require('prettier').format(code, {
+        parser: 'babylon'
+      })
     } catch (error) {
       return code
     }
