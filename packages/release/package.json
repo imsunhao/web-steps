@@ -1,0 +1,27 @@
+{
+  "name": "@web-steps/release",
+  "version": "0.0.1-alpha.6",
+  "description": "@web-steps/release",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "types": "dist/release.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsunhao/utils.git"
+  },
+  "keywords": [],
+  "author": "imsunhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imsunhao/utils/issues"
+  },
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/release#readme",
+  "dependencies": {
+    "enquirer": "^2.3.4",
+    "execa": "^4.0.0",
+    "semver": "^7.1.3"
+  }
+}

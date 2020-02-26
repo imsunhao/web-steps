@@ -39,6 +39,18 @@ export class Args {
    */
   forceCompilerConfig: boolean
 
+  /// release
+
+  /**
+   * 跳过 test检查
+   */
+  skipTests: boolean
+
+  /**
+   * 跳过 打包
+   */
+  skipBuild: boolean
+
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2)))
 
