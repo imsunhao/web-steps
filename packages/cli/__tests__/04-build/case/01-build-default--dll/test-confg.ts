@@ -25,7 +25,7 @@ const testConfig: TTestConfig = {
       SSR: resolve(__dirname, './node_modules/.web-steps_cache/life-cycle.js')
     },
     build: {
-      'files-manifest': {
+      filesManifest: {
         path: resolve(__dirname, './dist/web-steps/files-manifest.json'),
         content: {
           base: ['dist/web-steps/start-config.js']

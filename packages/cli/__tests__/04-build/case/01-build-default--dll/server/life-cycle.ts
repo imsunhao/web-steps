@@ -6,8 +6,8 @@ import { APITest } from '../@types'
 const getServerConfig: GetUserServerConfig = () => {
   return {
     beforeRender(req, res, next) {
-      console.log('[beforeRender] 1', req.url, req.method, /^\/private/.test(req.url))
-      if (/^\/private/.test(req.url)) {
+      console.log('[beforeRender] 1', req.url, req.method, req.url.startsWith("/private"))
+      if (req.url.startsWith("/private")) {
         next()
       }
     },

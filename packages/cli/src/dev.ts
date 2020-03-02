@@ -35,7 +35,7 @@ export function start(args: Args) {
       messageBus.emit('config', { config })
     }
 
-    if (!process.send || !__TEST__) {
+    if (!('send' in process) || !__TEST__) {
     } else {
       processOnMessage(process, (payload: ProcessMessage) => {
         log.debug(log.packagePrefix, 'process', payload.messageKey)
@@ -47,5 +47,5 @@ export function start(args: Args) {
 
     await new Promise(r => {})
   }
-  main().catch(log.catchError)
+  main().catch(e => log.catchError(e))
 }

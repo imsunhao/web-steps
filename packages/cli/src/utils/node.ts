@@ -13,7 +13,7 @@ export class Execa {
         opts.stdio[1] = 'ignore'
         opts.stdio[2] = 'ignore'
       } else {
-        ;(opts as any).stdio = 'ignore'
+        (opts as any).stdio = 'ignore'
       }
     }
 

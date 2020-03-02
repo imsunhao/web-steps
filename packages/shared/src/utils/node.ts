@@ -2,7 +2,7 @@ import { ProcessMessage } from '@types'
 import { ProcessMessageMap } from '../type'
 import { ExecaChildProcess } from 'execa'
 
-export function processOnMessage(p: NodeJS.Process | ExecaChildProcess<string>, fn: (p: ProcessMessage) => void) {
+export function processOnMessage(p: NodeJS.Process | ExecaChildProcess<string>, fn: (p: ProcessMessage) => any) {
   p.on('message', (payload: any) => {
     console.debug('[onMessage]', 'messageKey =', payload.messageKey)
     fn(payload)
@@ -24,7 +24,7 @@ export function processSend(
 
 export function getProcessMessageMap() {
   let resolve: any
-  const p = new Promise<ProcessMessageMap>((r, j) => {
+  const p = new Promise<ProcessMessageMap>((r) => {
     resolve = r
   })
   const messageMap: ProcessMessageMap = {} as any

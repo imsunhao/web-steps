@@ -10,14 +10,6 @@ export function mergeBase(src: { [x: string]: any }, target: { [x: string]: any 
   return src
 }
 
-export function merge(...args: any[]) {
-  return args.reduce((t, o) => {
-    if (!o) return t
-    if (t === o) return t
-    return mergeBase(t, cloneDeep(o))
-  }, args[0])
-}
-
 export function cloneDeep<T>(data: T): T {
   if (typeof data !== 'object') return data
   if (data instanceof Array) {
@@ -28,7 +20,15 @@ export function cloneDeep<T>(data: T): T {
   return Object.keys(data).reduce((t: any, o) => {
     t[o] = cloneDeep((data as any)[o])
     return t
-  }, {}) as any
+  }, {})
+}
+
+export function merge(...args: any[]) {
+  return args.reduce((t, o) => {
+    if (!o) return t
+    if (t === o) return t
+    return mergeBase(t, cloneDeep(o))
+  }, args[0])
 }
 
 export function has(obj: any, paths: string[] | string): boolean {

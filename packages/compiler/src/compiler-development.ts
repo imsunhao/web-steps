@@ -14,14 +14,11 @@ function compiling(webpackConfig: webpack.Configuration, opts: { messageBus?: SS
   }
 }
 
-export async function start(webpackConfigs: webpack.Configuration[], opts: { messageBus?: SSRMessageBus } = {}) {
+export function start(webpackConfigs: webpack.Configuration[], opts: { messageBus?: SSRMessageBus } = {}) {
   log.info('[compiler] development mode')
-  async function main() {
-    opts.messageBus.emit('memory-fs', { mfs })
-    for (let i = 0; i < webpackConfigs.length; i++) {
-      const webpackConfig = webpackConfigs[i]
-      compiling(webpackConfig, opts)
-    }
+  opts.messageBus.emit('memory-fs', { mfs })
+  for (let i = 0; i < webpackConfigs.length; i++) {
+    const webpackConfig = webpackConfigs[i]
+    compiling(webpackConfig, opts)
   }
-  await main().catch(e => log.catchError(e))
 }

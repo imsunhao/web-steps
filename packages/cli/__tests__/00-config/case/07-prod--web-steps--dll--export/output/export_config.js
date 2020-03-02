@@ -9,7 +9,7 @@ const requireSourceString = function requireSourceString(
 ) {
   if (opts.fs.existsSync(path)) {
     let source = opts.fs.readFileSync(path, "utf-8");
-    if (/\.json$/.test(path)) {
+    if (path.endsWith(".json")) {
       source = "module.exports = " + source;
     }
     return source + "";
@@ -20,7 +20,7 @@ const requireFromPath = function requireFromPath(
   opts = { fs: require("fs") }
 ) {
   const source = requireSourceString(path, opts);
-  if (/\.html$/.test(path)) {
+  if (path.endsWith(".html")) {
     return source;
   }
   try {
@@ -457,7 +457,7 @@ const stuffServer = function stuffServer() {
   SSR.server.render = merge(render || {}, SSR.server.render);
 };
 context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleConfigWebpackConfig() {
-  let lifeCycle = this.config.src.SSR.server.lifeCycle;
+  const lifeCycle = this.config.src.SSR.server.lifeCycle;
   if (
     !fs__default.existsSync(lifeCycle) &&
     !fs__default.existsSync(lifeCycle + ".ts") &&

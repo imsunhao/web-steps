@@ -55,7 +55,7 @@ export class Config {
         startupOptions[key] = bind(this[key])
         return startupOptions
       },
-      (startupOptions as any) as StartupOptions
+      startupOptions as any
     )
   }
 
@@ -74,7 +74,7 @@ export class Config {
   private userLifeCycleConstructor: (inject: TOptionsInject) => Required<ServerLifeCycle>
 
   private getDefaultLifeCycleConfigWebpackConfig() {
-    let lifeCycle: string = this.config.src.SSR.server.lifeCycle as any
+    const lifeCycle: string = this.config.src.SSR.server.lifeCycle as any
     if (!fs.existsSync(lifeCycle) && !fs.existsSync(lifeCycle + '.ts') && !fs.existsSync(lifeCycle + '.js')) return
     return getConfigWebpackConfig('life-cycle', lifeCycle, this.setting.cache)
   }
@@ -463,24 +463,21 @@ export class Config {
     return await main().catch(e => log.catchError(e))
   }
 
-  async exportStatic() {
+  exportStatic() {
     if (!this.isInit) throw log.error('Config need init first. try await config.init()')
-    const main = async () => {
-      const exportPath = path.resolve(this.setting.output, 'export_config.js')
-      ensureDirectoryExistence(exportPath)
-      if (existsSync(exportPath)) unlinkSync(exportPath)
-      writeFileSync(exportPath, this.getExportConfig(), { encoding: 'utf-8', flag: 'w' })
-      log.success('export config = ' + exportPath)
-      if (__TEST__) {
-        processSend(process, { messageKey: 'export_config' })
-      }
+    const exportPath = path.resolve(this.setting.output, 'export_config.js')
+    ensureDirectoryExistence(exportPath)
+    if (existsSync(exportPath)) unlinkSync(exportPath)
+    writeFileSync(exportPath, this.getExportConfig(), { encoding: 'utf-8', flag: 'w' })
+    log.success('export config = ' + exportPath)
+    if (__TEST__) {
+      processSend(process, { messageKey: 'EXPORT_CONFIG' })
     }
-    return await main().catch(err => log.catchError(err))
   }
 }
 
 export const config = new Config()
 
-export let defaultTemplatePath = ''
+export const defaultTemplatePath = ''
 
 export * from './type'

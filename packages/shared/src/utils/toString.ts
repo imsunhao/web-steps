@@ -14,8 +14,8 @@ export function convertObjToSource(obj: any) {
     return 'undefined'
   } else if (sourceString === '[object Object]') {
     sourceString = '{'
-    for (let k in obj) {
-      if (!obj.hasOwnProperty(k)) continue
+    for (const k in obj) {
+      if (!Object.prototype.hasOwnProperty.call(obj, k)) continue
       sourceString += `\n  "${k}": ${convertObjToSource(obj[k])},`
     }
     sourceString += '\n}'

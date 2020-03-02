@@ -10,7 +10,7 @@ const testConfig: TTestConfig = {
     argv: ['export']
   },
   result: {
-    export_config: {
+    EXPORT_CONFIG: {
       path: resolve(__dirname, './output/export_config.js'),
       result: {
         config: {

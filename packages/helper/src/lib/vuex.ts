@@ -3,7 +3,7 @@ import { Module, Store, MutationTree, Commit, Dispatch } from 'vuex'
 export type VUEX_DEVTOOL = ((options: VuexDevtoolOptions) => boolean) | boolean
 export type VuexDevtoolOptions = { type: 'mutation' | 'action'; paths: string; payload: any }
 
-let log = ({ type, paths, payload }: VuexDevtoolOptions) => {
+const log = ({ type, paths, payload }: VuexDevtoolOptions) => {
   if (!__IS_SERVER__ && !__PRODUCTION__) {
     const devtool = (window as any).VUEX_DEVTOOL
     if (devtool) {
@@ -29,6 +29,29 @@ type FixActionContext<S, RS, G, RG> = {
 
 function isEmpty(list: any) {
   return !(list && list.length)
+}
+
+function isStore(context: any) {
+  return 'strict' in context
+}
+
+function checkNamespace(namespace: string[], args: any[]) {
+  if (namespace) {
+    if (typeof namespace === 'string') {
+      args.unshift(namespace)
+    } else {
+      namespace = [...namespace]
+      namespace.reverse().forEach(key => {
+        args.unshift(key)
+      })
+    }
+  }
+}
+
+function checkStore(context: any, { namespace, args }: any) {
+  if (isStore(context)) {
+    checkNamespace(namespace, args)
+  }
 }
 
 /**
@@ -103,29 +126,6 @@ export function unregisterModules(store: Store<any>, configList: RegistrationCon
   configList.forEach(item => {
     unregisterModule(store, item.namespace)
   })
-}
-
-function isStore(context: any) {
-  return 'strict' in context
-}
-
-function checkStore(context: any, { namespace, args }: any) {
-  if (isStore(context)) {
-    checkNamespace(namespace, args)
-  }
-}
-
-function checkNamespace(namespace: string[], args: any[]) {
-  if (namespace) {
-    if (typeof namespace === 'string') {
-      args.unshift(namespace)
-    } else {
-      namespace = [...namespace]
-      namespace.reverse().forEach(key => {
-        args.unshift(key)
-      })
-    }
-  }
 }
 
 export class VuexStoreHelper<GlobalStates, GlobalGetters> {

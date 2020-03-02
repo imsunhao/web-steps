@@ -20,7 +20,7 @@ const testConfig: TTestConfig = {
         '#get': 'true',
         '#post': 'true'
       },
-      async action({ text, click, page, show }) {
+      async action({ text, click, show }) {
         await click('#add')
         const count = await text('#count')
         if (show) console.log('#add', count)

@@ -7,11 +7,8 @@ const puppeteerOptions: puppeteer.LaunchOptions = process.env.CI
 puppeteerOptions.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 
 export async function setupPuppeteer() {
-  let browser: puppeteer.Browser
-  let page: puppeteer.Page
-
-  browser = await puppeteer.launch(puppeteerOptions)
-  page = await browser.newPage()
+  const browser = await puppeteer.launch(puppeteerOptions)
+  const page = await browser.newPage()
 
   page.on('console', e => {
     if (e.type() === 'error') {
@@ -63,16 +60,20 @@ export async function setupPuppeteer() {
   }
 
   async function setValue(selector: string, value: string) {
-    const el = (await page.$(selector))!
-    await el.evaluate((node: HTMLInputElement) => (node.value = ''))
-    await el.type(value)
+    const el = await page.$(selector)
+    if (el) {
+      await el.evaluate((node: HTMLInputElement) => (node.value = ''))
+      await el.type(value)
+    }
   }
 
   async function enterValue(selector: string, value: string) {
-    const el = (await page.$(selector))!
-    await el.evaluate((node: HTMLInputElement) => (node.value = ''))
-    await el.type(value)
-    await el.press('Enter')
+    const el = await page.$(selector)
+    if (el) {
+      await el.evaluate((node: HTMLInputElement) => (node.value = ''))
+      await el.type(value)
+      await el.press('Enter')
+    }
   }
 
   async function clearValue(selector: string) {

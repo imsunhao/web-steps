@@ -1,6 +1,6 @@
 import { TGetWebpackConfig } from '@web-steps/config'
 
-const getConfig: TGetWebpackConfig = function({ resolve }) {
+const getConfig: TGetWebpackConfig = function() {
   return {
     optimization: {
       minimize: false

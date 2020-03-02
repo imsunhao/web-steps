@@ -2,54 +2,16 @@ import { createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import { VuexStoreHelper } from '../src'
 import { merge } from 'lodash'
-/**
- * Test Store
- */
-namespace TestStore {
-  /**
-   * vuex state
-   */
-  export interface state {
-    /**
-     * 单元测试使用
-     */
-    test: {
-      test: string
-      testNumber: number
-      deepTest: {
-        test1: string
-        test2: number
-      }
-    }
-  }
+import TestStore from './type'
 
-  /**
-   * vuex getters
-   */
-  export interface getters {
-    globleValue: number
-    /**
-     * 单元测试使用
-     */
-    test?: {
-      getTest: string
-      getTestNumber: number
-      deepTest?: {
-        getTest: string
-        getTestNumber: number
-      }
-    }
-  }
-}
-
-const { makeWrapper } = new VuexStoreHelper<TestStore.state, TestStore.getters>()
+const { makeWrapper } = new VuexStoreHelper<TestStore.State, TestStore.Getters>()
 const DEFAULT_TEST_STRING = 'DEFAULT_TEST_STRING'
 const DEFAULT_TEST_NUMBER = 1
 
 describe('Vux base-utils.spec', () => {
   const localVue = createLocalVue()
 
-  function getTestState(): TestStore.state['test'] {
+  function getTestState(): TestStore.State['test'] {
     return {
       test: DEFAULT_TEST_STRING,
       testNumber: 0,
@@ -78,12 +40,12 @@ describe('Vux base-utils.spec', () => {
   describe('全局测试', () => {
     const globalHelper = makeWrapper()
     const mutations = globalHelper.makeMutations({
-      SET_set: (state, test: string) => {
+      SET_SET: (state, test: string) => {
         state.test.test = test
       }
     })
     const getters = globalHelper.makeGetters({
-      globleValue(state, getters, rootState, rootGetters) {
+      globleValue() {
         return DEFAULT_TEST_NUMBER
       }
     })
@@ -92,18 +54,18 @@ describe('Vux base-utils.spec', () => {
 
     it('getGetter', () => {
       const getGetter = globalHelper.createGetGetter()
-      const store = getStore<TestStore.state>({ mutations, getters })
+      const store = getStore<TestStore.State>({ mutations, getters })
       const value = getGetter(store, 'globleValue')
       expect(value).toEqual(DEFAULT_TEST_NUMBER)
     })
 
     it('commit getState', () => {
-      const store = getStore<TestStore.state>({ mutations })
+      const store = getStore<TestStore.State>({ mutations })
       const testString = 'hi'
 
       expect(store.state.test.test).toEqual(DEFAULT_TEST_STRING)
 
-      commit(store, 'SET_set', testString)
+      commit(store, 'SET_SET', testString)
 
       expect(store.state.test.test).toEqual(testString)
 
@@ -111,37 +73,37 @@ describe('Vux base-utils.spec', () => {
     })
 
     const actions = globalHelper.makeActions({
-      action_set(ctx, { test }: { test: string }) {
+      ACTION_SET(ctx, { test }: { test: string }) {
         ctx.getters.globleValue
-        commit(ctx, 'SET_set', test)
+        commit(ctx, 'SET_SET', test)
       },
-      action_test_getters(ctx) {
+      ACTION_TEST_GETTERS(ctx) {
         expect(ctx.getters.globleValue).toEqual(DEFAULT_TEST_NUMBER)
       }
     })
     const dispatch = globalHelper.createDispatch<typeof actions>()
 
     it('dispatch', () => {
-      const store = getStore<TestStore.state>({ mutations, getters, actions })
+      const store = getStore<TestStore.State>({ mutations, getters, actions })
       const testString = 'hi'
 
       expect(store.state.test.test).toEqual(DEFAULT_TEST_STRING)
 
-      dispatch(store, 'action_set', { test: testString })
+      dispatch(store, 'ACTION_SET', { test: testString })
 
-      dispatch(store, 'action_test_getters', undefined)
+      dispatch(store, 'ACTION_TEST_GETTERS', undefined)
 
       expect(getState(store, 'test', 'test')).toEqual(testString)
     })
   })
 
-  type VUEX_NS_1 = typeof VUEX_NS_1
   const VUEX_NS_1 = 'test'
+  type VUEX_NS_1 = typeof VUEX_NS_1
 
   describe('单模块测试', () => {
-    const testHelper = makeWrapper<TestStore.state[VUEX_NS_1], TestStore.getters[VUEX_NS_1]>(VUEX_NS_1)
+    const testHelper = makeWrapper<TestStore.State[VUEX_NS_1], TestStore.Getters[VUEX_NS_1]>(VUEX_NS_1)
     const mutations = testHelper.makeMutations({
-      SET_set: (state, test: string) => {
+      SET_SET: (state, test: string) => {
         state.test = test
       }
     })
@@ -149,7 +111,7 @@ describe('Vux base-utils.spec', () => {
     const commit = testHelper.createCommit<typeof mutations>()
 
     it('commit getState', () => {
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: { test: { namespaced: true, state: getTestState(), mutations } }
       })
@@ -158,7 +120,7 @@ describe('Vux base-utils.spec', () => {
       expect(store.state.test.test).toEqual(DEFAULT_TEST_STRING)
       expect(store.state.test.test).toEqual(DEFAULT_TEST_STRING)
 
-      commit(store, 'SET_set', testString)
+      commit(store, 'SET_SET', testString)
 
       expect(store.state.test.test).toEqual(testString)
 
@@ -166,15 +128,15 @@ describe('Vux base-utils.spec', () => {
     })
 
     const getters = testHelper.makeGetters({
-      getTest(state, getters, rootState, rootGetters) {
+      getTest() {
         return DEFAULT_TEST_STRING
       },
-      getTestNumber(state, getters, rootState, rootGetters) {
+      getTestNumber() {
         return DEFAULT_TEST_NUMBER
       }
     })
     it('getGetter', () => {
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: { test: { namespaced: true, state: getTestState(), mutations, getters } }
       })
@@ -184,14 +146,14 @@ describe('Vux base-utils.spec', () => {
     })
 
     const actions = testHelper.makeActions({
-      action_set(ctx, { test }: { test: string }) {
-        commit(ctx, 'SET_set', test)
+      ACTION_SET(ctx, { test }: { test: string }) {
+        commit(ctx, 'SET_SET', test)
       }
     })
     const dispatch = testHelper.createDispatch<typeof actions>()
 
     it('dispatch', () => {
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: { test: { namespaced: true, state: getTestState(), mutations, actions } }
       })
@@ -199,21 +161,22 @@ describe('Vux base-utils.spec', () => {
 
       expect(store.state.test.test).toEqual(DEFAULT_TEST_STRING)
 
-      dispatch(store, 'action_set', { test: testString })
+      dispatch(store, 'ACTION_SET', { test: testString })
 
       expect(getState(store, 'test')).toEqual(testString)
     })
   })
 
-  type VUEX_NS_1_1 = typeof VUEX_NS_1_1
   const VUEX_NS_1_1 = 'deepTest'
+  type VUEX_NS_1_1 = typeof VUEX_NS_1_1
+
   describe('深模块(2层)测试', () => {
-    const testHelper = makeWrapper<TestStore.state[VUEX_NS_1][VUEX_NS_1_1], TestStore.getters[VUEX_NS_1][VUEX_NS_1_1]>([
+    const testHelper = makeWrapper<TestStore.State[VUEX_NS_1][VUEX_NS_1_1], TestStore.Getters[VUEX_NS_1][VUEX_NS_1_1]>([
       VUEX_NS_1,
       VUEX_NS_1_1
     ])
     const mutations = testHelper.makeMutations({
-      SET_set: (state, test: string) => {
+      SET_SET: (state, test: string) => {
         state.test1 = test
       }
     })
@@ -221,7 +184,7 @@ describe('Vux base-utils.spec', () => {
     const commit = testHelper.createCommit<typeof mutations>()
 
     it('commit getState', () => {
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: {
           test: {
@@ -235,7 +198,7 @@ describe('Vux base-utils.spec', () => {
 
       expect(store.state.test.deepTest.test1).toEqual(DEFAULT_TEST_STRING)
 
-      commit(store, 'SET_set', testString)
+      commit(store, 'SET_SET', testString)
 
       expect(store.state.test.deepTest.test1).toEqual(testString)
 
@@ -244,14 +207,14 @@ describe('Vux base-utils.spec', () => {
 
     it('getGetter', () => {
       const getters = testHelper.makeGetters({
-        getTest(state, getters, rootState, rootGetters) {
+        getTest() {
           return DEFAULT_TEST_STRING
         },
-        getTestNumber(state, getters, rootState, rootGetters) {
+        getTestNumber() {
           return DEFAULT_TEST_NUMBER
         }
       })
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: {
           test: {
@@ -267,14 +230,14 @@ describe('Vux base-utils.spec', () => {
     })
 
     const actions = testHelper.makeActions({
-      action_set(ctx, { test }: { test: string }) {
-        commit(ctx, 'SET_set', test)
+      ACTION_SET(ctx, { test }: { test: string }) {
+        commit(ctx, 'SET_SET', test)
       }
     })
     const dispatch = testHelper.createDispatch<typeof actions>()
 
     it('dispatch', () => {
-      const store = getStore<TestStore.state>({
+      const store = getStore<TestStore.State>({
         state: {},
         modules: {
           test: {
@@ -288,7 +251,7 @@ describe('Vux base-utils.spec', () => {
 
       expect(store.state.test.deepTest.test1).toEqual(DEFAULT_TEST_STRING)
 
-      dispatch(store, 'action_set', { test: testString })
+      dispatch(store, 'ACTION_SET', { test: testString })
 
       expect(getState(store, 'test1')).toEqual(testString)
     })
@@ -300,7 +263,7 @@ describe('Vux base-utils.spec', () => {
       globleValue: number
     }
     const localGetters = globalHelper.makeGetters<testLocalGetters>({
-      globleValue(state, getters, rootState, rootGetters) {
+      globleValue() {
         return DEFAULT_TEST_NUMBER
       }
     })
@@ -310,7 +273,7 @@ describe('Vux base-utils.spec', () => {
 
     it('getGetter', () => {
       const getGetter = globalHelper.createGetGetter()
-      const store = getStore<TestStore.state>({ getters })
+      const store = getStore<TestStore.State>({ getters })
       const value = getGetter(store, 'globleValue')
       expect(value).toEqual(DEFAULT_TEST_NUMBER)
     })

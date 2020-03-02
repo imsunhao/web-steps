@@ -3,7 +3,7 @@ import getBaseConfig from './config/webpack-base'
 import getClientConfig from './config/webpack-client'
 import getServerConfig from './config/webpack-server'
 
-const getConfig: GetUserConfig = function({ resolve }) {
+const getConfig: GetUserConfig = function() {
   return {
     src: {
       SSR: {

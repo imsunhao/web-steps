@@ -63,7 +63,7 @@ function createConfig(format, output, plugins = []) {
   // we only need to check TS and generate declarations once for each build.
   // it also seems to run into weird issues when checking multiple times
   // during a single build.
-  hasTSChecked = true
+  hasTSChecked = false
 
   const srcDir = resolve('src')
   const files = fs

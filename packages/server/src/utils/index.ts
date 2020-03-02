@@ -29,6 +29,148 @@ export class APP implements TAPP {
   }
 }
 
+function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
+  const serverStatics = () => {
+    if (statics === false) return
+    else if (!statics) {
+      statics = {
+        ['/' + basename(output)]: {
+          path: output
+        }
+      }
+    }
+
+    Object.keys(statics).forEach(eStaticKey => {
+      const eStatic = (statics as any)[eStaticKey]
+      log.info('[statics]', eStaticKey, eStatic.path, eStatic.maxAge)
+      APP.use(
+        eStaticKey,
+        express.static(eStatic.path, {
+          maxAge: eStatic.maxAge || 0
+        })
+      )
+    })
+  }
+
+  serverStatics()
+}
+
+const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
+  const port = DEFAULT_PORT
+  const WAIT_TIME = 1000
+  const MAX = 60
+  let index = 0
+  const SERVER = http.createServer(APP.express)
+  const start = () => {
+    SERVER.listen(port)
+  }
+
+  SERVER.on('error', function(error) {
+    if (index++ < MAX) {
+      log.fatal('SERVER_START:', error.message, `\n\t重试中, 当前次数: ${index}`)
+      setTimeout(() => {
+        start()
+      }, WAIT_TIME)
+    } else {
+      process.exit(1)
+    }
+  })
+
+  SERVER.on('listening', function() {
+    log.info(`server started at ${port}`)
+  })
+
+  start()
+
+  return SERVER
+}
+
+const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res, next) {
+  res.send(html)
+}
+
+const createBundleRendererRenderToString: (
+  render: TRender,
+  DLL: TDLL
+) => RequiredServerLifeCycle['renderToString'] = function({ bundlePath, templatePath, clientManifestPath }, DLL) {
+  try {
+    const renderer = createBundleRenderer(bundlePath, {
+      inject: true,
+      template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      clientManifest: Service.getClientManifestAfterAddDll(requireFromPath(clientManifestPath), DLL)
+    })
+    if (__TEST__ && __WEB_STEPS__) {
+      processSend(process, { messageKey: 'e2e' })
+    }
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    return renderer.renderToString
+  } catch (error) {
+    const renderToString: any = (context: any, fn: any) => {
+      fn(undefined, '<h1>等待webpack中...</h1>')
+      return
+    }
+    return renderToString
+  }
+}
+
+export const noop: any = function() {}
+
+function getRenderContext(req: { url: any }, res: { locals: any }) {
+  const injectContext: TServerInjectContext = {}
+  const context: TServerContext = {
+    injectContext,
+    pageInfo: {
+      title: '',
+      keywords: '',
+      description: ''
+    },
+    url: req.url,
+    locals: res.locals,
+    nonce: '',
+    head: ''
+  }
+
+  if (!injectContext.CSP_DISABLED) {
+    const nonce = randomStringAsBase64Url(12)
+    context.nonce = nonce
+  }
+  return context
+}
+
+function getRequiredLifeCycle(
+  {
+    lifeCycle: {
+      beforeCreated,
+      creating,
+      beforeStart,
+      start,
+      beforeRender,
+      renderContext,
+      renderToString,
+      beforeRenderSend,
+      renderSend,
+      router
+    },
+    render
+  }: TServer<'finish'>,
+  DLL: TDLL
+): RequiredServerLifeCycle {
+  return {
+    beforeCreated: beforeCreated || noop,
+    creating: creating || serverCreating,
+    devMiddleware: noop,
+    beforeStart: beforeStart || noop,
+    start: start || serverStart,
+    beforeRender: beforeRender || noop,
+    renderContext: renderContext || noop,
+    renderToString: renderToString || createBundleRendererRenderToString(render, DLL),
+    beforeRenderSend: beforeRenderSend || noop,
+    renderSend: renderSend || serverRenderSend,
+    router: router || noop
+  }
+}
+
 export class Service {
   lifeCycle: RequiredServerLifeCycle
   server: TServer<'finish'>
@@ -120,146 +262,6 @@ export class Service {
   close() {
     this.compilersWatching.map(watching => watching.close())
     if (this.SERVER) this.SERVER.close()
-  }
-}
-
-function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish'>, { output }: TSetting) {
-  const serverStatics = () => {
-    if (statics === false) return
-    else if (!statics) {
-      statics = {
-        ['/' + basename(output)]: {
-          path: output
-        }
-      }
-    }
-
-    Object.keys(statics).forEach(eStaticKey => {
-      const eStatic = (statics as any)[eStaticKey]
-      log.info('[statics]', eStaticKey, eStatic.path, eStatic.maxAge)
-      APP.use(
-        eStaticKey,
-        express.static(eStatic.path, {
-          maxAge: eStatic.maxAge || 0
-        })
-      )
-    })
-  }
-
-  serverStatics()
-}
-
-const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
-  let port = DEFAULT_PORT
-  const WAIT_TIME = 1000
-  const MAX = 60
-  let index = 0
-  const SERVER = http.createServer(APP.express)
-  const start = () => {
-    SERVER.listen(port)
-  }
-
-  SERVER.on('error', function(error) {
-    if (index++ < MAX) {
-      log.fatal('SERVER_START:', error.message, `\n\t重试中, 当前次数: ${index}`)
-      setTimeout(() => {
-        start()
-      }, WAIT_TIME)
-    } else {
-      process.exit(1)
-    }
-  })
-
-  SERVER.on('listening', function() {
-    log.info(`server started at ${port}`)
-  })
-
-  start()
-
-  return SERVER
-}
-
-const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res, next) {
-  res.send(html)
-}
-
-const createBundleRendererRenderToString: (
-  render: TRender,
-  DLL: TDLL
-) => RequiredServerLifeCycle['renderToString'] = function({ bundlePath, templatePath, clientManifestPath }, DLL) {
-  try {
-    const renderer = createBundleRenderer(bundlePath, {
-      inject: true,
-      template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-      clientManifest: Service.getClientManifestAfterAddDll(requireFromPath(clientManifestPath), DLL)
-    })
-    if (__TEST__ && __WEB_STEPS__) {
-      processSend(process, { messageKey: 'e2e' })
-    }
-    return renderer.renderToString
-  } catch (error) {
-    const renderToString: any = (context: any, fn: any) => {
-      fn(undefined, '<h1>等待webpack中...</h1>')
-      return
-    }
-    return renderToString
-  }
-}
-
-export const noop: any = function() {}
-
-function getRenderContext(req: { url: any }, res: { locals: any }) {
-  const injectContext: TServerInjectContext = {}
-  const context: TServerContext = {
-    injectContext,
-    pageInfo: {
-      title: '',
-      keywords: '',
-      description: ''
-    },
-    url: req.url,
-    locals: res.locals,
-    nonce: '',
-    head: ''
-  }
-
-  if (!injectContext.CSP_DISABLED) {
-    const nonce = randomStringAsBase64Url(12)
-    context.nonce = nonce
-  }
-  return context
-}
-
-function getRequiredLifeCycle(
-  {
-    lifeCycle: {
-      beforeCreated,
-      creating,
-      beforeStart,
-      start,
-      beforeRender,
-      renderContext,
-      renderToString,
-      beforeRenderSend,
-      renderSend,
-      router
-    },
-    render
-  }: TServer<'finish'>,
-  DLL: TDLL
-): RequiredServerLifeCycle {
-  return {
-    beforeCreated: beforeCreated || noop,
-    creating: creating || serverCreating,
-    devMiddleware: noop,
-    beforeStart: beforeStart || noop,
-    start: start || serverStart,
-    beforeRender: beforeRender || noop,
-    renderContext: renderContext || noop,
-    renderToString: renderToString || createBundleRendererRenderToString(render, DLL),
-    beforeRenderSend: beforeRenderSend || noop,
-    renderSend: renderSend || serverRenderSend,
-    router: router || noop
   }
 }
 

@@ -1,11 +1,18 @@
 import { Args } from '@types'
 import path from 'path'
 import { log } from './'
-import { getSetting, requireFromPath } from 'packages/shared'
+import { requireFromPath } from 'packages/shared'
 import semver from 'semver'
 import { prompt } from 'enquirer'
 import execa from 'execa'
 import fs from 'fs'
+
+function updatePackage(pkgRoot: string, version: any) {
+  const pkgPath = path.resolve(pkgRoot, 'package.json')
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+  pkg.version = version
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
+}
 
 export function start(args: Args) {
   // const setting = getSetting(args)
@@ -96,11 +103,4 @@ export function start(args: Args) {
     await run('git', ['push'])
   }
   main().catch(e => log.catchError(e))
-}
-
-function updatePackage(pkgRoot: string, version: any) {
-  const pkgPath = path.resolve(pkgRoot, 'package.json')
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
-  pkg.version = version
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 }

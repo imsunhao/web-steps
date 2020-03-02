@@ -35,6 +35,7 @@ export class DevService extends Service {
       this.SSR.bundle = false
       this.SSR.clientManifest = false
       log.info(`updated by ${key} time: ${new Date().toLocaleString()}`)
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, requireOptions), {
         inject: true,
         template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
@@ -132,6 +133,7 @@ export class DevAPP extends APP {
 
   protected useInit(args: any) {
     const { express: app } = this
+    // eslint-disable-next-line prefer-spread
     app.use.apply(app, args)
     const statusInfo = this.statusInfoMap[this.status]
     if (!statusInfo) {
@@ -150,6 +152,7 @@ export class DevAPP extends APP {
     const { express: app } = this
     let statusInfo = this.statusInfoMap[this.status]
     const getLayer = () => {
+      // eslint-disable-next-line prefer-spread
       app.use.apply(app, args)
       return this.stack.pop()
     }

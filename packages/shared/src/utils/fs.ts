@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs'
 
 export function ensureDirectoryExistence(filePath: string) {
-  var dirname = path.dirname(filePath)
+  const dirname = path.dirname(filePath)
   if (fs.existsSync(dirname)) return true
   fs.mkdirSync(dirname, { recursive: true })
 }
@@ -44,7 +44,7 @@ export function getDirFilesPath(
     } else {
       const childrenFilePathList = getDirFilesPath(filePath, opts)
       if (childrenFilePathList) {
-        filePathList.push.apply(filePathList, childrenFilePathList)
+        Array.prototype.push.apply(filePathList, childrenFilePathList)
       }
     }
   })

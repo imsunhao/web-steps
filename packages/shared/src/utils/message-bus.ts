@@ -9,15 +9,15 @@ export class MessageBus<T extends Record<string, any>> {
       const list = this.map.get(key)
       list.push(fn)
     }
-    fn._message_bus_id = createUUID()
+    fn.MESSAGE_BUS_ID = createUUID()
   }
 
   off<K extends keyof T>(key: K, fn: T[K]) {
-    const id = fn._message_bus_id
+    const id = fn.MESSAGE_BUS_ID
     if (!id) return
     if (this.map.has(key)) {
       const list = this.map.get(key)
-      const pos = list.findIndex(f => f._message_bus_id === id)
+      const pos = list.findIndex(f => f.MESSAGE_BUS_ID === id)
       if (pos !== -1) {
         list.splice(id, 1)
       }
