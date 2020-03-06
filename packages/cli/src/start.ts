@@ -29,11 +29,15 @@ export function start(args: Args) {
     server.lifeCycle = requrieFromString(server.lifeCycle)(startupOptions)
   }
 
+  const { DLL, injectContext, port } = startConfig as any
+
   if (args.target === 'SSR') {
     serverStart({
       server,
       setting,
-      dll: startConfig.DLL,
+      dll: DLL,
+      injectContext,
+      port,
       env: args.env
     })
   }

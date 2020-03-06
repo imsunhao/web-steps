@@ -1,6 +1,6 @@
 import { getInitChildProcessConfig, getProcessMessageMap } from 'packages/shared'
 import { log } from '..'
-import { TServer, TSetting, TDLL } from '@web-steps/config'
+import { TServer } from '@web-steps/config'
 
 // eslint-disable-next-line prefer-const
 let { processMessageMap, localArgs } = getInitChildProcessConfig()
@@ -23,20 +23,24 @@ export class Args {
 export const args = new Args()
 
 export async function getInitConfig() {
-  let server: TServer<'finish'>
-  let setting: TSetting
-  let dll: TDLL
   try {
     processMessageMap = await getProcessMessageMap()
-    server = processMessageMap.config.src.SSR.server
-    setting = processMessageMap.setting
-    dll = processMessageMap.config.src.DLL
+    const server: TServer<'finish'> = processMessageMap.config.src.SSR.server
+    const setting = processMessageMap.setting
+    const dll = processMessageMap.config.src.DLL
+
+    // TODO 这俩应该是 env环境变量 中 获取
+    const injectContext = processMessageMap.config.injectContext
+    const port = processMessageMap.config.port
+
+    return {
+      server,
+      setting,
+      dll,
+      injectContext,
+      port
+    }
   } catch (error) {
     log.error('未能找到 processMessageMap. 请确保 TODO 存在 或者 使用 yarn web-step 启动.')
-  }
-  return {
-    server,
-    setting,
-    dll
   }
 }

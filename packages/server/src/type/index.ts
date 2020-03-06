@@ -24,6 +24,7 @@ export type ServerLifeCycle = {
   devMiddleware?: (APP: TAPP) => void
   beforeStart?: (APP: TAPP) => void
   start?: (APP: TAPP) => http.Server
+  getDefaultRenderContext?: (req: Request, res: Response) => any
   beforeRender?: (req: Request, res: Response, next: NextFunction) => void
   renderContext?: (context: TServerContext, opts: { serverInfos: TServerInfos; req: Request; res: Response }) => void
   renderToString?: ReturnType<typeof createBundleRenderer>['renderToString']

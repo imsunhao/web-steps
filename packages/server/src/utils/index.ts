@@ -1,12 +1,13 @@
 import express from 'express'
 import { createBundleRenderer } from 'vue-server-renderer'
 import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log, TAPP } from '../'
-import { DEFAULT_PORT, DEFAULT_TEMPLATE } from '../setting'
+import { DEFAULT_TEMPLATE } from '../setting'
 import { randomStringAsBase64Url } from './random'
 import http from 'http'
 import { basename } from 'path'
-import { TServer, TRender, TSetting, TDLL } from '@web-steps/config'
+import { TServer, TRender, TSetting, TDLL, DEFAULT_PORT, DEFAULT_INJECT_CONTEXT } from '@web-steps/config'
 import { requireFromPath, processSend } from 'packages/shared'
+import serialize from 'serialize-javascript'
 
 type RequiredServerLifeCycle = Required<ServerLifeCycle>
 
@@ -117,7 +118,7 @@ const createBundleRendererRenderToString: (
 export const noop: any = function() {}
 
 function getRenderContext(req: { url: any }, res: { locals: any }) {
-  const injectContext: TServerInjectContext = {}
+  const injectContext: TServerInjectContext = process.__INJECT_CONTEXT__
   const context: TServerContext = {
     injectContext,
     pageInfo: {
@@ -135,6 +136,16 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
     const nonce = randomStringAsBase64Url(12)
     context.nonce = nonce
   }
+
+  const autoRemove = __PRODUCTION__
+    ? ';(function(){var s;(s=document.currentScript||document.scripts[document.scripts.length-1]).parentNode.removeChild(s);}());'
+    : ''
+
+  const nonceStr = context.nonce ? `nonce="${context.nonce}"` : ''
+  context.head = `<script ${nonceStr}>window.__INJECT_ENV__ = ${serialize(
+    { nonce: context.nonce },
+    { isJSON: true }
+  )};window.__INJECT_CONTEXT__ = ${serialize(injectContext, { isJSON: true })}${autoRemove}</script>`
   return context
 }
 
@@ -146,6 +157,7 @@ function getRequiredLifeCycle(
       beforeStart,
       start,
       beforeRender,
+      getDefaultRenderContext,
       renderContext,
       renderToString,
       beforeRenderSend,
@@ -163,6 +175,7 @@ function getRequiredLifeCycle(
     beforeStart: beforeStart || noop,
     start: start || serverStart,
     beforeRender: beforeRender || noop,
+    getDefaultRenderContext: getDefaultRenderContext || getRenderContext,
     renderContext: renderContext || noop,
     renderToString: renderToString || createBundleRendererRenderToString(render, DLL),
     beforeRenderSend: beforeRenderSend || noop,
@@ -180,23 +193,6 @@ export class Service {
   DLL: TDLL
 
   compilersWatching: any[] = []
-
-  static getClientManifestAfterAddDll(clientManifest: any, DLL: TDLL) {
-    if (DLL) {
-      const dll: string[] = DLL as any
-      try {
-        dll.forEach((js: string) => {
-          clientManifest.all.push(js)
-        })
-        dll.reverse().forEach((js: string) => {
-          clientManifest.initial.unshift(js)
-        })
-      } catch (error) {
-        log.error('[getClientManifestAfterAddDll]', error)
-      }
-    }
-    return clientManifest
-  }
 
   constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP, DLL: TDLL) {
     this.DLL = DLL
@@ -233,7 +229,7 @@ export class Service {
         this.lifeCycle.beforeRender(req, res, n)
         if (isNext) return
 
-        const context = getRenderContext(req, res)
+        const context = this.lifeCycle.getDefaultRenderContext(req, res)
         const serverInfos: TServerInfos = [
           `express/${require('express/package.json').version}`,
           `vue/${require('vue/package.json').version}`,
@@ -262,6 +258,28 @@ export class Service {
   close() {
     this.compilersWatching.map(watching => watching.close())
     if (this.SERVER) this.SERVER.close()
+  }
+
+  static updateInjectContext(injectContext: any) {
+    log.info(`updated [InjectContext] time: ${new Date().toLocaleString()}`)
+    process.__INJECT_CONTEXT__ = injectContext || DEFAULT_INJECT_CONTEXT
+  }
+
+  static getClientManifestAfterAddDll(clientManifest: any, DLL: TDLL) {
+    if (DLL) {
+      const dll: string[] = DLL as any
+      try {
+        dll.forEach((js: string) => {
+          clientManifest.all.push(js)
+        })
+        dll.reverse().forEach((js: string) => {
+          clientManifest.initial.unshift(js)
+        })
+      } catch (error) {
+        log.error('[getClientManifestAfterAddDll]', error)
+      }
+    }
+    return clientManifest
   }
 }
 

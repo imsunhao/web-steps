@@ -10,6 +10,12 @@ export class Args {
   rootDir: string
 
   /**
+   * server运行端口号
+   * - 默认值 8080
+   */
+  port: string
+
+  /**
    * 配置文件的相对路径
    *
    * - 配置文件 JSON 类型, 例如 web-steps.json

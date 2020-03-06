@@ -1,3 +1,6 @@
+// eslint-disable-next-line no-var
+export var defaultTemplatePath = ''
+
 import { Args } from '@types'
 import webpack from 'webpack'
 import webpackMerge from 'webpack-merge'
@@ -27,6 +30,7 @@ import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
 import { ServerLifeCycle } from '@web-steps/server'
+import { DEFAULT_PORT } from './setting'
 
 export let log: Log
 
@@ -223,7 +227,18 @@ export class Config {
       }
     }
 
-    if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.js')
+    debugger
+    if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.ts')
+
+    if (fs.existsSync(this.config.injectContext)) {
+      this.config.injectContext = getConfigWebpackConfig(
+        'inject-context',
+        this.config.injectContext,
+        this.setting.cache
+      ) as any
+    } else {
+      this.config.injectContext = undefined
+    }
 
     if (this.config.customBuild) {
       this.config.customBuild = this.config.customBuild.map(webpackConfig => {
@@ -232,6 +247,8 @@ export class Config {
     }
 
     if (!this.config.src) this.config.src = {} as any
+
+    this.config.port = this.startupOptions.args.port || this.config.port || DEFAULT_PORT
 
     if (target === 'SSR') {
       if (!this.config.src.SSR) this.config.src.SSR = {} as any
@@ -478,6 +495,5 @@ export class Config {
 
 export const config = new Config()
 
-export const defaultTemplatePath = ''
-
 export * from './type'
+export * from './setting'

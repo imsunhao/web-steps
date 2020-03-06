@@ -37,6 +37,7 @@ declare namespace WebSteps {
     rootDir: string
     server: any
     DLL: TDLL
+    injectContext: any
   }
 
   type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'common-asset' | 'template', string[]>

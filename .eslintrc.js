@@ -34,7 +34,14 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-misused-promises': 'off', // 耗时太长
+    'vue/no-parsing-error': [
+      'error',
+      {
+        'control-character-in-input-stream': false // 有一些很神奇的 script 内的报错
+      }
+    ]
   },
   globals: {
     __webpack_require__: 'readonly'

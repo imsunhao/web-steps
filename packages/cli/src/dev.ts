@@ -14,20 +14,22 @@ export function start(args: Args) {
 
     if (args.target === 'SSR') {
       const messageBus = new MessageBus<TSSRMessageBus>()
-      const src = config.config.src
+      const { src, injectContext, port } = config.config
       const SSR = src.SSR
       serverStart(
         {
           server: SSR.server,
           setting: config.setting,
           dll: src.DLL,
+          injectContext: undefined,
+          port,
           env
         },
         { messageBus }
       )
       compilerStart(
         {
-          webpackConfigs: [SSR.server.lifeCycle as any, SSR.client.webpack, SSR.server.webpack],
+          webpackConfigs: [injectContext as any, SSR.server.lifeCycle as any, SSR.client.webpack, SSR.server.webpack],
           env
         },
         { messageBus }

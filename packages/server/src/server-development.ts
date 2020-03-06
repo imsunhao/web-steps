@@ -68,6 +68,13 @@ export function start({ server, setting, dll }: ServerStart, opts?: { messageBus
         }
       })
       service.compilersWatching.push(serverWatching)
+    } else if (name === 'inject-context') {
+      const injectContextWatching = compiler.watch({}, (err, stats) => {
+        if (showWebpackCompilerError(stats)) {
+          service.updateInjectContext()
+        }
+      })
+      service.compilersWatching.push(injectContextWatching)
     }
   })
 

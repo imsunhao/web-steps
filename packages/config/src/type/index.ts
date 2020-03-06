@@ -61,6 +61,12 @@ type TBaseConfig<T extends 'finish' | 'ready'> = {
   rootDir: string
 
   /**
+   * server运行端口号
+   * - 默认值 8080
+   */
+  port: string | number
+
+  /**
    * 注入自定义数据
    * - 注入的上下文 配置文件目录
    * - 默认值 ./inject-context.js

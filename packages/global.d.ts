@@ -16,6 +16,10 @@ declare let __FEATURE_SUSPENSE__: boolean
 
 //SSR
 
+// eslint-disable-next-line no-var
+declare var process: NodeJS.Process & {
+  __INJECT_CONTEXT__: any
+}
 declare let __HOST_GLOBAL__: any
 declare let __IS_SERVER__: boolean
 

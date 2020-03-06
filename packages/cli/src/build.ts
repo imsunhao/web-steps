@@ -9,6 +9,7 @@ import {
   cloneDeep,
   ensureDirectoryExistence,
   requireSourceString,
+  requireFromPath,
   convertObjToSource,
   getResolve,
   getDirFilesPath,
@@ -18,7 +19,7 @@ import {
 import { writeFileSync, existsSync } from 'fs'
 import path from 'path'
 
-function exportSSRStartConfig(DLL: any) {
+function exportSSRStartConfig(DLL: any, injectContext: any) {
   const server = cloneDeep(config.config.src.SSR.server)
   if (existsSync(config.userConfigPath.lifeCycle)) {
     server.lifeCycle = requireSourceString(config.userConfigPath.lifeCycle) as any
@@ -35,7 +36,8 @@ function exportSSRStartConfig(DLL: any) {
 
   const startConfig: Partial<TStartConfig> = {
     server,
-    DLL
+    DLL,
+    injectContext
   }
 
   function getStartConfigJs() {
@@ -44,7 +46,7 @@ function exportSSRStartConfig(DLL: any) {
       const rootDir = path.resolve(__dirname, '${path.relative(config.setting.output, config.args.rootDir)}')
       const getResolve = ${convertObjToSource(getResolve)}
       const resolve = getResolve({ rootDir })
-      const { server, DLL } = ${convertObjToSource(startConfig)}
+      const { server, DLL, injectContext } = ${convertObjToSource(startConfig)}
 
       Object.keys(server.render).reduce((render, key) => {
         if (render[key]) render[key] = resolve(render[key])
@@ -55,7 +57,8 @@ function exportSSRStartConfig(DLL: any) {
         resolve,
         rootDir,
         server,
-        DLL
+        DLL,
+        injectContext
       }
     `
     try {
@@ -104,6 +107,21 @@ export function start(args: Args) {
       'common-asset': []
     }
 
+    const injectContextConfig: any = config.config.injectContext
+
+    let injectContext: any
+
+    if (injectContextConfig) {
+      await compilerStart(
+        {
+          webpackConfigs: [injectContextConfig],
+          env
+        },
+        { notTestExit: true }
+      )
+      injectContext = requireFromPath(path.resolve(config.setting.cache, 'inject-context.js'))
+    }
+
     const DLL: string[] = config.config.src.DLL as any
     if (DLL) {
       FILES_MANIFEST.dll = DLL.map(dll => relative(path.resolve(config.setting.output, dll)))
@@ -125,7 +143,7 @@ export function start(args: Args) {
 
     if (args.target === 'SSR') {
       const SSR = config.config.src.SSR
-      exportSSRStartConfig(DLL)
+      exportSSRStartConfig(DLL, injectContext)
       const statsList: Stats[] = await compilerStart(
         {
           webpackConfigs: [SSR.client.webpack, SSR.server.webpack],

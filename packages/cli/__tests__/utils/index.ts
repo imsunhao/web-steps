@@ -111,17 +111,17 @@ async function resolveMessageKey(
         childProcess.send({ messageKey: 'exit' })
         return true
       case 'e2e':
-        try {
-          const { url, texts, debug: e2eDebug, action } = result.e2e
-          if (e2eDebug && __DEBUG_PORT__) {
-            if (args.show) {
-              console.log('[e2e] url =', url)
-            }
-            if (__DEBUG_PORT__) debugger
-            else return true
+        const { url, texts, debug: e2eDebug, action } = result.e2e
+        if (e2eDebug && __DEBUG_PORT__) {
+          if (args.show) {
+            console.log('[e2e] url =', url)
           }
-          if (args.show) console.log('setupPuppeteer start!')
-          const { page, text, click, destroy } = await setupPuppeteer()
+          if (__DEBUG_PORT__) debugger
+          else return true
+        }
+        if (args.show) console.log('setupPuppeteer start!')
+        const { page, text, click, destroy } = await setupPuppeteer()
+        try {
           if (texts) {
             if (args.show) console.log('page.goto')
             await page.goto(url, { timeout: 5000 })
@@ -134,11 +134,14 @@ async function resolveMessageKey(
             }
           }
           if (action) await action({ text, click, page, show: args.show })
-          if (args.show) console.log('destroy')
+          if (args.show) console.log('[Puppeteer] destroy')
           await destroy()
           childProcess.send({ messageKey: 'e2e' })
           return true
         } catch (e) {
+          console.error(e)
+          if (args.show) console.log('[Puppeteer] destroy')
+          await destroy()
           childProcess.send({ messageKey: 'e2e' })
           return false
         }

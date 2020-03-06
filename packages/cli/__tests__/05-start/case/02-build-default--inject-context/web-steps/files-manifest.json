@@ -1,0 +1,19 @@
+{
+  "base": [
+    "web-steps/start-config.js"
+  ],
+  "dll": [
+    "web-steps/Vue.dll.346c8a2df60e9153f0c0.js",
+    "web-steps/Vuex.dll.a0242c506c4ea1c29379.js",
+    "web-steps/VueRouter.dll.a99199c945f8ab7003c6.js"
+  ],
+  "SSR": [
+    "web-steps/client.836555114322d1cbb79f.js",
+    "web-steps/1.3bfb2021502b1bfb3d15.js",
+    "web-steps/vue-ssr-client-manifest.json",
+    "web-steps/vue-ssr-server-bundle.json"
+  ],
+  "template": [],
+  "public": [],
+  "common-asset": []
+}

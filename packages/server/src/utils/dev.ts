@@ -18,6 +18,10 @@ export class DevService extends Service {
 
   config: Config
 
+  get requireOptions() {
+    return { fs: this.fileSystem }
+  }
+
   readFileSync(filePath: string) {
     try {
       return this.fileSystem.readFileSync(filePath, 'utf-8')
@@ -30,19 +34,24 @@ export class DevService extends Service {
     const {
       render: { templatePath, clientManifestPath, bundlePath }
     } = this.server
-    const requireOptions = { fs: this.fileSystem }
     if (this.SSR.bundle && this.SSR.clientManifest) {
       this.SSR.bundle = false
       this.SSR.clientManifest = false
       log.info(`updated by ${key} time: ${new Date().toLocaleString()}`)
+
+      const clientManifest = DevService.getClientManifestAfterAddDll(
+        requireFromPath(clientManifestPath, this.requireOptions),
+        this.DLL
+      )
+
+      clientManifest.all = clientManifest.all.filter((name: string) => !name.includes('hot-update'))
+      clientManifest.async = clientManifest.async.filter((name: string) => !name.includes('hot-update'))
+
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, requireOptions), {
+      this.lifeCycle.renderToString = createBundleRenderer(requireFromPath(bundlePath, this.requireOptions), {
         inject: true,
         template: templatePath ? requireFromPath(templatePath) : DEFAULT_TEMPLATE,
-        clientManifest: DevService.getClientManifestAfterAddDll(
-          requireFromPath(clientManifestPath, requireOptions),
-          this.DLL
-        )
+        clientManifest
       }).renderToString
       if (__TEST__ && __WEB_STEPS__) {
         processSend(process, { messageKey: 'e2e' })
@@ -53,9 +62,7 @@ export class DevService extends Service {
   updateLifeCycle() {
     const lifeCyclePath = resolve(this.setting.cache, 'life-cycle.js')
     if (!this.fileSystem.existsSync(lifeCyclePath)) return
-    const getLifeCycle: any = requireFromPath(lifeCyclePath, {
-      fs: this.fileSystem
-    })
+    const getLifeCycle: any = requireFromPath(lifeCyclePath, this.requireOptions)
     if (getLifeCycle) {
       const lifeCycle: Required<ServerLifeCycle> = getLifeCycle(this.config.startupOptions)
       if (lifeCycle) {
@@ -66,6 +73,12 @@ export class DevService extends Service {
         this.start(this.app, { isHotReload: true })
       }
     }
+  }
+
+  updateInjectContext() {
+    const injectContextPath = resolve(this.setting.cache, 'inject-context.js')
+    log.info(`updated [InjectContext] time: ${new Date().toLocaleString()}`)
+    process.__INJECT_CONTEXT__ = requireFromPath(injectContextPath, this.requireOptions)
   }
 }
 
