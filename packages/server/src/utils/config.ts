@@ -33,11 +33,13 @@ export async function getInitConfig() {
     const injectContext = processMessageMap.config.injectContext
     const port = processMessageMap.config.port
 
+    const credentials = processMessageMap.config.dev.credentials
     return {
       server,
       setting,
       dll,
       injectContext,
+      credentials,
       port
     }
   } catch (error) {

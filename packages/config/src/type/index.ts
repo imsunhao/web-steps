@@ -110,6 +110,38 @@ type TBaseConfig<T extends 'finish' | 'ready'> = {
    * 源码配置
    */
   src: T extends 'finish' ? TSrc<T> : Partial<TSrc<T>>
+
+  /**
+   * Dev 开发服务器配置
+   */
+  dev: {
+    /**
+     * 是否启动 https
+     * - 默认值 false
+     */
+    https: boolean
+
+    /**
+     * HTTPS 生成的证书文件目录
+     * - https 启动时 自动加载 这个目录下的 web-steps.key 文件 与 web-steps.pem 文件 与 CA.pem 文件 (没有将会借助 openssl 自动生成)
+     * - 默认值 './certificate'
+     */
+    credentials?: T extends 'finish' ? TCredentials : string
+
+    /**
+     * HTTPS 证书 配置文件
+     * - HTTPS 证书 自动生成时 会 读取 openssl.cnf 文件 (没有将会自动生成)
+     * - 默认值 './certificate/openssl.cnf'
+     */
+    cnf?: string
+
+    /**
+     * HTTPS 证书 x509 拓展文件
+     * - HTTPS 证书 自动生成时 会 读取 v3.cnf 文件 (没有将会自动生成)
+     * - 默认值 './certificate/v3.cnf'
+     */
+    ext?: string
+  }
 }
 
 type TWebpack<T extends 'finish' | 'ready'> = {
@@ -231,4 +263,11 @@ export type TGetDLLWebpackConfig = (
 
 export type TGetConfigPayload = {
   target: Args['target'] | 'base' | 'dll'
+}
+
+export type TCredentials = {
+  key: string
+  csr: string
+  cert: string
+  ca: string[]
 }

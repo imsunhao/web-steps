@@ -1,7 +1,7 @@
 import { Express, NextFunction, Request, Response } from 'express'
-import http from 'http'
 import { Args, getInitConfig } from '../utils'
 import { createBundleRenderer } from 'vue-server-renderer'
+import http from 'http'
 
 export type ServerStart = SniffPromise<ReturnType<typeof getInitConfig>>
 export type ServerConfig = ServerStart & { env: Args['env'] }
@@ -23,7 +23,7 @@ export type ServerLifeCycle = {
   creating?: (APP: TAPP, server: ServerConfig['server'], setting: ServerConfig['setting']) => void
   devMiddleware?: (APP: TAPP) => void
   beforeStart?: (APP: TAPP) => void
-  start?: (APP: TAPP) => http.Server
+  start?: (APP: TAPP) => http.Server[]
   getDefaultRenderContext?: (req: Request, res: Response) => any
   beforeRender?: (req: Request, res: Response, next: NextFunction) => void
   renderContext?: (context: TServerContext, opts: { serverInfos: TServerInfos; req: Request; res: Response }) => void

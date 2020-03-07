@@ -14,8 +14,9 @@ export function start(args: Args) {
 
     if (args.target === 'SSR') {
       const messageBus = new MessageBus<TSSRMessageBus>()
-      const { src, injectContext, port } = config.config
+      const { src, injectContext, port, dev } = config.config
       const SSR = src.SSR
+      const { credentials } = dev
       serverStart(
         {
           server: SSR.server,
@@ -23,6 +24,7 @@ export function start(args: Args) {
           dll: src.DLL,
           injectContext: undefined,
           port,
+          credentials,
           env
         },
         { messageBus }
@@ -36,6 +38,10 @@ export function start(args: Args) {
       )
       messageBus.emit('config', { config })
     }
+
+    process.on('unhandledRejection', error => {
+      log.error('unhandledRejection', error)
+    })
 
     if (!('send' in process) || !__TEST__) {
     } else {

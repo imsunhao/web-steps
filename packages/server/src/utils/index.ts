@@ -83,7 +83,7 @@ const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
 
   start()
 
-  return SERVER
+  return [SERVER]
 }
 
 const serverRenderSend: RequiredServerLifeCycle['renderSend'] = function(html, req, res, next) {
@@ -189,7 +189,7 @@ export class Service {
   server: TServer<'finish'>
   setting: TSetting
   app: TAPP
-  SERVER: http.Server
+  SERVER: http.Server[]
   DLL: TDLL
 
   compilersWatching: any[] = []
@@ -241,11 +241,15 @@ export class Service {
         res.setHeader('Content-Type', 'text/html')
         res.setHeader('Server', serverInfos)
 
-        this.lifeCycle.renderToString(context, (err, html) => {
-          this.lifeCycle.beforeRenderSend(err, html, n)
-          if (isNext) return
-          this.lifeCycle.renderSend(html, req, res, n)
-        })
+        try {
+          this.lifeCycle.renderToString(context, (err, html) => {
+            this.lifeCycle.beforeRenderSend(err, html, n)
+            if (isNext) return
+            this.lifeCycle.renderSend(html, req, res, n)
+          })
+        } catch (error) {
+          log.error(error)
+        }
       })
     }
 
@@ -257,7 +261,11 @@ export class Service {
 
   close() {
     this.compilersWatching.map(watching => watching.close())
-    if (this.SERVER) this.SERVER.close()
+    if (this.SERVER) {
+      this.SERVER.forEach(server => {
+        server.close()
+      })
+    }
   }
 
   static updateInjectContext(injectContext: any) {

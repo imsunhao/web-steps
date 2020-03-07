@@ -19,9 +19,9 @@ export function showWebpackCompilerError(stats: Stats) {
   return true
 }
 
-export function start({ server, setting, dll }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
+export function start({ server, setting, dll, credentials }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
   const { messageBus } = opts
-  const service = new DevService(server, setting, new DevAPP(), dll)
+  const service = new DevService(server, setting, new DevAPP(), dll, credentials)
 
   messageBus.on('memory-fs', ({ mfs }) => {
     service.fileSystem = mfs

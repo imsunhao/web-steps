@@ -29,8 +29,9 @@ import getDllWebpackConfig from './webpack/default-dll.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import defaultServerWebpackConfig from './webpack/default-server.webpack'
+import { Execa } from '@web-steps/cli'
 import { ServerLifeCycle } from '@web-steps/server'
-import { DEFAULT_PORT } from './setting'
+import { DEFAULT_PORT, DEFAULT_OPENSSL_CONFIG, DEFAULT_V3_EXT_CONFIG, HTTPS_README } from './setting'
 
 export let log: Log
 
@@ -198,6 +199,142 @@ export class Config {
       if (!this.userConfigConstructor) {
         log.error('无法找到配置文件')
       }
+      if (this.isDev) {
+        if (!this.config.dev) this.config.dev = { https: false }
+        if (this.config.dev.https) {
+          let certificate = this.config.dev.credentials as any
+          let hasCredentials = true
+          if (!this.config.dev.credentials) {
+            certificate = this.resolve('./certificate')
+          }
+          this.config.dev.credentials = {
+            key: this.resolve(certificate, './web-steps.key'),
+            csr: this.resolve(certificate, './web-steps.pem'),
+            cert: this.resolve(certificate, './web-steps.crt'),
+            ca: [this.resolve(certificate, './CA.pem')]
+          }
+          if (!this.config.dev.cnf) this.config.dev.cnf = this.resolve(certificate, './openssl.cnf')
+          if (!this.config.dev.ext) this.config.dev.ext = this.resolve(certificate, './v3.cnf')
+
+          if (!fs.existsSync(this.config.dev.credentials.key)) hasCredentials = false
+          if (!fs.existsSync(this.config.dev.credentials.cert)) hasCredentials = false
+
+          /**
+           * 命令
+           * openssl genrsa -out CA.key 2048
+           * openssl req -x509 -new -nodes -key CA.key -sha256 -days 1024 -config openssl.cnf -out CA.pem
+           * openssl req -new -newkey rsa:2048 -sha256 -nodes -keyout web-steps.key -config openssl.cnf -out web-steps.csr
+           * openssl x509 -sha256 -req -in web-steps.csr -CA CA.pem -CAkey CA.key -CAcreateserial -days 1024 -extfile v3.cnf -out web-steps.crt
+           *
+           * sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain web-steps.crt
+           */
+          if (!hasCredentials) {
+            ensureDirectoryExistence(this.config.dev.credentials.key)
+
+            if (!fs.existsSync(this.config.dev.cnf)) {
+              fs.writeFileSync(this.config.dev.cnf, DEFAULT_OPENSSL_CONFIG, {
+                encoding: 'utf-8',
+                flag: 'w'
+              })
+            }
+            if (!fs.existsSync(this.config.dev.ext)) {
+              fs.writeFileSync(this.config.dev.ext, DEFAULT_V3_EXT_CONFIG, {
+                encoding: 'utf-8',
+                flag: 'w'
+              })
+            }
+            const openssl = async (args: string[]) => {
+              let resolve: any
+              const childProcess = Execa.run('openssl', args, {
+                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
+              })
+              childProcess.on('close', code => {
+                if (code) throw 'openssl error'
+                resolve()
+              })
+              await new Promise(r => (resolve = r))
+            }
+            const {
+              key,
+              csr,
+              cert,
+              ca: [ca]
+            } = this.config.dev.credentials
+            const cnf = this.config.dev.cnf
+            const ext = this.config.dev.ext
+            const days = '3650'
+            const caKey = this.resolve(certificate, './CA.key')
+            try {
+              await openssl(['genrsa', '-out', caKey, '2048'])
+              await openssl([
+                'req',
+                '-x509',
+                '-new',
+                '-nodes',
+                '-key',
+                caKey,
+                '-sha256',
+                '-days',
+                days,
+                '-config',
+                cnf,
+                '-out',
+                ca
+              ])
+              await openssl([
+                'req',
+                '-new',
+                '-nodes',
+                '-newkey',
+                'rsa:2048',
+                '-sha256',
+                '-keyout',
+                key,
+                '-config',
+                cnf,
+                '-out',
+                csr
+              ])
+              await openssl([
+                'x509',
+                '-sha256',
+                '-req',
+                '-in',
+                csr,
+                '-CA',
+                ca,
+                '-CAkey',
+                caKey,
+                '-CAcreateserial',
+                '-days',
+                days,
+                '-extfile',
+                ext,
+                '-out',
+                cert
+              ])
+              fs.writeFileSync(
+                this.resolve(certificate, './README.md'),
+                HTTPS_README(path.relative(this.args.rootDir, ca), path.relative(this.args.rootDir, cert)),
+                {
+                  encoding: 'utf-8',
+                  flag: 'w'
+                }
+              )
+              log.info(`[HTTPS] 证书已经自动安装, 请阅读 ${certificate} 下的 README.md`)
+            } catch (error) {
+              log.error(error)
+            }
+          }
+
+          this.config.dev.credentials = {
+            key: requireSourceString(this.config.dev.credentials.key),
+            csr: '',
+            cert: requireSourceString(this.config.dev.credentials.cert),
+            ca: [requireSourceString(this.config.dev.credentials.ca[0])]
+          }
+        }
+      }
     } else if (payload.target === 'dll') {
       this.stuffConfigByDll(this.userDLLManifest)
     } else if (payload.target === 'SSR') {
@@ -227,9 +364,7 @@ export class Config {
       }
     }
 
-    debugger
     if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.ts')
-
     if (fs.existsSync(this.config.injectContext)) {
       this.config.injectContext = getConfigWebpackConfig(
         'inject-context',

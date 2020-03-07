@@ -36,6 +36,7 @@ export function start(args: Args) {
       server,
       setting,
       dll: DLL,
+      credentials: undefined,
       injectContext,
       port,
       env: args.env

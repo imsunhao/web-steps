@@ -3,8 +3,8 @@ import { resolve } from 'path'
 const debug = true
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
-  skip: true,
-  cache: false,
+  skip: false,
+  cache: true,
   timeout: 20000,
   node: {
     target: 'web-steps',
@@ -13,7 +13,7 @@ const testConfig: TTestConfig = {
   result: {
     e2e: {
       debug,
-      url: 'http://127.0.0.1:8080',
+      url: 'https://127.0.0.1:8081',
       texts: {
         '#test1': 'home Page',
         '#state': 'from server asyncData',
@@ -22,7 +22,7 @@ const testConfig: TTestConfig = {
         '#get': 'true',
         '#post': 'true',
         '#context': `INJECT_CONTEXT: {
-  "SERVER_HOST": "http://127.0.0.1:8080",
+  "SERVER_HOST": "https://127.0.0.1:8081",
   "TEST": "这是一个测试"
 }`
       },

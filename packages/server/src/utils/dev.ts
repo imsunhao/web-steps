@@ -6,7 +6,10 @@ import { createBundleRenderer } from 'vue-server-renderer'
 import MFS from 'memory-fs'
 import { DEFAULT_TEMPLATE } from '../setting'
 import { requireFromPath, processSend, cloneDeep } from 'packages/shared'
-import { Config } from '@web-steps/config'
+import { Config, DEFAULT_PORT, TServer, TSetting, TDLL, TCredentials } from '@web-steps/config'
+
+import http from 'http'
+import https from 'https'
 
 export class DevService extends Service {
   SSR = {
@@ -17,6 +20,74 @@ export class DevService extends Service {
   fileSystem: MFS
 
   config: Config
+
+  constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP, DLL: TDLL, credentials: TCredentials) {
+    super(server, setting, app, DLL)
+    this.lifeCycle.start = function(APP) {
+      const servers: any[] = []
+      const WAIT_TIME = 1000
+      const MAX = 60
+
+      const PORT = DEFAULT_PORT
+      const SSLPORT = PORT + 1
+
+      const httpServerStart = () => {
+        let index = 0
+        const SERVER = http.createServer(APP.express)
+        const start = () => {
+          SERVER.listen(PORT)
+        }
+
+        SERVER.on('error', function(error) {
+          if (index++ < MAX) {
+            log.fatal('[HTTP] SERVER_START:', error.message, `\n\t重试中, 当前次数: ${index}`)
+            setTimeout(() => {
+              start()
+            }, WAIT_TIME)
+          } else {
+            process.exit(1)
+          }
+        })
+
+        SERVER.on('listening', function() {
+          log.info(`[HTTP] server started at ${PORT}`)
+        })
+
+        start()
+        servers.push(SERVER)
+      }
+      const httpsServerStart = () => {
+        process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
+        let index = 0
+        const SERVER = https.createServer(credentials, APP.express)
+        const start = () => {
+          SERVER.listen(SSLPORT)
+        }
+
+        SERVER.on('error', function(error) {
+          if (index++ < MAX) {
+            log.fatal('[HTTPS] SERVER_START:', error.message, `\n\t重试中, 当前次数: ${index}`)
+            setTimeout(() => {
+              start()
+            }, WAIT_TIME)
+          } else {
+            process.exit(1)
+          }
+        })
+
+        SERVER.on('listening', function() {
+          log.info(`[HTTPS] server started at ${SSLPORT}`)
+        })
+
+        start()
+        servers.push(SERVER)
+      }
+
+      httpServerStart()
+      if (credentials) httpsServerStart()
+      return servers
+    }
+  }
 
   get requireOptions() {
     return { fs: this.fileSystem }
