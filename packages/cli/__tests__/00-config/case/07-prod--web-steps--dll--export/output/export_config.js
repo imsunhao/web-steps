@@ -1,3 +1,4 @@
+const DEFAULT_PORT = 8080;
 const webpack = require("webpack");
 const path = require("path");
 const path__default = path;
@@ -20,14 +21,14 @@ const requireFromPath = function requireFromPath(
   opts = { fs: require("fs") }
 ) {
   const source = requireSourceString(path, opts);
-  if (path.endsWith(".html")) {
-    return source;
-  }
   try {
+    if (path.endsWith(".html")) {
+      return source;
+    }
     const ex = requireFromString(source, path);
     return ex && typeof ex === "object" && "default" in ex ? ex["default"] : ex;
   } catch (error) {
-    throw new Error(`[requireFromPath] ${path} not find!`);
+    throw new Error(`[requireFromPath] ${path} Error: ${error}`);
   }
 };
 const webpackMerge = require("webpack-merge");
@@ -315,7 +316,16 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
     };
   }
   if (!this.config.injectContext)
-    this.config.injectContext = resolve("./inject-context.js");
+    this.config.injectContext = resolve("./inject-context.ts");
+  if (fs__default.existsSync(this.config.injectContext)) {
+    this.config.injectContext = getConfigWebpackConfig(
+      "inject-context",
+      this.config.injectContext,
+      this.setting.cache
+    );
+  } else {
+    this.config.injectContext = undefined;
+  }
   if (this.config.customBuild) {
     this.config.customBuild = this.config.customBuild.map(webpackConfig => {
       return webpackConfig instanceof Function
@@ -324,6 +334,8 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
     });
   }
   if (!this.config.src) this.config.src = {};
+  this.config.port =
+    this.startupOptions.args.port || this.config.port || DEFAULT_PORT;
   if (target === "SSR") {
     if (!this.config.src.SSR) this.config.src.SSR = {};
     const SSR = this.config.src.SSR;

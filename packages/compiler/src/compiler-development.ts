@@ -7,7 +7,7 @@ import MFS from 'memory-fs'
 const mfs = new MFS()
 
 function compiling(webpackConfig: webpack.Configuration, opts: { messageBus?: SSRMessageBus } = {}) {
-  if (webpackConfig.name) {
+  if (webpackConfig && webpackConfig.name) {
     const compiler = getCompiler(webpackConfig)
     compiler.outputFileSystem = mfs
     opts.messageBus.emit('SSR-compiler', { compiler, webpackConfig })

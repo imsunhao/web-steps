@@ -4,6 +4,7 @@ declare module '@web-steps/config' {
   type StartupOptions = any
   type Config = any
   type TConfig = any
+  type TCredentials = any
   type TSetting = any
   type TServer<T> = any
   type TRender = any

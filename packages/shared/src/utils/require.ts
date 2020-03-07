@@ -23,6 +23,6 @@ export function requireFromPath(path: string, opts: requireOptions = { fs: requi
     const ex = requireFromString(source, path)
     return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex
   } catch (error) {
-    throw new Error(`[requireFromPath] ${path} not find!`)
+    throw new Error(`[requireFromPath] ${path} Error: ${error}`)
   }
 }

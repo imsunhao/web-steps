@@ -532,6 +532,7 @@ export class Config {
     }
 
     const code = `
+      const DEFAULT_PORT = ${DEFAULT_PORT}
       const webpack = require('webpack')
       const path = require('path')
       const path__default = path

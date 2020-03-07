@@ -6,7 +6,7 @@ import { createBundleRenderer } from 'vue-server-renderer'
 import MFS from 'memory-fs'
 import { DEFAULT_TEMPLATE } from '../setting'
 import { requireFromPath, processSend, cloneDeep } from 'packages/shared'
-import { Config, DEFAULT_PORT, TServer, TSetting, TDLL, TCredentials } from '@web-steps/config'
+import { Config, DEFAULT_PORT, TServer, TSetting, TDLL, TCredentials, DEFAULT_INJECT_CONTEXT } from '@web-steps/config'
 
 import http from 'http'
 import https from 'https'
@@ -23,6 +23,7 @@ export class DevService extends Service {
 
   constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP, DLL: TDLL, credentials: TCredentials) {
     super(server, setting, app, DLL)
+    process.__INJECT_CONTEXT__ = DEFAULT_INJECT_CONTEXT
     this.lifeCycle.start = function(APP) {
       const servers: any[] = []
       const WAIT_TIME = 1000
