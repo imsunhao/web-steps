@@ -4,18 +4,18 @@ import proxy from 'http-proxy-middleware'
 import { ServerLifeCycle } from '@web-steps/server'
 import { Args } from '@types'
 
-export type UserConfig = {
+export type UserConfig<INJECT_CONTEXT> = {
   /**
    * 测试 专用字段
    * - 单元测试
    * - 用户设置此字段无意义,如果想审查用户配置,请导出静态配置
    */
   test?: string
-} & Partial<TBaseConfig<'ready'>>
+} & Partial<TBaseConfig<'ready', INJECT_CONTEXT>>
 
 export type StartupOptions = any
 
-export type GetUserConfig = (startupOptions: StartupOptions) => UserConfig
+export type GetUserConfig<INJECT_CONTEXT = any> = (startupOptions: StartupOptions) => UserConfig<INJECT_CONTEXT>
 export type GetUserServerConfig = (startupOptions: StartupOptions) => ServerLifeCycle
 
 export type TSetting = {
@@ -54,7 +54,7 @@ export type TDirOptions = {
   filters?: RegExp[]
 }
 
-type TBaseConfig<T extends 'finish' | 'ready'> = {
+type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   /**
    * 根目录 默认值为运行命令的目录
    */
@@ -109,7 +109,7 @@ type TBaseConfig<T extends 'finish' | 'ready'> = {
   /**
    * 源码配置
    */
-  src: T extends 'finish' ? TSrc<T> : Partial<TSrc<T>>
+  src: T extends 'finish' ? TSrc<T, INJECT_CONTEXT> : Partial<TSrc<T, INJECT_CONTEXT>>
 
   /**
    * Dev 开发服务器配置
@@ -148,12 +148,12 @@ type TWebpack<T extends 'finish' | 'ready'> = {
   webpack: TWebpackConfig<T>
 }
 
-type TSrc<T extends 'finish' | 'ready'> = {
+type TSrc<T extends 'finish' | 'ready', INJECT_CONTEXT> = {
   /**
    * Server Side Render 配置
    */
   SSR: {
-    server: (T extends 'finish' ? TServer<T> : Partial<TServer<T>>) & TWebpack<T> & {}
+    server: (T extends 'finish' ? TServer<T, INJECT_CONTEXT> : Partial<TServer<T, INJECT_CONTEXT>>) & TWebpack<T> & {}
     client: (T extends 'finish' ? TClient : Partial<TClient>) & TWebpack<T>
   } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
 
@@ -178,7 +178,7 @@ export type TDLL = Record<string, TDLLEntry>
 
 export type TClient = {}
 
-export type TServer<T extends 'finish' | 'ready'> = {
+export type TServer<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   /**
    * 声明周期钩子函数, 控制 服务器 生命周期
    * - 入口路径 默认 rootDir/server/life-cycle
@@ -208,9 +208,11 @@ export type TServer<T extends 'finish' | 'ready'> = {
    * - false 为不启用
    */
   proxyTable?:
-    | {
+    | ((
+        injectContext: INJECT_CONTEXT
+      ) => {
         [key: string]: proxy.Config
-      }
+      })
     | false
 
   /**

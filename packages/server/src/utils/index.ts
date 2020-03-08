@@ -8,6 +8,7 @@ import { basename } from 'path'
 import { TServer, TRender, TSetting, TDLL, DEFAULT_PORT, DEFAULT_INJECT_CONTEXT } from '@web-steps/config'
 import { requireFromPath, processSend } from 'packages/shared'
 import serialize from 'serialize-javascript'
+import proxyMiddleware from 'http-proxy-middleware'
 
 type RequiredServerLifeCycle = Required<ServerLifeCycle>
 
@@ -52,8 +53,29 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
       )
     })
   }
+  const serverProxyTable = () => {
+    if (proxyTable === false) return
+    else if (!proxyTable) {
+      statics = {
+        ['/' + basename(output)]: {
+          path: output
+        }
+      }
+    }
+
+    const table = proxyTable(process.__INJECT_CONTEXT__)
+
+    Object.keys(table).forEach(function(proxyKey) {
+      let options = table[proxyKey]
+      if (typeof options === 'string') {
+        options = { target: options }
+      }
+      APP.use(proxyMiddleware(proxyKey, options))
+    })
+  }
 
   serverStatics()
+  serverProxyTable()
 }
 
 const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
@@ -206,9 +228,10 @@ export class Service {
     app.status = 'beforeCreated'
     this.lifeCycle.beforeCreated(app)
 
+    app.status = 'creating'
+    this.lifeCycle.creating(app, this.server, this.setting)
+
     if (!isHotReload) {
-      app.status = 'creating'
-      this.lifeCycle.creating(app, this.server, this.setting)
       app.status = 'devMiddleware'
       this.lifeCycle.devMiddleware(app)
     }

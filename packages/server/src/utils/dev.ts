@@ -5,7 +5,7 @@ import { resolve } from 'path'
 import { createBundleRenderer } from 'vue-server-renderer'
 import MFS from 'memory-fs'
 import { DEFAULT_TEMPLATE } from '../setting'
-import { requireFromPath, processSend, cloneDeep } from 'packages/shared'
+import { requireFromPath, processSend, cloneDeep, debounce } from 'packages/shared'
 import { Config, DEFAULT_PORT, TServer, TSetting, TDLL, TCredentials, DEFAULT_INJECT_CONTEXT } from '@web-steps/config'
 
 import http from 'http'
@@ -20,6 +20,8 @@ export class DevService extends Service {
   fileSystem: MFS
 
   config: Config
+
+  hotReload: () => void
 
   constructor(server: TServer<'finish'>, setting: TSetting, app: TAPP, DLL: TDLL, credentials: TCredentials) {
     super(server, setting, app, DLL)
@@ -88,6 +90,11 @@ export class DevService extends Service {
       if (credentials) httpsServerStart()
       return servers
     }
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const startDebounce = debounce(this.start, 100).bind(this)
+    this.hotReload = () => {
+      startDebounce(this.app, { isHotReload: true })
+    }
   }
 
   get requireOptions() {
@@ -142,7 +149,7 @@ export class DevService extends Service {
         Object.keys(lifeCycle).forEach((key: keyof ServerLifeCycle) => {
           this.lifeCycle[key] = lifeCycle[key] as any
         })
-        this.start(this.app, { isHotReload: true })
+        this.hotReload()
       }
     }
   }
@@ -151,6 +158,7 @@ export class DevService extends Service {
     const injectContextPath = resolve(this.setting.cache, 'inject-context.js')
     log.info(`updated [InjectContext] time: ${new Date().toLocaleString()}`)
     process.__INJECT_CONTEXT__ = requireFromPath(injectContextPath, this.requireOptions)
+    this.hotReload()
   }
 }
 

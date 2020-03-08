@@ -40,7 +40,7 @@ export function start(args: Args) {
     }
 
     process.on('unhandledRejection', error => {
-      log.error('unhandledRejection', error)
+      console.error('unhandledRejection', error)
     })
 
     if (!('send' in process) || !__TEST__) {
