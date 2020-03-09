@@ -54,14 +54,7 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
     })
   }
   const serverProxyTable = () => {
-    if (proxyTable === false) return
-    else if (!proxyTable) {
-      statics = {
-        ['/' + basename(output)]: {
-          path: output
-        }
-      }
-    }
+    if (proxyTable === false || !proxyTable) return
 
     const table = proxyTable(process.__INJECT_CONTEXT__)
 
