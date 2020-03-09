@@ -1,3 +1,31 @@
+## [0.0.1-alpha.7](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.6...v0.0.1-alpha.7) (2020-03-09)
+
+
+### Bug Fixes
+
+* [e2e] 修复 certificate error ([37eda07](https://github.com/imsunhao/utils/commit/37eda07e8fc3119859e06516886a2b82d2869f96))
+* default ProxyTable ([15b3b48](https://github.com/imsunhao/utils/commit/15b3b48628f3419c3e02d1e01ded717eb918cd57))
+* 修复 测试错误 ([7f31a23](https://github.com/imsunhao/utils/commit/7f31a235d39b292d9744f9bd99e70c72164ed35c))
+
+
+### Features
+
+* build 命令 自动清空输出目录 ([fb430e6](https://github.com/imsunhao/utils/commit/fb430e64ffd252afbc6bdb53d84396aec60af61f))
+* inject-context ([75c6469](https://github.com/imsunhao/utils/commit/75c646915024ca8a35c9466621e0068e746133c2))
+* relase 基础 ([c43d7ce](https://github.com/imsunhao/utils/commit/c43d7ceb65ae079962afa75355215a8f2c3e0ec5))
+* upgrade typescript 3.8 ([89f6683](https://github.com/imsunhao/utils/commit/89f668309de867967353968a697b261bf29c2d78))
+* 优化 require 规则 ([d84392e](https://github.com/imsunhao/utils/commit/d84392e2be18107ec024f36c01ace927140ba21d))
+* 优化代码结构 ([5890019](https://github.com/imsunhao/utils/commit/58900190f1ec80bf4f1e99ef988e4af3b42e295f))
+* 使用 debounce 优化 hotReload ([20b07cb](https://github.com/imsunhao/utils/commit/20b07cbdf6bc691a7552a726b5542a016fb71f29))
+* 完善 eslint 检查 ([67b5ea9](https://github.com/imsunhao/utils/commit/67b5ea9d172763d91e86cd55b36b30efa8e52a57))
+* 对 缓存DLL的检查 更加严格 ([1c629dc](https://github.com/imsunhao/utils/commit/1c629dcb835701faf974fb0e27032a12ed1baa2c))
+* 支持 dev模式  https 启动 ([3b2b210](https://github.com/imsunhao/utils/commit/3b2b2102783b3dcbb0cbf11ef758d9cfb16a0e83))
+* 添加 build files-manifest 功能 ([d1fde71](https://github.com/imsunhao/utils/commit/d1fde71e0f5856ac48c6ee9c61050dbe084bccb8))
+* 添加 start命令 ([960cfc8](https://github.com/imsunhao/utils/commit/960cfc806d422d53059d09ba139ffac5e3f287d3))
+* 添加 样式处理 ([521482f](https://github.com/imsunhao/utils/commit/521482f07c4d47a78fcd23b9ac7ba2a372cfa369))
+
+
+
 ## [0.0.1-alpha.6](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.5...v0.0.1-alpha.6) (2020-02-21)
 
 

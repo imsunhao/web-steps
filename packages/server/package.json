@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/server",
-  "version": "0.0.1-alpha.6",
+  "version": "0.0.1-alpha.7",
   "description": "@web-steps/server",
   "main": "index.js",
   "files": [
@@ -36,7 +36,7 @@
     "webpack-hot-middleware": "^2.25.0"
   },
   "peerDependencies": {
-    "@web-steps/config": "0.0.1-alpha.6",
+    "@web-steps/config": "0.0.1-alpha.7",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0"
   }
