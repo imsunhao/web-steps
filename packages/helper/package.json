@@ -22,7 +22,6 @@
   "dependencies": {
     "@types/webpack-env": "^1.15.1",
     "loader-utils": "^1.2.3",
-    "lodash.uniq": "^4.5.0",
     "svgson": "^4.0.0"
   },
   "devDependencies": {
