@@ -338,7 +338,7 @@ export class Config {
     } else if (payload.target === 'dll') {
       this.stuffConfigByDll(this.userDLLManifest, requireFromPath)
     } else if (payload.target === 'SSR') {
-      this.stuffServer()
+      this.stuffServer(merge)
     }
   }
 
@@ -494,7 +494,7 @@ export class Config {
     this.config.src.DLL = userDLLManifest.all
   }
 
-  private stuffServer() {
+  private stuffServer(merge: any) {
     const SSR = this.config.src.SSR
     if (!this.isDev) {
       if (this.userLifeCycleConstructor) {
@@ -583,7 +583,7 @@ export class Config {
 
       stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)}, requireFromPath)
 
-      stuffServer.call(context)
+      stuffServer.call(context, merge)
 
       delete context.config.src.SSR.base
 

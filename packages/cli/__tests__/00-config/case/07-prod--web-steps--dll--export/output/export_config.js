@@ -459,7 +459,7 @@ const stuffConfigByDll = function stuffConfigByDll(
   });
   this.config.src.DLL = userDLLManifest.all;
 };
-const stuffServer = function stuffServer() {
+const stuffServer = function stuffServer(merge) {
   const SSR = this.config.src.SSR;
   if (!this.isDev) {
     if (this.userLifeCycleConstructor) {
@@ -526,7 +526,7 @@ stuffConfigByDll.call(
   requireFromPath
 );
 
-stuffServer.call(context);
+stuffServer.call(context, merge);
 
 delete context.config.src.SSR.base;
 
