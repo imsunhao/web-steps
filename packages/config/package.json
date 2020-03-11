@@ -31,7 +31,9 @@
     "sass-loader": "^8.0.2",
     "webpack-merge": "^4.2.2",
     "loader-utils": "^1.2.3",
-    "webpack-node-externals": "^1.7.2"
+    "svgson": "^4.0.0",
+    "webpack-node-externals": "^1.7.2",
+    "@types/webpack-env": "^1.15.1"
   },
   "devDependencies": {
     "@types/require-from-string": "^1.2.0"

@@ -1,7 +1,7 @@
-// import loaderUtils from 'loader-utils'
-// import { TRemoveCodeBlockOptions } from '..'
-
 export const webpackHelper = {
+  /**
+   * only client
+   */
   hotReload(
     webpackModule: any,
     getWebpackRequrieContext: () => any,
