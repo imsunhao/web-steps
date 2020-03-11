@@ -335,13 +335,13 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
     if (!this.config.src.SSR) this.config.src.SSR = {};
     const SSR = this.config.src.SSR;
     const stuffServer = () => {
+      if (!SSR.client) SSR.client = {};
+      if (!SSR.server) SSR.server = {};
       if (!SSR.server.lifeCycle)
         SSR.server.lifeCycle = resolve("server/life-cycle");
-      if (!SSR.server.whitelist) SSR.server.whitelist = [];
-      if (!SSR.client) SSR.client = {};
       if (!SSR.client.exclude) SSR.client.exclude = [];
-      if (!SSR.server) SSR.server = {};
       if (!SSR.server.exclude) SSR.server.exclude = [];
+      if (!SSR.server.whitelist) SSR.server.whitelist = [];
     };
     const stuffWebpack = () => {
       const {

@@ -1,3 +1,22 @@
+## [0.0.1-alpha.8](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.7...v0.0.1-alpha.8) (2020-03-11)
+
+
+### Bug Fixes
+
+* [test] error ([e5ee870](https://github.com/imsunhao/utils/commit/e5ee87035bc0871e0ebf30c66e97021c873116be))
+* [test] error ([2fc4c06](https://github.com/imsunhao/utils/commit/2fc4c06afb419018a1dbcfa910f5f1d6b687ce7f))
+
+
+### Features
+
+* helper can use in dependencies ([d3cfbab](https://github.com/imsunhao/utils/commit/d3cfbabc99ce8b1a1a4f6c8bd53c5dbdaa10970e))
+* move remove-code-block to config ([71b5146](https://github.com/imsunhao/utils/commit/71b5146bd80339c944fb15fb6a877260d2fb567c))
+* remove manifest-plugin ([1a0d3e2](https://github.com/imsunhao/utils/commit/1a0d3e24fa280c0372f0fa6c58738f561bcb836d))
+* 添加 nodeExternals whitelist 支持 ([e9a7c37](https://github.com/imsunhao/utils/commit/e9a7c37f98b1d470b27170e00bf2f8bfe434ea52))
+* 添加 ssr-exclude-module ([f106dec](https://github.com/imsunhao/utils/commit/f106deca397db16c3af9aeb3099a224cadca8ecc))
+
+
+
 ## [0.0.1-alpha.7](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.6...v0.0.1-alpha.7) (2020-03-09)
 
 
