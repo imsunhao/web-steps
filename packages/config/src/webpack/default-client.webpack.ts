@@ -3,7 +3,7 @@ import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import { SSRExcludeModulePlugin } from '../plugin/ssr-exclude-module'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import webpack from 'webpack'
-import { TGetWebpackConfig } from '@web-steps/config'
+import { TGetWebpackConfig, TRemoveCodeBlockOptions } from '@web-steps/config'
 
 const VUE_ENV = 'client'
 
@@ -28,10 +28,10 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function(
           exclude: /node_modules/,
           use: [
             {
-              loader: '@web-steps/helper/dist/remove-code-block.js',
+              loader: '@web-steps/config/dist/remove-code-block.js',
               options: {
                 VUE_ENV
-              }
+              } as TRemoveCodeBlockOptions
             }
           ]
         },

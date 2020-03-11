@@ -11,6 +11,7 @@ declare module '@web-steps/config' {
   type TDLL = any
   type TGetWebpackConfig = AnyFunction
   type TGetDLLWebpackConfig = AnyFunction
+  type TRemoveCodeBlockOptions = any
 
   const config: any
   const defaultTemplatePath: any
@@ -23,5 +24,5 @@ declare module '@web-steps/compiler' {
 }
 
 declare module '@web-steps/helper' {
-  type TRemoveCodeBlockOptions = any
+
 }

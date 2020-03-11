@@ -21,7 +21,6 @@
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper#readme",
   "dependencies": {
     "@types/webpack-env": "^1.15.1",
-    "loader-utils": "^1.2.3",
     "svgson": "^4.0.0"
   },
   "devDependencies": {

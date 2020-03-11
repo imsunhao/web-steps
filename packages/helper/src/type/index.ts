@@ -1,8 +1,3 @@
-export type TRemoveCodeBlockOptions = {
-  VUE_ENV: 'client' | 'server'
-  NODE_ENV?: 'development' | 'production'
-}
-
 /**
  * Represents the completion of an asynchronous operation
  */

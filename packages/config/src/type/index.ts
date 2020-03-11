@@ -293,3 +293,8 @@ export type TSSRExcludeModuleOptions = {
 type TExcludeModule = {
   exclude: TSSRExcludeModuleOptions['list']
 }
+
+export type TRemoveCodeBlockOptions = {
+  VUE_ENV: 'client' | 'server'
+  NODE_ENV?: 'development' | 'production'
+}

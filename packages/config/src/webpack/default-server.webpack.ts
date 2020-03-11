@@ -1,7 +1,7 @@
 import VueSSRServerPlugin from 'vue-server-renderer/server-plugin'
 import webpack from 'webpack'
 import nodeExternals from 'webpack-node-externals'
-import { TGetWebpackConfig } from '@web-steps/config'
+import { TGetWebpackConfig, TRemoveCodeBlockOptions } from '@web-steps/config'
 import { SSRExcludeModulePlugin } from '../plugin/ssr-exclude-module'
 
 const VUE_ENV = 'server'
@@ -30,10 +30,10 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
           exclude: /node_modules/,
           use: [
             {
-              loader: '@web-steps/helper/dist/remove-code-block.js',
+              loader: '@web-steps/config/dist/remove-code-block.js',
               options: {
                 VUE_ENV
-              }
+              } as TRemoveCodeBlockOptions
             }
           ]
         },

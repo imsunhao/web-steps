@@ -1,4 +1,4 @@
-import { TRemoveCodeBlockOptions } from '@web-steps/helper'
+import { TRemoveCodeBlockOptions } from './type'
 import loaderUtils from 'loader-utils'
 /**
  * 移除 指定环境 下 代码块
