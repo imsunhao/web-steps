@@ -28,7 +28,7 @@ import getConfigWebpackConfig from './webpack/default-config.webpack'
 import getDllWebpackConfig from './webpack/default-dll.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
-import defaultServerWebpackConfig from './webpack/default-server.webpack'
+import getDefaultServerWebpackConfig from './webpack/default-server.webpack'
 import { Execa } from '@web-steps/cli'
 import { ServerLifeCycle } from '@web-steps/server'
 import { DEFAULT_PORT, DEFAULT_OPENSSL_CONFIG, DEFAULT_V3_EXT_CONFIG, HTTPS_README } from './setting'
@@ -192,9 +192,9 @@ export class Config {
 
     if (payload.target === 'base') {
       this.stuffConfig({
-        defaultBaseWebpackConfig: getDefaultBaseWebpackConfig(this.startupOptions, this.config),
-        defaultClientWebpackConfig: getDefaultClientWebpackConfig(this.startupOptions, this.config),
-        defaultServerWebpackConfig
+        getDefaultBaseWebpackConfig,
+        getDefaultClientWebpackConfig,
+        getDefaultServerWebpackConfig
       })
       if (!this.userConfigConstructor) {
         log.error('无法找到配置文件')
@@ -336,15 +336,15 @@ export class Config {
         }
       }
     } else if (payload.target === 'dll') {
-      this.stuffConfigByDll(this.userDLLManifest)
+      this.stuffConfigByDll(this.userDLLManifest, requireFromPath)
     } else if (payload.target === 'SSR') {
       this.stuffServer()
     }
   }
 
   private stuffConfig(defaultWebpackConfig: any) {
-    const { defaultClientWebpackConfig, defaultServerWebpackConfig, defaultBaseWebpackConfig } = defaultWebpackConfig
     this.config = this.userConfigConstructor(this.startupOptions)
+
     const target = this.startupOptions.args.target
     const resolve = this.startupOptions.resolve
 
@@ -389,7 +389,22 @@ export class Config {
       if (!this.config.src.SSR) this.config.src.SSR = {} as any
       const SSR = this.config.src.SSR
 
+      const stuffExclude = () => {
+        if (!SSR.client) SSR.client = {} as any
+        if (!SSR.client.exclude) SSR.client.exclude = []
+        if (!SSR.server) SSR.server = {} as any
+        if (!SSR.server.exclude) SSR.server.exclude = []
+      }
       const stuffWebpack = () => {
+        const {
+          getDefaultBaseWebpackConfig,
+          getDefaultClientWebpackConfig,
+          getDefaultServerWebpackConfig
+        } = defaultWebpackConfig
+        const defaultBaseWebpackConfig = getDefaultBaseWebpackConfig(this.startupOptions, this.config)
+        const defaultClientWebpackConfig = getDefaultClientWebpackConfig(this.startupOptions, this.config)
+        const defaultServerWebpackConfig = getDefaultServerWebpackConfig(this.startupOptions, this.config)
+
         const result = {
           base: {} as any,
           client: {} as any,
@@ -456,12 +471,13 @@ export class Config {
         if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
       }
 
+      stuffExclude()
       stuffWebpack()
       stuffServer()
     }
   }
 
-  private stuffConfigByDll(userDLLManifest: any) {
+  private stuffConfigByDll(userDLLManifest: any, requireFromPath: any) {
     if (!this.config.src.DLL) return
 
     Object.keys(this.config.src.DLL).forEach(key => {
@@ -560,12 +576,12 @@ export class Config {
       )}
 
       stuffConfig.call(context, {
-        defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
-        defaultClientWebpackConfig: client.default(context.startupOptions, { args }),
-        defaultServerWebpackConfig: server
+        getDefaultBaseWebpackConfig: base.default,
+        getDefaultClientWebpackConfig: client.default,
+        getDefaultServerWebpackConfig: server.default
       })
 
-      stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)})
+      stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)}, requireFromPath)
 
       stuffServer.call(context)
 
@@ -596,7 +612,7 @@ export class Config {
       this.setting = getSetting(this.args, this.resolve.bind(this))
       if (opts.getSettingCallBack) opts.getSettingCallBack(this)
       if (!getCache(args)) {
-        log.info('清空 缓存:', this.setting.cache)
+        log.info('清空 缓存目录:', this.setting.cache)
         rmrfSync(this.setting.cache)
       }
       await this.getConfig({ target: 'base' })

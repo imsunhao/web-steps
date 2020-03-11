@@ -27,6 +27,9 @@ const testConfig: TTestConfig = {
                   },
                   mode: 'development'
                 }
+              },
+              server: {
+                exclude: []
               }
             }
           }

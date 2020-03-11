@@ -1,13 +1,25 @@
 import VueSSRClientPlugin from 'vue-server-renderer/client-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
+import { SSRExcludeModulePlugin } from '../plugin/ssr-exclude-module'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import webpack from 'webpack'
 import { TGetWebpackConfig } from '@web-steps/config'
 
-const getDefaultClientWebpackConfig: TGetWebpackConfig = function({ args: { env } }) {
+const VUE_ENV = 'client'
+
+const getDefaultClientWebpackConfig: TGetWebpackConfig = function(
+  { args: { env } },
+  {
+    src: {
+      SSR: {
+        client: { exclude }
+      }
+    }
+  }
+) {
   const isProd = env === 'production'
   return {
-    name: 'client',
+    name: VUE_ENV,
     module: {
       rules: [
         {
@@ -18,7 +30,7 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function({ args: { env 
             {
               loader: '@web-steps/helper/dist/remove-code-block.js',
               options: {
-                VUE_ENV: 'client'
+                VUE_ENV
               }
             }
           ]
@@ -58,7 +70,11 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function({ args: { env 
     plugins: [
       new VueSSRClientPlugin(),
       new webpack.DefinePlugin({
-        'process.env.VUE_ENV': '"client"'
+        'process.env.VUE_ENV': `"${VUE_ENV}"`
+      }),
+      new SSRExcludeModulePlugin({
+        VUE_ENV,
+        list: exclude
       })
     ]
   }

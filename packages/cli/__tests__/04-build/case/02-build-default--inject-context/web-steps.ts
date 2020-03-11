@@ -3,7 +3,7 @@ import getBaseConfig from './config/webpack-base'
 import getClientConfig from './config/webpack-client'
 import getServerConfig from './config/webpack-server'
 
-const getConfig: GetUserConfig = function() {
+const getConfig: GetUserConfig = function({ resolve }) {
   return {
     src: {
       SSR: {
@@ -12,7 +12,8 @@ const getConfig: GetUserConfig = function() {
           webpack: getClientConfig
         },
         server: {
-          webpack: getServerConfig
+          webpack: getServerConfig,
+          exclude: [{ module: 'only-client', replace: resolve('./local_modules/only-server.ts') }]
         }
       },
       DLL: {

@@ -153,8 +153,11 @@ type TSrc<T extends 'finish' | 'ready', INJECT_CONTEXT> = {
    * Server Side Render 配置
    */
   SSR: {
-    server: (T extends 'finish' ? TServer<T, INJECT_CONTEXT> : Partial<TServer<T, INJECT_CONTEXT>>) & TWebpack<T> & {}
-    client: (T extends 'finish' ? TClient : Partial<TClient>) & TWebpack<T>
+    server: (T extends 'finish'
+      ? (TServer<T, INJECT_CONTEXT> & TExcludeModule)
+      : Partial<TServer<T, INJECT_CONTEXT> & TExcludeModule>) &
+      TWebpack<T> & {}
+    client: (T extends 'finish' ? (TClient & TExcludeModule) : Partial<TClient & TExcludeModule>) & TWebpack<T>
   } & (T extends 'finish' ? TSSR<T> : Partial<TSSR<T>>)
 
   /**
@@ -272,4 +275,16 @@ export type TCredentials = {
   csr: string
   cert: string
   ca: string[]
+}
+
+export type TExcludeModuleOption = string | RegExp
+
+export type TSSRExcludeModuleOptions = {
+  debug?: boolean
+  VUE_ENV: 'client' | 'server'
+  list: Array<TExcludeModuleOption | { module: TExcludeModuleOption; replace?: string }>
+}
+
+type TExcludeModule = {
+  exclude: TSSRExcludeModuleOptions['list']
 }

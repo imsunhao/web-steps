@@ -14,6 +14,7 @@ const getConfig: GetUserConfig<T_INJECT_CONTEXT> = function({ resolve }) {
         client: { webpack: getClientConfig },
         server: {
           webpack: getServerConfig,
+          exclude: [{ module: 'only-client', replace: resolve('./local_modules/only-server.ts') }],
           proxyTable: injectContext => ({
             '/api': {
               target: injectContext.SERVER_HOST,

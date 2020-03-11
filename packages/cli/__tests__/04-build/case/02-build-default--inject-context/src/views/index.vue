@@ -1,6 +1,7 @@
 <template>
 <div>
   <p id="test1">{{ text1 }}</p>
+  <p id="test2">{{ text2 }}</p>
   <p id="state">{{ stateTest }}</p>
   <p id="hasUser">{{ hasUser }}</p>
   <p id="count">{{ count + '' }}</p>
@@ -12,6 +13,7 @@
 
 <script>
 import { dispatch, getGetter, getState, commit } from '../store'
+import onlyClient from '../../local_modules/only-client'
 
 export default {
   async asyncData({ store, locals: { test } }) {
@@ -23,7 +25,8 @@ export default {
   },
   data() {
     return {
-      text1: 'home Page'
+      text1: 'home Page',
+      text2: onlyClient()
     }
   },
   computed: {

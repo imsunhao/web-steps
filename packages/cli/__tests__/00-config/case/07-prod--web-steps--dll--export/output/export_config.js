@@ -294,11 +294,6 @@ context.userConfigConstructor = /******/ (function(modules) {
 ).default;
 context.userLifeCycleConstructor = undefined;
 const stuffConfig = function stuffConfig(defaultWebpackConfig) {
-  const {
-    defaultClientWebpackConfig,
-    defaultServerWebpackConfig,
-    defaultBaseWebpackConfig
-  } = defaultWebpackConfig;
   this.config = this.userConfigConstructor(this.startupOptions);
   const target = this.startupOptions.args.target;
   const resolve = this.startupOptions.resolve;
@@ -339,7 +334,30 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
   if (target === "SSR") {
     if (!this.config.src.SSR) this.config.src.SSR = {};
     const SSR = this.config.src.SSR;
+    const stuffExclude = () => {
+      if (!SSR.client) SSR.client = {};
+      if (!SSR.client.exclude) SSR.client.exclude = [];
+      if (!SSR.server) SSR.server = {};
+      if (!SSR.server.exclude) SSR.server.exclude = [];
+    };
     const stuffWebpack = () => {
+      const {
+        getDefaultBaseWebpackConfig,
+        getDefaultClientWebpackConfig,
+        getDefaultServerWebpackConfig
+      } = defaultWebpackConfig;
+      const defaultBaseWebpackConfig = getDefaultBaseWebpackConfig(
+        this.startupOptions,
+        this.config
+      );
+      const defaultClientWebpackConfig = getDefaultClientWebpackConfig(
+        this.startupOptions,
+        this.config
+      );
+      const defaultServerWebpackConfig = getDefaultServerWebpackConfig(
+        this.startupOptions,
+        this.config
+      );
       const result = {
         base: {},
         client: {},
@@ -415,11 +433,15 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
       if (!SSR.server.lifeCycle)
         SSR.server.lifeCycle = resolve("server/life-cycle");
     };
+    stuffExclude();
     stuffWebpack();
     stuffServer();
   }
 };
-const stuffConfigByDll = function stuffConfigByDll(userDLLManifest) {
+const stuffConfigByDll = function stuffConfigByDll(
+  userDLLManifest,
+  requireFromPath
+) {
   if (!this.config.src.DLL) return;
   Object.keys(this.config.src.DLL).forEach(key => {
     const manifestPath = path__default.resolve(
@@ -480,25 +502,29 @@ context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleCon
 };
 
 stuffConfig.call(context, {
-  defaultBaseWebpackConfig: base.default(context.startupOptions, { args }),
-  defaultClientWebpackConfig: client.default(context.startupOptions, { args }),
-  defaultServerWebpackConfig: server
+  getDefaultBaseWebpackConfig: base.default,
+  getDefaultClientWebpackConfig: client.default,
+  getDefaultServerWebpackConfig: server.default
 });
 
-stuffConfigByDll.call(context, {
-  publicPath: "",
-  all: [
-    "Vue.dll.ba8b48d92c6d571ce0b4.js",
-    "VueRouter.dll.6c1b719a2fbf024644e9.js",
-    "Vuex.dll.c32572a2cbdef26c588b.js"
-  ],
-  initial: [
-    "VueRouter.dll.6c1b719a2fbf024644e9.js",
-    "Vuex.dll.c32572a2cbdef26c588b.js",
-    "Vue.dll.ba8b48d92c6d571ce0b4.js"
-  ],
-  async: []
-});
+stuffConfigByDll.call(
+  context,
+  {
+    publicPath: "",
+    all: [
+      "Vue.dll.ba8b48d92c6d571ce0b4.js",
+      "VueRouter.dll.6c1b719a2fbf024644e9.js",
+      "Vuex.dll.c32572a2cbdef26c588b.js"
+    ],
+    initial: [
+      "VueRouter.dll.6c1b719a2fbf024644e9.js",
+      "Vuex.dll.c32572a2cbdef26c588b.js",
+      "Vue.dll.ba8b48d92c6d571ce0b4.js"
+    ],
+    async: []
+  },
+  requireFromPath
+);
 
 stuffServer.call(context);
 
