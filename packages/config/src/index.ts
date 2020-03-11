@@ -469,6 +469,7 @@ export class Config {
       }
       const stuffServer = () => {
         if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
+        if (!SSR.server.whitelist) SSR.server.whitelist = []
       }
 
       stuffExclude()

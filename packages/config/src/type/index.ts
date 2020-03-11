@@ -225,6 +225,11 @@ export type TServer<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
    * - 默认注入 xxx
    */
   env?: string[] | false
+
+  /**
+   * nodeExternals whitelist
+   */
+  whitelist?: string[]
 }
 
 interface ServeStaticOptions extends serveStatic.ServeStaticOptions {

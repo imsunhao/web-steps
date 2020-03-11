@@ -11,7 +11,7 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
   {
     src: {
       SSR: {
-        server: { exclude }
+        server: { exclude, whitelist }
       }
     }
   }
@@ -47,7 +47,11 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
         }
       ]
     },
-    externals: [nodeExternals()],
+    externals: [
+      nodeExternals({
+        whitelist: [/\.css$/, /\?vue&type=style/, ...whitelist]
+      })
+    ],
     performance: {
       maxEntrypointSize: 1024 * 1024 * 6,
       maxAssetSize: 1024 * 1024 * 3,
