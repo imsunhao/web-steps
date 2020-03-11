@@ -334,7 +334,10 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
   if (target === "SSR") {
     if (!this.config.src.SSR) this.config.src.SSR = {};
     const SSR = this.config.src.SSR;
-    const stuffExclude = () => {
+    const stuffServer = () => {
+      if (!SSR.server.lifeCycle)
+        SSR.server.lifeCycle = resolve("server/life-cycle");
+      if (!SSR.server.whitelist) SSR.server.whitelist = [];
       if (!SSR.client) SSR.client = {};
       if (!SSR.client.exclude) SSR.client.exclude = [];
       if (!SSR.server) SSR.server = {};
@@ -429,13 +432,8 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
         result.server
       );
     };
-    const stuffServer = () => {
-      if (!SSR.server.lifeCycle)
-        SSR.server.lifeCycle = resolve("server/life-cycle");
-    };
-    stuffExclude();
-    stuffWebpack();
     stuffServer();
+    stuffWebpack();
   }
 };
 const stuffConfigByDll = function stuffConfigByDll(

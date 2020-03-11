@@ -389,12 +389,16 @@ export class Config {
       if (!this.config.src.SSR) this.config.src.SSR = {} as any
       const SSR = this.config.src.SSR
 
-      const stuffExclude = () => {
+      const stuffServer = () => {
         if (!SSR.client) SSR.client = {} as any
-        if (!SSR.client.exclude) SSR.client.exclude = []
         if (!SSR.server) SSR.server = {} as any
+
+        if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
+        if (!SSR.client.exclude) SSR.client.exclude = []
         if (!SSR.server.exclude) SSR.server.exclude = []
+        if (!SSR.server.whitelist) SSR.server.whitelist = []
       }
+
       const stuffWebpack = () => {
         const {
           getDefaultBaseWebpackConfig,
@@ -467,14 +471,9 @@ export class Config {
         }
         SSR.server.webpack = webpackMerge(baseWebpackConfig, defaultServerWebpackConfig, result.server)
       }
-      const stuffServer = () => {
-        if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
-        if (!SSR.server.whitelist) SSR.server.whitelist = []
-      }
 
-      stuffExclude()
-      stuffWebpack()
       stuffServer()
+      stuffWebpack()
     }
   }
 
