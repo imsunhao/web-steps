@@ -33,10 +33,10 @@
     "loader-utils": "^1.2.3",
     "svgson": "^4.0.0",
     "webpack-node-externals": "^1.7.2",
-    "@types/webpack-env": "^1.15.1"
-  },
-  "devDependencies": {
-    "@types/require-from-string": "^1.2.0"
+    "@types/webpack-env": "^1.15.1",
+    "@types/express": "^4.17.2",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0"
   },
   "peerDependencies": {
     "@web-steps/compiler": "0.0.1-alpha.9"

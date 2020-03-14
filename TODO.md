@@ -16,4 +16,4 @@
 14. common-asset -> common-assets
 15. start-config statics path
 16. error lifeCycle undefined start error
-17. server package.json dependencies
+17. ~~server package.json dependencies~~

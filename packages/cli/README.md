@@ -1,1 +1,1 @@
-# @web-steps/bin
+# @web-steps/cli

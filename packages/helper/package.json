@@ -19,11 +19,6 @@
     "url": "https://github.com/imsunhao/utils/issues"
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper#readme",
-  "devDependencies": {
-    "axios": "^0.19.2",
-    "vue-router": "^3.1.5",
-    "vuex": "^3.1.2"
-  },
   "peerDependencies": {
     "axios": "^0.19.2",
     "vue-router": "^3.1.5",
