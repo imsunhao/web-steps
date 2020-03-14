@@ -1,3 +1,12 @@
+## [0.0.1-alpha.9](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.8...v0.0.1-alpha.9) (2020-03-14)
+
+
+### Features
+
+* ssr-exclude-module 添加 emptyModule ([ff80d3d](https://github.com/imsunhao/utils/commit/ff80d3d15064bf82ffc4fe4a7cbb9203b7b70989))
+
+
+
 ## [0.0.1-alpha.8](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.7...v0.0.1-alpha.8) (2020-03-11)
 
 
