@@ -49,7 +49,7 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
     },
     externals: [
       nodeExternals({
-        whitelist: [/\.css$/, /\?vue&type=style/, ...whitelist]
+        whitelist
       })
     ],
     performance: {

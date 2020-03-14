@@ -229,7 +229,7 @@ export type TServer<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   /**
    * nodeExternals whitelist
    */
-  whitelist?: string[]
+  whitelist?: Array<string | RegExp>
 }
 
 interface ServeStaticOptions extends serveStatic.ServeStaticOptions {

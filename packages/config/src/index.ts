@@ -397,6 +397,20 @@ export class Config {
         if (!SSR.client.exclude) SSR.client.exclude = []
         if (!SSR.server.exclude) SSR.server.exclude = []
         if (!SSR.server.whitelist) SSR.server.whitelist = []
+        SSR.server.exclude.push(
+          {
+            module: /\.css$/,
+            exclude: true
+          },
+          {
+            module: /\?vue&type=style/,
+            exclude: true
+          }
+        )
+        const excludeWhiteList = SSR.server.exclude.map(options => {
+          return typeof options === 'string' || !('module' in options) ? options : options.module
+        })
+        SSR.server.whitelist.concat(excludeWhiteList)
       }
 
       const stuffWebpack = () => {
