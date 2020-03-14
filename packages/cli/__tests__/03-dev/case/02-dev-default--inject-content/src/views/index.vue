@@ -2,6 +2,7 @@
 <div>
   <p id="test1">{{ text1 }}</p>
   <p id="test2">{{ text2 }}</p>
+  <p id="test3">{{ text3 }}</p>
   <p id="state">{{ stateTest }}</p>
   <p id="hasUser">{{ hasUser }}</p>
   <p id="count">{{ count + '' }}</p>
@@ -16,6 +17,7 @@
 import { hostGlobal } from '../envs'
 import { dispatch, getGetter, getState, commit } from '../store'
 import onlyClient from '../../local_modules/only-client'
+import onlyClient2 from '../../local_modules/only-client-2'
 
 export default {
   async asyncData({ store, locals: { test } }) {
@@ -29,6 +31,7 @@ export default {
     return {
       text1: 'home Page',
       text2: onlyClient(),
+      text3: onlyClient2(),
       INJECT_CONTEXT: hostGlobal.__INJECT_CONTEXT__
     }
   },

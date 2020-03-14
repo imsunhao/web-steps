@@ -64,7 +64,8 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
       }),
       new SSRExcludeModulePlugin({
         VUE_ENV,
-        list: exclude
+        list: exclude,
+        debug: !!__DEBUG_PORT__
       })
     ]
   }

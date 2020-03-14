@@ -282,12 +282,13 @@ export type TCredentials = {
   ca: string[]
 }
 
-export type TExcludeModuleOption = string | RegExp
+export type TExcludeModuleSimpleOption = string | RegExp
+export type TExcludeModuleOption = { module: TExcludeModuleSimpleOption; replace?: string; exclude?: boolean }
 
 export type TSSRExcludeModuleOptions = {
   debug?: boolean
   VUE_ENV: 'client' | 'server'
-  list: Array<TExcludeModuleOption | { module: TExcludeModuleOption; replace?: string }>
+  list: Array<TExcludeModuleSimpleOption | TExcludeModuleOption>
 }
 
 type TExcludeModule = {
