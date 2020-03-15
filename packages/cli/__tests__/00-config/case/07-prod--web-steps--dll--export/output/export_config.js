@@ -293,16 +293,16 @@ context.userConfigConstructor = /******/ (function(modules) {
   ]
 ).default;
 context.userLifeCycleConstructor = undefined;
-const stuffConfig = function stuffConfig(defaultWebpackConfig) {
+const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
   this.config = this.userConfigConstructor(this.startupOptions);
   const target = this.startupOptions.args.target;
   const resolve = this.startupOptions.resolve;
   if (!this.config.rootDir) {
     this.config.rootDir = this.startupOptions.args.rootDir;
   }
-  if (!this.config["common-asset"]) {
-    this.config["common-asset"] = {
-      path: resolve("./common-asset")
+  if (!this.config["common-assets"]) {
+    this.config["common-assets"] = {
+      path: resolve("./common-assets")
     };
   }
   if (!this.config.public) {
@@ -342,6 +342,21 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig) {
       if (!SSR.client.exclude) SSR.client.exclude = [];
       if (!SSR.server.exclude) SSR.server.exclude = [];
       if (!SSR.server.whitelist) SSR.server.whitelist = [];
+      SSR.server.exclude.push(
+        {
+          module: /\.css$/,
+          exclude: true
+        },
+        {
+          module: /\?vue&type=style/
+        }
+      );
+      const excludeWhiteList = SSR.server.exclude.map(options => {
+        return typeof options === "string" || !("module" in options)
+          ? options
+          : options.module;
+      });
+      SSR.server.whitelist.concat(excludeWhiteList);
     };
     const stuffWebpack = () => {
       const {
@@ -499,11 +514,15 @@ context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleCon
   return getConfigWebpackConfig("life-cycle", lifeCycle, this.setting.cache);
 };
 
-stuffConfig.call(context, {
-  getDefaultBaseWebpackConfig: base.default,
-  getDefaultClientWebpackConfig: client.default,
-  getDefaultServerWebpackConfig: server.default
-});
+stuffConfig.call(
+  context,
+  {
+    getDefaultBaseWebpackConfig: base.default,
+    getDefaultClientWebpackConfig: client.default,
+    getDefaultServerWebpackConfig: server.default
+  },
+  DEFAULT_PORT
+);
 
 stuffConfigByDll.call(
   context,

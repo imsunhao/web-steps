@@ -104,7 +104,7 @@ export function start(args: Args) {
       SSR: [],
       template: [],
       public: [],
-      'common-asset': []
+      'common-assets': []
     }
 
     const injectContextConfig: any = config.config.injectContext
@@ -139,7 +139,7 @@ export function start(args: Args) {
     }
 
     getStaticFilePath('public')
-    getStaticFilePath('common-asset')
+    getStaticFilePath('common-assets')
 
     if (args.target === 'SSR') {
       const SSR = config.config.src.SSR

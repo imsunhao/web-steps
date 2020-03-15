@@ -1,6 +1,6 @@
 import { TTestConfig } from '../../../utils'
 import { resolve } from 'path'
-const debug = true
+const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
   skip: false,
@@ -38,6 +38,14 @@ const testConfig: TTestConfig = {
         })
 
         expect(color).toEqual('rgb(255, 0, 0)')
+
+        const color2 = await page.evaluate(() => {
+          const element = document.getElementById('state')
+          element.focus()
+          return window.getComputedStyle(element).getPropertyValue('color')
+        })
+
+        expect(color2).toEqual('rgb(255, 0, 0)')
       }
     }
   },

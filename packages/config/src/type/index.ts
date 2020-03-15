@@ -76,10 +76,10 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   /**
    * 公共资源库
    * - 资源库 一对多 服务器
-   * - 默认值 path: './common-asset'
+   * - 默认值 path: './common-assets'
    * - 默认值 filters: undefined
    */
-  'common-asset': TDirOptions
+  'common-assets': TDirOptions
 
   /**
    * 资源库

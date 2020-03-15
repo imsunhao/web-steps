@@ -40,7 +40,7 @@ declare namespace WebSteps {
     injectContext: any
   }
 
-  type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'common-asset' | 'template', string[]>
+  type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'common-assets' | 'template', string[]>
 }
 
 export = WebSteps

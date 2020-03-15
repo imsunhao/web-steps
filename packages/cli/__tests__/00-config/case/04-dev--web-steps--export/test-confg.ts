@@ -26,10 +26,21 @@ const testConfig: TTestConfig = {
                     client: ['webpack-hot-middleware/client', resolve(__dirname, 'src/entry-client.ts')]
                   },
                   mode: 'development'
-                }
+                },
+                exclude: []
               },
               server: {
-                exclude: []
+                exclude: [
+                  {
+                    exclude: true,
+                    module: /\.css$/,
+                    replace: '@web-steps/config/dist/empty-module.js'
+                  },
+                  {
+                    module: /\?vue&type=style/,
+                    replace: '@web-steps/config/dist/empty-module.js'
+                  }
+                ]
               }
             }
           }

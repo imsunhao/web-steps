@@ -66,3 +66,7 @@ export default {
   color: red;
 }
 </style>
+
+<style>
+@import '../css/test.css';
+</style>

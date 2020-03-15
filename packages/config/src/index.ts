@@ -191,11 +191,14 @@ export class Config {
     }
 
     if (payload.target === 'base') {
-      this.stuffConfig({
-        getDefaultBaseWebpackConfig,
-        getDefaultClientWebpackConfig,
-        getDefaultServerWebpackConfig
-      })
+      this.stuffConfig(
+        {
+          getDefaultBaseWebpackConfig,
+          getDefaultClientWebpackConfig,
+          getDefaultServerWebpackConfig
+        },
+        DEFAULT_PORT
+      )
       if (!this.userConfigConstructor) {
         log.error('无法找到配置文件')
       }
@@ -342,7 +345,7 @@ export class Config {
     }
   }
 
-  private stuffConfig(defaultWebpackConfig: any) {
+  private stuffConfig(defaultWebpackConfig: any, DEFAULT_PORT: number) {
     this.config = this.userConfigConstructor(this.startupOptions)
 
     const target = this.startupOptions.args.target
@@ -352,9 +355,9 @@ export class Config {
       this.config.rootDir = this.startupOptions.args.rootDir
     }
 
-    if (!this.config['common-asset']) {
-      this.config['common-asset'] = {
-        path: resolve('./common-asset')
+    if (!this.config['common-assets']) {
+      this.config['common-assets'] = {
+        path: resolve('./common-assets')
       }
     }
 
@@ -403,8 +406,7 @@ export class Config {
             exclude: true
           },
           {
-            module: /\?vue&type=style/,
-            exclude: true
+            module: /\?vue&type=style/
           }
         )
         const excludeWhiteList = SSR.server.exclude.map(options => {
@@ -593,7 +595,7 @@ export class Config {
         getDefaultBaseWebpackConfig: base.default,
         getDefaultClientWebpackConfig: client.default,
         getDefaultServerWebpackConfig: server.default
-      })
+      }, DEFAULT_PORT)
 
       stuffConfigByDll.call(context, ${convertObjToSource(userDLLManifest)}, requireFromPath)
 
