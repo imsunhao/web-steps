@@ -35,7 +35,7 @@ export function showStats(stats: webpack.Stats) {
 }
 
 export function showCompilerStart(config: webpack.Configuration) {
-  log.log('Working Compiler:', config.name || '未命名', '\n')
+  log.log('Working Compiler:', config.name || '未命名', 'by', config.mode || 'mode 为 undefined!', '\n')
 }
 
 export * from './config'

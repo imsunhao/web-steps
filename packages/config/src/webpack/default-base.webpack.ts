@@ -1,9 +1,12 @@
 import { VueLoaderPlugin } from 'vue-loader'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
 import { TGetWebpackConfig } from '@web-steps/config'
+import webpack from 'webpack'
+import { TERSER_PLUGIN_OPTIONS } from '../setting'
 
 const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
-  return {
+  const base: webpack.Configuration = {
     mode: env,
     context: rootDir,
     resolve: {
@@ -11,6 +14,9 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
     },
     output: {
       filename: '[name].[chunkhash].js'
+    },
+    optimization: {
+      minimizer: [new TerserPlugin(TERSER_PLUGIN_OPTIONS)]
     },
     module: {
       noParse: /es6-promise\.js$/,
@@ -46,6 +52,8 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
       })
     ]
   }
+
+  return base
 }
 
 export default getConfig

@@ -21,7 +21,11 @@
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/config#readme",
   "dependencies": {
+    "@types/express": "^4.17.2",
+    "@types/terser-webpack-plugin": "^2.2.0",
+    "@types/webpack-env": "^1.15.1",
     "css-loader": "^3.4.2",
+    "loader-utils": "^1.2.3",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.13.1",
     "null-loader": "^3.0.0",
@@ -29,14 +33,12 @@
     "require-from-string": "^2.0.2",
     "rimraf": "^3.0.1",
     "sass-loader": "^8.0.2",
-    "webpack-merge": "^4.2.2",
-    "loader-utils": "^1.2.3",
     "svgson": "^4.0.0",
-    "webpack-node-externals": "^1.7.2",
-    "@types/webpack-env": "^1.15.1",
-    "@types/express": "^4.17.2",
+    "terser-webpack-plugin": "^2.3.5",
     "webpack-dev-middleware": "^3.7.2",
-    "webpack-hot-middleware": "^2.25.0"
+    "webpack-hot-middleware": "^2.25.0",
+    "webpack-merge": "^4.2.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
     "@web-steps/compiler": "0.0.1-alpha.9"

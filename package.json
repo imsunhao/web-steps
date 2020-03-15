@@ -50,6 +50,7 @@
     "@types/minimist": "^1.2.0",
     "@types/optimize-css-assets-webpack-plugin": "^5.0.1",
     "@types/puppeteer-core": "^2.0.0",
+    "@types/require-from-string": "^1.2.0",
     "@types/rimraf": "^2.0.3",
     "@types/semver": "^7.1.0",
     "@types/serialize-javascript": "^1.5.0",
@@ -87,6 +88,9 @@
     "vue-router": "^3.1.5",
     "vue-server-renderer": "^2.6.11",
     "vue-template-compiler": "^2.6.11",
-    "vuex": "^3.1.2"
+    "vuex": "^3.1.2",
+    "@types/webpack": "^4.41.3",
+    "ts-loader": "^6.2.1",
+    "webpack": "^4.41.5"
   }
 }

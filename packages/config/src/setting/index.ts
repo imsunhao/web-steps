@@ -1,4 +1,5 @@
 import { TServerInjectContext } from '@web-steps/server'
+import TerserPlugin from 'terser-webpack-plugin'
 /**
  * 默认 启动端口
  */
@@ -43,3 +44,10 @@ open /Library/Keychains/System.keychain
 \`\`\`
 然后 找到 标红的 web-steps 证书, 双击打开 找到 详细. 始终信任
 `
+
+export const TERSER_PLUGIN_OPTIONS: TerserPlugin.TerserPluginOptions = {
+  exclude: /\.min\.js$/,
+  parallel: true,
+  extractComments: false,
+  sourceMap: false
+}
