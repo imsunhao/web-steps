@@ -31,7 +31,7 @@ export class DevService extends Service {
       const WAIT_TIME = 1000
       const MAX = 60
 
-      const PORT = DEFAULT_PORT
+      const PORT = parseInt((process.env.PORT || DEFAULT_PORT) as string)
       const SSLPORT = PORT + 1
 
       const httpServerStart = () => {

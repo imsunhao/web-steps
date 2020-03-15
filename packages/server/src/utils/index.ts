@@ -72,7 +72,7 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
 }
 
 const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
-  const port = DEFAULT_PORT
+  const port = process.env.PORT || DEFAULT_PORT
   const WAIT_TIME = 1000
   const MAX = 60
   let index = 0

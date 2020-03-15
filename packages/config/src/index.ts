@@ -386,7 +386,8 @@ export class Config {
 
     if (!this.config.src) this.config.src = {} as any
 
-    this.config.port = this.startupOptions.args.port || this.config.port || DEFAULT_PORT
+    this.config.port = this.startupOptions.args.port || process.env.PORT || this.config.port || DEFAULT_PORT
+    process.env.PORT = this.config.port as any
 
     if (target === 'SSR') {
       if (!this.config.src.SSR) this.config.src.SSR = {} as any
