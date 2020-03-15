@@ -13,6 +13,11 @@ const getConfig: GetUserConfig = function({ resolve }) {
         },
         server: {
           webpack: getServerConfig,
+          statics: {
+            'common-assets': {
+              path: resolve('./common-assets')
+            }
+          },
           exclude: [{ module: 'only-client', replace: resolve('./local_modules/only-server.ts') }]
         }
       },

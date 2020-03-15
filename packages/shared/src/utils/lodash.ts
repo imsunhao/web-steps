@@ -12,6 +12,7 @@ export function mergeBase(src: { [x: string]: any }, target: { [x: string]: any 
 
 export function cloneDeep<T>(data: T): T {
   if (typeof data !== 'object') return data
+  if (data instanceof RegExp) return data
   if (data instanceof Array) {
     return data.map(d => {
       return cloneDeep(d)

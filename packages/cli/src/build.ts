@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-string-starts-ends-with */
 import { Stats } from 'webpack'
 import { Args, TStartConfig, TFILES_MANIFEST, ProcessMessage } from '@types'
 import { config, TConfig } from '@web-steps/config'
@@ -19,18 +20,71 @@ import {
 import { writeFileSync, existsSync } from 'fs'
 import path from 'path'
 
+function pathResolve(
+  server: TConfig['src']['SSR']['server'],
+  resolve: (p: string) => string,
+  getReplacePath: (p: string, resolve: any) => string | false
+) {
+  if (server.exclude) {
+    server.exclude = server.exclude.map(exclude => {
+      if (typeof exclude !== 'string' && 'module' in exclude && typeof exclude.replace === 'string') {
+        const path = getReplacePath(exclude.replace, resolve)
+        if (path) {
+          exclude.replace = path
+        }
+      }
+      return exclude
+    })
+  }
+
+  if (server.statics) {
+    Object.keys(server.statics).reduce((statics, key) => {
+      if (statics[key]) {
+        const path = getReplacePath(statics[key].path, resolve)
+        if (path) {
+          statics[key].path = path
+        }
+      }
+      return statics
+    }, server.statics)
+  }
+
+  if (server.render) {
+    Object.keys(server.render).reduce((render, key: keyof typeof server.render) => {
+      if (render[key]) {
+        const path = getReplacePath(render[key], resolve)
+        if (path) render[key] = path
+      }
+      return render
+    }, server.render)
+  }
+}
+
 function exportSSRStartConfig(DLL: any, injectContext: any) {
   const server = cloneDeep(config.config.src.SSR.server)
+  const replaceRegExp = /^#replace#/
+
+  const getReplacePath = (p: string, resolve: any) => {
+    if (replaceRegExp.test(p)) {
+      return resolve(p.replace(replaceRegExp, ''))
+    }
+    return false
+  }
+
+  const setReplacePath = (p: string, resolve: any) => {
+    if (/^\//.test(p)) {
+      return '#replace#' + resolve(p)
+    }
+    return false
+  }
+
   if (existsSync(config.userConfigPath.lifeCycle)) {
     server.lifeCycle = requireSourceString(config.userConfigPath.lifeCycle) as any
   } else {
     delete server.lifeCycle
   }
 
-  Object.keys(server.render).reduce((render, key: keyof typeof server.render) => {
-    if (render[key]) render[key] = path.relative(config.args.rootDir, render[key])
-    return render
-  }, server.render)
+  pathResolve(server, p => path.relative(config.args.rootDir, p), setReplacePath)
 
   delete server.webpack
 
@@ -47,11 +101,11 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
       const getResolve = ${convertObjToSource(getResolve)}
       const resolve = getResolve({ rootDir })
       const { server, DLL, injectContext } = ${convertObjToSource(startConfig)}
+      const pathResolve = ${pathResolve}
+      const getReplacePath = ${getReplacePath}
+      const replaceRegExp = ${replaceRegExp}
 
-      Object.keys(server.render).reduce((render, key) => {
-        if (render[key]) render[key] = resolve(render[key])
-        return render
-      }, server.render)
+      pathResolve(server, resolve, getReplacePath)
 
       module.exports = {
         resolve,
