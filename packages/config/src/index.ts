@@ -407,7 +407,8 @@ export class Config {
         if (!SSR.server.whitelist) SSR.server.whitelist = []
         SSR.server.exclude.push(
           {
-            module: /\.css$/
+            module: /\.css$/,
+            exclude: true
           },
           {
             module: /\?vue&type=style/
