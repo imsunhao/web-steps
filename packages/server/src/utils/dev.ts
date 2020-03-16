@@ -113,7 +113,7 @@ export class DevService extends Service {
     const {
       render: { templatePath, clientManifestPath, bundlePath }
     } = this.server
-    if (this.SSR.bundle && this.SSR.clientManifest) {
+    if ((this.SSR.bundle && this.SSR.clientManifest) || key === 'template') {
       this.SSR.bundle = false
       this.SSR.clientManifest = false
       log.info(`updated by ${key} time: ${new Date().toLocaleString()}`)

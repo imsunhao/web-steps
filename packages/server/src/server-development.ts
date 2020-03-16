@@ -3,6 +3,7 @@ import { log } from '.'
 import { DevService, DevAPP } from './utils/dev'
 import { SSRMessageBus } from '@types'
 import { Stats } from 'webpack'
+import chokidar from 'chokidar'
 
 export function showWebpackCompilerError(stats: Stats) {
   if (stats.hasWarnings()) {
@@ -68,6 +69,13 @@ export function start({ server, setting, dll, credentials }: ServerStart, opts?:
         }
       })
       service.compilersWatching.push(serverWatching)
+
+      if (server.render.templatePath) {
+        const templateWatching = chokidar.watch(server.render.templatePath).on('change', () => {
+          service.updateBundleRenderer('template')
+        })
+        service.compilersWatching.push(templateWatching)
+      }
     } else if (name === 'inject-context') {
       const injectContextWatching = compiler.watch({}, (err, stats) => {
         if (showWebpackCompilerError(stats)) {

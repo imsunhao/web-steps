@@ -15,6 +15,7 @@ const testConfig: TTestConfig = {
       debug,
       url: 'http://127.0.0.1:8080',
       texts: {
+        '#template': 'hello im from index.template.html',
         '#test1': 'home Page',
         '#state': 'from server asyncData',
         '#count': '0',
