@@ -27,6 +27,8 @@ export function start(args: Args) {
   if (server.lifeCycle) {
     const startupOptions: StartupOptions = { args, resolve: startConfig.resolve }
     server.lifeCycle = requrieFromString(server.lifeCycle)(startupOptions)
+  } else {
+    server.lifeCycle = {}
   }
 
   const { DLL, injectContext, port } = startConfig as any

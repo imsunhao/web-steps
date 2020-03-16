@@ -6,4 +6,3 @@
 4. beforeRenderSend 500 error
 5. dev websocket
 6. args inject-context
-7. error lifeCycle undefined start error
