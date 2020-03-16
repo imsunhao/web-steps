@@ -40,7 +40,8 @@ const testConfig: TTestConfig = {
                     module: /\?vue&type=style/,
                     replace: '@web-steps/config/dist/empty-module.js'
                   }
-                ]
+                ],
+                whitelist: [/\.css$/, /\?vue&type=style/]
               }
             }
           }

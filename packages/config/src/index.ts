@@ -417,7 +417,7 @@ export class Config {
         const excludeWhiteList = SSR.server.exclude.map(options => {
           return typeof options === 'string' || !('module' in options) ? options : options.module
         })
-        SSR.server.whitelist.concat(excludeWhiteList)
+        SSR.server.whitelist = SSR.server.whitelist.concat(excludeWhiteList)
       }
 
       const stuffWebpack = () => {
