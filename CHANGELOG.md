@@ -1,3 +1,26 @@
+## [0.0.1-alpha.10](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.9...v0.0.1-alpha.10) (2020-03-16)
+
+
+### Bug Fixes
+
+* [start] error lifeCycle undefined ([eb1cf2d](https://github.com/imsunhao/utils/commit/eb1cf2d7b12f7a09ca7e5bc036657a2e53501a01))
+* build ts error ([be7ca6c](https://github.com/imsunhao/utils/commit/be7ca6cedf71fb0f14d9a746b6cb18035bbeed9a))
+
+
+### Features
+
+* args 添加 inject-context 支持 ([da0ad2a](https://github.com/imsunhao/utils/commit/da0ad2aeabb03c72dba5e14b3475213059ad703f))
+* common-asset -> common-assets ([867014a](https://github.com/imsunhao/utils/commit/867014aa51ca285bad352b9cc6c8d4f145cbd8ce))
+* dev html hot-reload ([48cf949](https://github.com/imsunhao/utils/commit/48cf9492a8e63816041885334e0819e0a7d6e979))
+* start exportSSRStartConfig 添加 pathResolve ([a1a39e1](https://github.com/imsunhao/utils/commit/a1a39e1ea7720d40c69472c515c883abd336d9ac))
+* 完善 exclude 与 whitelist 的关系 ([4b7c279](https://github.com/imsunhao/utils/commit/4b7c2792c567a792bd8c02e25560a775f26ef1b5))
+* 添加 terser-webpack-plugin options ([ccc308d](https://github.com/imsunhao/utils/commit/ccc308d47420d58fdd27d116c95ef2f85ca9128d))
+* 添加 todo ([42a7780](https://github.com/imsunhao/utils/commit/42a77809d85f0e74a37775a09e28d78bb19b293b))
+* 移除 无用的 devDependencies ([69eb9cc](https://github.com/imsunhao/utils/commit/69eb9cc940bcd47a60a9ab0345445c090236f961))
+* 调整 port 规则 ([e9dc02b](https://github.com/imsunhao/utils/commit/e9dc02b9971e3e1cf36b698cf944f55bca2d5be7))
+
+
+
 ## [0.0.1-alpha.9](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.8...v0.0.1-alpha.9) (2020-03-14)
 
 
