@@ -8,7 +8,8 @@ const testConfig: TTestConfig = {
   timeout: 20000,
   node: {
     target: 'web-steps',
-    rootDir: resolve(__dirname)
+    rootDir: resolve(__dirname),
+    argv: ['--inject-context=inject-content/stage.ts']
   },
   result: {
     e2e: {

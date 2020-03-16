@@ -10,6 +10,11 @@ export class Args {
   rootDir: string
 
   /**
+   * 注入自定义数据 路径
+   */
+  injectContext: string
+
+  /**
    * server运行端口号
    * - 默认值 8080
    */
@@ -61,6 +66,7 @@ export class Args {
     const args: any = (this.args = minimist(process.argv.slice(2)))
 
     this.rootDir = args['root-dir'] || process.cwd()
+    this.injectContext = args['inject-context']
     this.settingPath = args['setting-path'] || 'web-steps.json'
     this.skipCompilerConfig = args['skip-compiler-config']
     this.forceCompilerConfig = args['force-compiler-config']

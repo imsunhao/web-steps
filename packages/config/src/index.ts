@@ -349,7 +349,7 @@ export class Config {
     this.config = this.userConfigConstructor(this.startupOptions)
 
     const target = this.startupOptions.args.target
-    const resolve = this.startupOptions.resolve
+    const resolve: (p: string) => string = this.startupOptions.resolve
 
     if (!this.config.rootDir) {
       this.config.rootDir = this.startupOptions.args.rootDir
@@ -367,7 +367,11 @@ export class Config {
       }
     }
 
-    if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.ts')
+    if (this.startupOptions.args.injectContext) {
+      const injectContextPath = this.startupOptions.args.injectContext
+      this.config.injectContext = injectContextPath.startsWith('/') ? injectContextPath : resolve(injectContextPath)
+    } else if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.ts')
+
     if (fs.existsSync(this.config.injectContext)) {
       this.config.injectContext = getConfigWebpackConfig(
         'inject-context',
@@ -397,7 +401,7 @@ export class Config {
         if (!SSR.client) SSR.client = {} as any
         if (!SSR.server) SSR.server = {} as any
 
-        if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle')
+        if (!SSR.server.lifeCycle) SSR.server.lifeCycle = resolve('server/life-cycle') as any
         if (!SSR.client.exclude) SSR.client.exclude = []
         if (!SSR.server.exclude) SSR.server.exclude = []
         if (!SSR.server.whitelist) SSR.server.whitelist = []

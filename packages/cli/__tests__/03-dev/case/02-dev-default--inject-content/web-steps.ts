@@ -4,10 +4,9 @@ import getClientConfig from './config/webpack-client'
 import getServerConfig from './config/webpack-server'
 import { T_INJECT_CONTEXT } from './inject-content/type'
 
-const getConfig: GetUserConfig<T_INJECT_CONTEXT> = function({ resolve }) {
+const getConfig: GetUserConfig<T_INJECT_CONTEXT> = function() {
   return {
     port: 8000,
-    injectContext: resolve('inject-content/stage.ts'),
     src: {
       SSR: {
         base: { webpack: getBaseConfig },
