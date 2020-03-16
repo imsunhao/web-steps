@@ -32,7 +32,6 @@ const testConfig: TTestConfig = {
               server: {
                 exclude: [
                   {
-                    exclude: true,
                     module: /\.css$/,
                     replace: '@web-steps/config/dist/empty-module.js'
                   },

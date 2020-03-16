@@ -355,8 +355,7 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
       if (!SSR.server.whitelist) SSR.server.whitelist = [];
       SSR.server.exclude.push(
         {
-          module: /\.css$/,
-          exclude: true
+          module: /\.css$/
         },
         {
           module: /\?vue&type=style/

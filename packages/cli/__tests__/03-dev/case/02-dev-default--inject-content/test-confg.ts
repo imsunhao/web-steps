@@ -14,7 +14,7 @@ const testConfig: TTestConfig = {
   result: {
     e2e: {
       debug,
-      url: 'http://127.0.0.1:8000',
+      url: 'http://127.0.0.1:8080',
       texts: {
         '#test1': 'home Page',
         '#state': 'from server asyncData',
@@ -23,7 +23,7 @@ const testConfig: TTestConfig = {
         '#get': 'true',
         '#post': 'true',
         '#context': `INJECT_CONTEXT: {
-  "SERVER_HOST": "http://127.0.0.1:8000",
+  "SERVER_HOST": "http://127.0.0.1:8080",
   "TEST": "这是一个测试"
 }`
       },

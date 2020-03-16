@@ -6,7 +6,7 @@ import { T_INJECT_CONTEXT } from './inject-content/type'
 
 const getConfig: GetUserConfig<T_INJECT_CONTEXT> = function() {
   return {
-    port: 8000,
+    port: 8080,
     src: {
       SSR: {
         base: { webpack: getBaseConfig },
