@@ -71,6 +71,13 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
   serverProxyTable()
 }
 
+function serverBeforeRenderSend(err: any, html: string, next: express.NextFunction) {
+  if (err) {
+    log.error(err)
+    return next()
+  }
+}
+
 const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
   const port = process.env.PORT || DEFAULT_PORT
   const WAIT_TIME = 1000
@@ -193,7 +200,7 @@ function getRequiredLifeCycle(
     getDefaultRenderContext: getDefaultRenderContext || getRenderContext,
     renderContext: renderContext || noop,
     renderToString: renderToString || createBundleRendererRenderToString(render, DLL),
-    beforeRenderSend: beforeRenderSend || noop,
+    beforeRenderSend: beforeRenderSend || serverBeforeRenderSend,
     renderSend: renderSend || serverRenderSend,
     router: router || noop
   }
