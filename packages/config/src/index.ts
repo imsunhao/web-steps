@@ -592,6 +592,8 @@ export class Config {
       const stuffConfig = function ${convertObjToSource(stuffConfig)}
       const stuffConfigByDll = function ${stuffConfigByDll}
       const stuffServer = function ${convertObjToSource(stuffServer)}
+      const nodeExternals = require('webpack-node-externals')
+      const getConfigWebpackConfig = ${getConfigWebpackConfig}
       context.getDefaultLifeCycleConfigWebpackConfig = function ${convertObjToSource(
         getDefaultLifeCycleConfigWebpackConfig
       )}
