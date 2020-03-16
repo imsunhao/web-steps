@@ -355,7 +355,8 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
       if (!SSR.server.whitelist) SSR.server.whitelist = [];
       SSR.server.exclude.push(
         {
-          module: /\.css$/
+          module: /\.css$/,
+          exclude: true
         },
         {
           module: /\?vue&type=style/
@@ -366,7 +367,7 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
           ? options
           : options.module;
       });
-      SSR.server.whitelist.concat(excludeWhiteList);
+      SSR.server.whitelist = SSR.server.whitelist.concat(excludeWhiteList);
     };
     const stuffWebpack = () => {
       const {
@@ -512,6 +513,43 @@ const stuffServer = function stuffServer(merge) {
     };
   }
   SSR.server.render = merge(render || {}, SSR.server.render);
+};
+const nodeExternals = require("webpack-node-externals");
+const getConfigWebpackConfig = function getConfigWebpackConfig(
+  name,
+  entryPath,
+  outputPath
+) {
+  return {
+    name,
+    mode: "production",
+    devtool: false,
+    target: "node",
+    optimization: {
+      minimize: false
+    },
+    entry: {
+      [name]: entryPath
+    },
+    output: {
+      path: outputPath,
+      filename: "[name].js",
+      libraryTarget: "commonjs2"
+    },
+    externals: [nodeExternals()],
+    resolve: {
+      extensions: [".ts", ".js", ".json"]
+    },
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          use: ["ts-loader"]
+        }
+      ]
+    }
+  };
 };
 context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleConfigWebpackConfig() {
   const lifeCycle = this.config.src.SSR.server.lifeCycle;

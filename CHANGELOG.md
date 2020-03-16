@@ -1,3 +1,18 @@
+## [0.0.1-alpha.12](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.11...v0.0.1-alpha.12) (2020-03-16)
+
+
+### Bug Fixes
+
+* export 修复 getConfigWebpackConfig is undefined ([81eddc5](https://github.com/imsunhao/utils/commit/81eddc5746797c1a30c4dff9cbcc9c337b0efc68))
+* 修复 whitelist 失效 ([f420da9](https://github.com/imsunhao/utils/commit/f420da927788b18e0c107459dd0eb35bed6cdfc9))
+
+
+### Reverts
+
+* Revert "fix: exclude css 被排除" ([a1aeaec](https://github.com/imsunhao/utils/commit/a1aeaec61a2f0ce7165ec6cd1726fa3171ab09ea))
+
+
+
 ## [0.0.1-alpha.11](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.10...v0.0.1-alpha.11) (2020-03-16)
 
 
