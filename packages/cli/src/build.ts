@@ -26,7 +26,7 @@ function pathResolve(
   getReplacePath: (p: string, resolve: any) => string | false
 ) {
   if (server.exclude) {
-    server.exclude = server.exclude.map(exclude => {
+    server.exclude = server.exclude.map((exclude: any) => {
       if (typeof exclude !== 'string' && 'module' in exclude && typeof exclude.replace === 'string') {
         const path = getReplacePath(exclude.replace, resolve)
         if (path) {

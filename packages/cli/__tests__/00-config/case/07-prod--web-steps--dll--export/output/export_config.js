@@ -52,6 +52,7 @@ const mergeBase = function mergeBase(src, target) {
 };
 const cloneDeep = function cloneDeep(data) {
   if (typeof data !== "object") return data;
+  if (data instanceof RegExp) return data;
   if (data instanceof Array) {
     return data.map(d => {
       return cloneDeep(d);
@@ -71,6 +72,7 @@ const { args, setting, isDev } = {
   args: {
     rootDir:
       "/Users/sunhao/Documents/imsunhao/utils/packages/cli/__tests__/00-config/case/07-prod--web-steps--dll--export",
+    injectContext: undefined,
     settingPath: "web-steps.json",
     skipCompilerConfig: undefined,
     forceCompilerConfig: undefined,
@@ -310,7 +312,12 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
       path: resolve("./public")
     };
   }
-  if (!this.config.injectContext)
+  if (this.startupOptions.args.injectContext) {
+    const injectContextPath = this.startupOptions.args.injectContext;
+    this.config.injectContext = injectContextPath.startsWith("/")
+      ? injectContextPath
+      : resolve(injectContextPath);
+  } else if (!this.config.injectContext)
     this.config.injectContext = resolve("./inject-context.ts");
   if (fs__default.existsSync(this.config.injectContext)) {
     this.config.injectContext = getConfigWebpackConfig(
@@ -330,7 +337,11 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
   }
   if (!this.config.src) this.config.src = {};
   this.config.port =
-    this.startupOptions.args.port || this.config.port || DEFAULT_PORT;
+    this.startupOptions.args.port ||
+    process.env.PORT ||
+    this.config.port ||
+    DEFAULT_PORT;
+  process.env.PORT = this.config.port;
   if (target === "SSR") {
     if (!this.config.src.SSR) this.config.src.SSR = {};
     const SSR = this.config.src.SSR;
