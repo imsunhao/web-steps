@@ -7,6 +7,7 @@ const major = 'build'
 
 describe(major, () => {
   readdirSync(caseDir).forEach(caseName => {
+    if (caseName === '.DS_Store') return
     testing(major, caseName, require(`./case/${caseName}/test-confg`).default)
   })
 })

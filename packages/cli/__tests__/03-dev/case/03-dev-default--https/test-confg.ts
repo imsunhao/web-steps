@@ -3,7 +3,7 @@ import { resolve } from 'path'
 const debug = false
 const testConfig: TTestConfig = {
   vscodeDebug: debug,
-  skip: true,
+  skip: !debug,
   cache: true,
   timeout: 20000,
   node: {
