@@ -30,19 +30,6 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
             }
           }
         },
-        {
-          test: /\.tsx?$/,
-          exclude: /node_modules/,
-          use: [
-            {
-              loader: 'ts-loader',
-              options: {
-                appendTsSuffixTo: [/\.vue$/],
-                transpileOnly: true
-              }
-            }
-          ]
-        }
       ]
     },
     plugins: [

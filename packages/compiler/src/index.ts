@@ -1,8 +1,22 @@
 import { getInitConfig, CompilerConfig } from './utils'
 import { processSend, Log, getEnv } from 'packages/shared'
 import { SSRMessageBus } from '@types'
+// import threadLoader from 'thread-loader'
 
 const major = 'compiler'
+
+// function name(params:type) {
+//   threadLoader.warmup({
+//     // pool options, like passed to loader options
+//     // must match loader options to boot the correct pool
+//   }, [
+//     // modules to load
+//     // can be any module, i. e.
+//     'babel-loader',
+//     'babel-preset-es2015',
+//     'sass-loader',
+//   ])
+// }
 
 export let log: Log
 export async function start(

@@ -7,7 +7,7 @@ import { SSRExcludeModulePlugin } from '../plugin/ssr-exclude-module'
 const VUE_ENV = 'server'
 
 const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
-  startupOptions,
+  { args: { env } },
   {
     src: {
       SSR: {
@@ -16,6 +16,13 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
     }
   }
 ) {
+  const isProd = env === 'production'
+  const threadLoader = {
+    loader: 'thread-loader',
+    options: {
+      poolTimeout: isProd ? 500 : Infinity
+    }
+  }
   return {
     name: VUE_ENV,
     target: 'node',
@@ -44,6 +51,27 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
         {
           test: /\.css$/,
           use: 'null-loader'
+        },
+        {
+          test: /\.js$/,
+          use: ['cache-loader', threadLoader],
+          exclude: /node_modules/
+        },
+        {
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          use: [
+            'cache-loader',
+            threadLoader,
+            {
+              loader: 'ts-loader',
+              options: {
+                appendTsSuffixTo: [/\.vue$/],
+                transpileOnly: true,
+                happyPackMode: true
+              }
+            }
+          ]
         }
       ]
     },

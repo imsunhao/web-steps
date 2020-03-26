@@ -18,6 +18,13 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function(
   }
 ) {
   const isProd = env === 'production'
+  const threadLoader = {
+    loader: 'thread-loader',
+    options: {
+      poolTimeout: isProd ? 500 : Infinity
+    }
+  }
+
   return {
     name: VUE_ENV,
     module: {
@@ -51,6 +58,27 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function(
         {
           test: /\.css$/,
           use: [isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader', 'css-loader']
+        },
+        {
+          test: /\.js$/,
+          use: ['cache-loader', threadLoader],
+          exclude: /node_modules/
+        },
+        {
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          use: [
+            'cache-loader',
+            threadLoader,
+            {
+              loader: 'ts-loader',
+              options: {
+                appendTsSuffixTo: [/\.vue$/],
+                transpileOnly: true,
+                happyPackMode: true
+              }
+            }
+          ]
         }
       ]
     },
