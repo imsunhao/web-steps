@@ -5,6 +5,7 @@ import getServerConfig from './config/webpack-server'
 
 const getConfig: GetUserConfig = function({ resolve }) {
   return {
+    port: 8040,
     public: {
       path: resolve('./public'),
       filters: [/.txt$/]
