@@ -91,7 +91,8 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
   const startConfig: Partial<TStartConfig> = {
     server,
     DLL,
-    injectContext
+    injectContext,
+    port: config.config.port
   }
 
   function getStartConfigJs() {
@@ -100,7 +101,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
       const rootDir = path.resolve(__dirname, '${path.relative(config.setting.output, config.args.rootDir)}')
       const getResolve = ${convertObjToSource(getResolve)}
       const resolve = getResolve({ rootDir })
-      const { server, DLL, injectContext } = ${convertObjToSource(startConfig)}
+      const { server, DLL, injectContext, port } = ${convertObjToSource(startConfig)}
       const pathResolve = ${pathResolve}
       const getReplacePath = ${getReplacePath}
       const replaceRegExp = ${replaceRegExp}
@@ -112,6 +113,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
         rootDir,
         server,
         DLL,
+        port,
         injectContext
       }
     `

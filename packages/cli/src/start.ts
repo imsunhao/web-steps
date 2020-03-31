@@ -40,7 +40,7 @@ export function start(args: Args) {
       dll: DLL,
       credentials: undefined,
       injectContext,
-      port,
+      port: process.env.PORT || args.port || port,
       env: args.env
     })
   }
