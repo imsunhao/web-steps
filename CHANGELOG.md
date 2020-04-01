@@ -1,3 +1,14 @@
+## [0.0.1-alpha.13](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.12...v0.0.1-alpha.13) (2020-04-01)
+
+
+### Features
+
+* add start port ([1ece21c](https://github.com/imsunhao/utils/commit/1ece21c4ce11f462513f0c350f35a7eaef954116))
+* test 添加 过滤无用目录 ([a35cdac](https://github.com/imsunhao/utils/commit/a35cdac57f2270d61e4f1d70104efd307663ff69))
+* 添加 cache-loader 与 thread-loader ([f3ab683](https://github.com/imsunhao/utils/commit/f3ab683efd5012a5de78214b0d173634b191ac2c))
+
+
+
 ## [0.0.1-alpha.12](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.11...v0.0.1-alpha.12) (2020-03-16)
 
 
