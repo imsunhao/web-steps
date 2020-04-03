@@ -79,8 +79,8 @@ export async function start(args: Args) {
 
     step('\nRunning tests...')
     if (!skipTests) {
-      run(bin('jest'), ['--clearCache'])
-      run('yarn', ['test'])
+      await run(bin('jest'), ['--clearCache'])
+      await run('yarn', ['test'])
     } else {
       console.log(`(skipped)`)
     }
@@ -90,7 +90,7 @@ export async function start(args: Args) {
 
     step('\nBuilding all packages...')
     if (!skipBuild) {
-      run('yarn', ['build'])
+      await run('yarn', ['build'])
     } else {
       console.log(`(skipped)`)
     }
@@ -143,12 +143,17 @@ export async function start(args: Args) {
 
     step('\nGit changelog...')
 
-    run(`yarn`, ['changelog'])
+    await run(`yarn`, ['changelog'])
 
-    run('git', ['diff'], { stdio: 'pipe' })
     step('\nCommitting changes...')
-    run('git', ['add', '-A'])
-    run('git', ['commit', '-m', `release: v${targetVersion}`])
+    const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
+    if (stdout) {
+      step('\nCommitting changes...')
+      await run('git', ['add', '-A'])
+      await run('git', ['commit', '-m', `release: v${targetVersion}`])
+    } else {
+      console.log('No changes to commit.')
+    }
   }
 
   await main().catch(err => log.catchError(err))

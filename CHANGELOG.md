@@ -1,3 +1,7 @@
+## [0.0.1-alpha.16](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.15...v0.0.1-alpha.16) (2020-04-03)
+
+
+
 ## [0.0.1-alpha.15](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.14...v0.0.1-alpha.15) (2020-04-03)
 
 
