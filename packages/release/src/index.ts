@@ -127,7 +127,10 @@ export async function start(args: Args) {
         const filePathsList = FILESManifest[key]
         if (!filePathsList || !filePathsList.length) continue
         const md5 = !(key === 'SSR' || key === 'dll' || key === 'template')
-        targetManifestFile[key] = await deploy.upload(FILESManifest[key], { remoteDirPath, md5 })
+        targetManifestFile[key] = await deploy.upload(FILESManifest[key], {
+          remoteDirPath: key !== 'common-assets' ? remoteDirPath : '/',
+          md5
+        })
       }
 
       fs.writeFileSync(targetManifestFilePath, JSON.stringify(targetManifestFile, null, 2), 'utf-8')
@@ -154,6 +157,12 @@ export async function start(args: Args) {
     } else {
       console.log('No changes to commit.')
     }
+
+    // push to GitHub
+    step('\nPushing to GitHub...')
+    await run('git', ['tag', `v${targetVersion}`])
+    await run('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
+    await run('git', ['push', '--set-upstream', 'origin', 'master'])
   }
 
   await main().catch(err => log.catchError(err))
