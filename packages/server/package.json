@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/server",
-  "version": "0.0.1-alpha.17",
+  "version": "0.0.1-alpha.18",
   "description": "@web-steps/server",
   "main": "index.js",
   "files": [
@@ -31,6 +31,6 @@
     "vue-server-renderer": "^2.6.11"
   },
   "peerDependencies": {
-    "@web-steps/config": "0.0.1-alpha.17"
+    "@web-steps/config": "0.0.1-alpha.18"
   }
 }
