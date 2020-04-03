@@ -1,0 +1,19 @@
+{
+  "base": [
+    "/stage/dist/web-steps/start-config.8be4666ba458c3265727fad7b3f3f5a2.js"
+  ],
+  "dll": [
+    "/stage/dist/web-steps/Vue.dll.6d65533f7cf0706e3e76.js",
+    "/stage/dist/web-steps/Vuex.dll.0bb56af0e8634c7ebf26.js",
+    "/stage/dist/web-steps/VueRouter.dll.39fa24b1dd041168eae4.js"
+  ],
+  "SSR": [
+    "/stage/dist/web-steps/client.4287863f07fe7aa71b4a.js",
+    "/stage/dist/web-steps/1.83e7f84a4a6657d16deb.js",
+    "/stage/dist/web-steps/vue-ssr-client-manifest.json",
+    "/stage/dist/web-steps/vue-ssr-server-bundle.json"
+  ],
+  "common-assets": [
+    "/stage/common-assets/text.d2f41534ddb1ff3f69d501a2ef76d52a.txt"
+  ]
+}

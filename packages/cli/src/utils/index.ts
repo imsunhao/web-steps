@@ -63,7 +63,7 @@ export class Args {
   skipBuild: boolean
 
   constructor() {
-    const args: any = (this.args = minimist(process.argv.slice(2)))
+    const args: any = (this.args = minimist(process.argv.slice(2), { boolean: ['skip-build', 'skip-test'] }))
 
     this.rootDir = args['root-dir'] || process.cwd()
     this.injectContext = args['inject-context']
@@ -76,6 +76,9 @@ export class Args {
     this.env = args.env || process.env.NODE_ENV || 'production'
 
     this.target = this.args.target || 'SSR'
+
+    this.skipBuild = args['skip-build']
+    this.skipTests = args['skip-test']
   }
 }
 

@@ -626,14 +626,14 @@ export class Config {
     return path.resolve.apply(undefined, [this.args.rootDir, ...args])
   }
 
-  async init(args: Args, opts: { getSettingCallBack?: (config: Config) => void } = {}) {
+  async init(args: Args, opts: { afterGetSetting?: (config: Config) => void } = {}) {
     if (this.isInit) return
     this.args = args
     this.isInit = true
     log = new Log('config', args)
     const main = async () => {
       this.setting = getSetting(this.args, this.resolve.bind(this))
-      if (opts.getSettingCallBack) opts.getSettingCallBack(this)
+      if (opts.afterGetSetting) opts.afterGetSetting(this)
       if (!getCache(args)) {
         log.info('清空 缓存目录:', this.setting.cache)
         rmrfSync(this.setting.cache)

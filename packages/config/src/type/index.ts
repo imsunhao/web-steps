@@ -1,6 +1,7 @@
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import proxy from 'http-proxy-middleware'
+import { TAliyunCDNOptions } from '@web-steps/oss'
 import { ServerLifeCycle } from '@web-steps/server'
 import { Args } from '@types'
 
@@ -142,7 +143,38 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
      */
     ext?: string
   }
+
+  /**
+   * 发布配置
+   */
+  release: TRelease<T>
 }
+
+type TRelease<T extends 'finish' | 'ready'> = {
+  /**
+   * 使用的 CDN 配置
+   * - 公共 会被单独target中的 cdn 配置 覆盖
+   */
+  cdn: TAliyunCDNOptions
+
+  /**
+   * 发布目标
+   */
+  target: Record<string, TReleaseTarget<T>>
+}
+
+type TReleaseTarget<T extends 'finish' | 'ready'> = {
+  /**
+   * 服务器地址
+   */
+  host: string
+} & T extends 'finish'
+  ? {
+      cdn: TAliyunCDNOptions
+    }
+  : {
+      cdn?: Partial<TAliyunCDNOptions>
+    }
 
 type TWebpack<T extends 'finish' | 'ready'> = {
   webpack: TWebpackConfig<T>
