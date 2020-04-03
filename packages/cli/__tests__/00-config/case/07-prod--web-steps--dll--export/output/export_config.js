@@ -79,7 +79,9 @@ const { args, setting, isDev } = {
     majorCommand: "config",
     minorCommand: "export",
     env: "production",
-    target: "SSR"
+    target: "SSR",
+    skipBuild: false,
+    skipTest: false
   },
   setting: {
     entry:

@@ -53,6 +53,18 @@ const getDefaultServerWebpackConfig: TGetWebpackConfig = function(
           use: 'null-loader'
         },
         {
+          test: /\.(png|jpe?g|gif|svg|webp)$/i,
+          use: 'null-loader'
+        },
+        {
+          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
+          use: 'null-loader'
+        },
+        {
+          test: /\.(webm|mp4|ogv)$/i,
+          use: 'null-loader'
+        },
+        {
           test: /\.js$/,
           use: ['cache-loader', threadLoader],
           exclude: /node_modules/

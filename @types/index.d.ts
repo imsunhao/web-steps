@@ -41,7 +41,8 @@ declare namespace WebSteps {
     port: string | number
   }
 
-  type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'common-assets' | 'template', string[]>
+  type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'static', string[]>
+  type DOWNLOAD_MANIFEST_FILE = TFILES_MANIFEST & { oss: any }
 }
 
 export = WebSteps

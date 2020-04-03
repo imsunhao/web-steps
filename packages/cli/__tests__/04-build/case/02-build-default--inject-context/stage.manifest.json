@@ -1,0 +1,35 @@
+{
+  "base": [
+    "/dist/web-steps/start-config.d23a992f20dd6dfa22919226a1cba13a.js",
+    "/dist/web-steps/vue-ssr-client-manifest.8626702bbaf50c6f32f1f7bd70dbf2e7.json",
+    "/dist/web-steps/vue-ssr-server-bundle.0f4eb272c0cab50a99639893dd609556.json"
+  ],
+  "dll": [
+    "/dist/web-steps/Vue.dll.6d65533f7cf0706e3e76.js",
+    "/dist/web-steps/Vuex.dll.0bb56af0e8634c7ebf26.js",
+    "/dist/web-steps/VueRouter.dll.39fa24b1dd041168eae4.js"
+  ],
+  "SSR": [
+    "/dist/web-steps/client.811624d3de302f39ddf0.js",
+    "/dist/web-steps/1.5bcba0b6bc3fbc2d7804.js"
+  ],
+  "public": [
+    "/public/home/home.74b183e2d867fc9b68beda2d0c51e3ff.svg",
+    "/public/logo.74b183e2d867fc9b68beda2d0c51e3ff.svg",
+    "/public/text.d2f41534ddb1ff3f69d501a2ef76d52a.txt"
+  ],
+  "static": [
+    "/static/favicon.ico",
+    "/static/static.txt"
+  ],
+  "oss": {
+    "name": "aliyun",
+    "options": {
+      "region": "oss-cn-beijing",
+      "accessKeyId": "accessKeyId",
+      "accessKeySecret": "accessKeySecret",
+      "staticHost": "https://test.aliyuncs.com/stage",
+      "bucket": "test"
+    }
+  }
+}

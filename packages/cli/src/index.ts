@@ -8,6 +8,7 @@ export const log = new Log('cli', args)
 export function start() {
   const majorCommand = args.majorCommand
   if (majorCommand) {
+    log.log('bin', majorCommand)
     require(`./${majorCommand}.js`).start(args)
   }
 }

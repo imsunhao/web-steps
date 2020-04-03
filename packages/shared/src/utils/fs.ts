@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import crypto from 'crypto'
 
 export function ensureDirectoryExistence(filePath: string) {
   const dirname = path.dirname(filePath)
@@ -7,7 +8,7 @@ export function ensureDirectoryExistence(filePath: string) {
   fs.mkdirSync(dirname, { recursive: true })
 }
 
-export function getDirFilesPath(
+export function getDirFilePathList(
   dirPath: string,
   opts: {
     filters?: RegExp[]
@@ -42,7 +43,7 @@ export function getDirFilesPath(
     if (!dirent.isDirectory()) {
       filePathList.push(filePath)
     } else {
-      const childrenFilePathList = getDirFilesPath(filePath, opts)
+      const childrenFilePathList = getDirFilePathList(filePath, opts)
       if (childrenFilePathList) {
         Array.prototype.push.apply(filePathList, childrenFilePathList)
       }
@@ -50,6 +51,54 @@ export function getDirFilesPath(
   })
 
   return filePathList
+}
+
+export function getDirFilePathObject(
+  dirPath: string,
+  opts: {
+    filters?: RegExp[]
+  } = {},
+  makeFilePath = (filePathObj: any, dirent: fs.Dirent, filePath: string) => {
+    filePathObj[dirent.name] = filePath
+  }
+) {
+  const filePathObj: any = {}
+  if (!fs.existsSync(dirPath)) {
+    return false
+    // throw new Error(`[getDirFilesPath] ${dirPath} not find!`)
+  }
+  const list = fs.readdirSync(dirPath, {
+    encoding: 'utf-8',
+    withFileTypes: true
+  })
+
+  const { filters } = opts
+
+  list.forEach(dirent => {
+    const filePath = path.resolve(dirPath, dirent.name)
+    if (filters) {
+      let checked = false
+      for (let i = 0; i < filters.length; i++) {
+        const filter = filters[i]
+        if (filter.test(filePath)) {
+          checked = true
+          break
+        }
+      }
+      if (!checked) return
+    }
+
+    if (!dirent.isDirectory()) {
+      makeFilePath(filePathObj, dirent, filePath)
+    } else {
+      const childrenFilePathList = getDirFilePathObject(filePath, opts, makeFilePath)
+      if (childrenFilePathList) {
+        filePathObj[dirent.name] = childrenFilePathList
+      }
+    }
+  })
+
+  return filePathObj
 }
 
 /**
@@ -110,4 +159,20 @@ export function dirname(fs: any, absPath: string): string {
       `${absPath} is neither a posix nor a windows path, and there is no 'dirname' method defined in the file system`
     )
   }
+}
+
+
+export async function getMD5FilePath(filePath: string, resolve: (...args: any) => string) {
+  return new Promise<string>(r => {
+    const md5Hash = crypto.createHash('md5')
+    const rs = fs.createReadStream(resolve(filePath))
+
+    rs.on('data', data => {
+      return md5Hash.update(data)
+    })
+
+    rs.on('end', () => {
+      return r(md5Hash.digest('hex'))
+    })
+  })
 }

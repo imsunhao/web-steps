@@ -13,7 +13,7 @@ import {
   requireFromPath,
   convertObjToSource,
   getResolve,
-  getDirFilesPath,
+  getDirFilePathList,
   processSend,
   processOnMessage
 } from 'packages/shared'
@@ -141,7 +141,7 @@ export function start(args: Args) {
     const env = args.env
 
     await config.init(args, {
-      getSettingCallBack(c: any) {
+      afterGetSetting(c: any) {
         if (!getCache(args)) {
           log.info('清空 输出目录:', c.setting.output)
           rmrfSync(c.setting.output)
@@ -158,9 +158,8 @@ export function start(args: Args) {
       base: [relative(config.userConfigPath.startConfig)],
       dll: [],
       SSR: [],
-      template: [],
       public: [],
-      'common-assets': []
+      static: []
     }
 
     const injectContextConfig: any = config.config.injectContext
@@ -186,7 +185,7 @@ export function start(args: Args) {
     const getStaticFilePath = (key: keyof TConfig & keyof TFILES_MANIFEST) => {
       const dirOption = config.config[key]
       const dirPath = dirOption.path
-      const filePathList = getDirFilesPath(dirPath, dirOption)
+      const filePathList = getDirFilePathList(dirPath, dirOption)
       if (filePathList) {
         FILES_MANIFEST[key] = filePathList.map(filePath => relative(filePath))
       } else {
@@ -195,7 +194,7 @@ export function start(args: Args) {
     }
 
     getStaticFilePath('public')
-    getStaticFilePath('common-assets')
+    getStaticFilePath('static')
 
     if (args.target === 'SSR') {
       const SSR = config.config.src.SSR
@@ -210,14 +209,22 @@ export function start(args: Args) {
 
       const templatePath = SSR.server.render.templatePath
       if (templatePath) {
-        FILES_MANIFEST.template.push(relative(templatePath))
+        FILES_MANIFEST.base.push(relative(templatePath))
       }
 
       statsList.forEach(stats => {
         FILES_MANIFEST.SSR = FILES_MANIFEST.SSR.concat(
-          Object.keys(stats.compilation.assets).map(asset => relative(path.resolve(config.setting.output, asset)))
+          Object.keys(stats.compilation.assets)
+            .filter(asset => !asset.includes('vue-ssr'))
+            .map(asset => relative(path.resolve(config.setting.output, asset)))
         )
       })
+
+      FILES_MANIFEST.base = FILES_MANIFEST.base.concat(
+        ['vue-ssr-client-manifest.json', 'vue-ssr-server-bundle.json'].map(asset =>
+          relative(path.resolve(config.setting.output, asset))
+        )
+      )
     }
 
     writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')

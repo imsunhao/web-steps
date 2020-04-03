@@ -5,12 +5,18 @@ import { TGetWebpackConfig } from '@web-steps/config'
 import webpack from 'webpack'
 import { TERSER_PLUGIN_OPTIONS } from '../setting'
 
-const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
+const getConfig: TGetWebpackConfig = function({ args: { env, rootDir }, resolve }) {
   const base: webpack.Configuration = {
     mode: env,
     context: rootDir,
     resolve: {
-      extensions: ['.ts', '.js', '.vue', '.json']
+      extensions: ['.ts', '.js', '.vue', '.json'],
+      alias: {
+        assets: resolve('assets'),
+        src: resolve('src'),
+        static: resolve('static'),
+        stories: resolve('stories')
+      }
     },
     output: {
       filename: '[name].[chunkhash].js'
@@ -29,7 +35,7 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir } }) {
               preserveWhitespace: false
             }
           }
-        },
+        }
       ]
     },
     plugins: [

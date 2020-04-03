@@ -1,6 +1,7 @@
 import webpack from 'webpack'
 import serveStatic from 'serve-static'
 import proxy from 'http-proxy-middleware'
+import { TAliyunCDNOptions } from '@web-steps/oss'
 import { ServerLifeCycle } from '@web-steps/server'
 import { Args } from '@types'
 
@@ -74,16 +75,16 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   injectContext: string
 
   /**
-   * 公共资源库
-   * - 资源库 一对多 服务器
-   * - 默认值 path: './common-assets'
+   * 资源库
+   * - 不会给上传的文件 添加 hash 值
+   * - 默认值 path: './static'
    * - 默认值 filters: undefined
    */
-  'common-assets': TDirOptions
+  static: TDirOptions
 
   /**
    * 资源库
-   * - 资源库 一对一 服务器
+   * - 会给上传的文件 添加 hash 值
    * - 默认值 path: './public'
    * - 默认值 filters: undefined
    */
@@ -142,11 +143,46 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
      */
     ext?: string
   }
+
+  /**
+   * 发布配置
+   */
+  release: TRelease<T>
 }
+
+type TRelease<T extends 'finish' | 'ready'> = {
+  /**
+   * 使用的 CDN 配置
+   * - 公共 会被单独target中的 cdn 配置 覆盖
+   */
+  cdn: TAliyunCDNOptions
+
+  /**
+   * 发布目标
+   */
+  target: Record<string, TReleaseTarget<T>>
+}
+
+type TReleaseTarget<T extends 'finish' | 'ready'> = {
+  /**
+   * 服务器地址
+   */
+  host: string
+} & T extends 'finish'
+  ? {
+      cdn: TAliyunCDNOptions
+      bin: TReleaseBin
+    }
+  : {
+      cdn?: Partial<TAliyunCDNOptions>
+      bin?: TReleaseBin
+    }
 
 type TWebpack<T extends 'finish' | 'ready'> = {
   webpack: TWebpackConfig<T>
 }
+
+type TReleaseBin = string | ((p: { gitHash: string; downloadManifestPath: string }) => string)
 
 type TSrc<T extends 'finish' | 'ready', INJECT_CONTEXT> = {
   /**

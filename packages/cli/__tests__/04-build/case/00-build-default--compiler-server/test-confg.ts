@@ -31,7 +31,7 @@ const testConfig: TTestConfig = {
           dll: [],
           template: ['index.template.html'],
           public: ['public/text.txt'],
-          'common-assets': []
+          static: []
         }
       }
     }

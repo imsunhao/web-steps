@@ -1,3 +1,4 @@
+export * from './lib/assets'
 export * from './lib/axios'
 export * from './lib/router'
 export * from './lib/vuex'

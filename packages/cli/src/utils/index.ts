@@ -41,6 +41,7 @@ export class Args {
   target: 'SSR-server' | 'SSR-client' | 'SSR' | 'custom'
 
   /// config
+
   /**
    * 跳过 config 编译
    */
@@ -62,8 +63,35 @@ export class Args {
    */
   skipBuild: boolean
 
+  /**
+   * 跳过 上传
+   */
+  skipDeploy: boolean
+
+  /**
+   * 跳过 改变ChangeLog
+   */
+  skipChangelog: boolean
+
+  /**
+   * 跳过 git 操作
+   */
+  skipPush: boolean
+
+  /**
+   * 跳过 git 操作
+   */
+  skipRunBin: boolean
+
+  /// download
+
+  /**
+   * 根据 downloadManifestPath 进行下载
+   */
+  downloadManifestPath: string
+
   constructor() {
-    const args: any = (this.args = minimist(process.argv.slice(2)))
+    const args: any = (this.args = minimist(process.argv.slice(2), { boolean: ['skip-build', 'skip-tests'] }))
 
     this.rootDir = args['root-dir'] || process.cwd()
     this.injectContext = args['inject-context']
@@ -76,6 +104,15 @@ export class Args {
     this.env = args.env || process.env.NODE_ENV || 'production'
 
     this.target = this.args.target || 'SSR'
+
+    this.skipBuild = args['skip-build']
+    this.skipTests = args['skip-tests']
+    this.skipDeploy = args['skip-deploy']
+    this.skipChangelog = args['skip-changelog']
+    this.skipPush = args['skip-push']
+    this.skipRunBin = args['skip-run-bin']
+
+    this.downloadManifestPath = args['download-manifest-path']
   }
 }
 

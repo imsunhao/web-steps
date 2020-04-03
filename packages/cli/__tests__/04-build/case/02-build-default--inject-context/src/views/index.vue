@@ -8,12 +8,14 @@
   <p id="get">{{ get + '' }}</p>
   <p id="post">{{ post + '' }}</p>
   <button id="add" @click="add">+</button>
+  <img :src="imgSrc" alt="logo">
 </div>
 </template>
 
 <script>
 import { dispatch, getGetter, getState, commit } from '../store'
 import onlyClient from '../../local_modules/only-client'
+import { getPublicAssets } from '../helpers'
 
 export default {
   async asyncData({ store, locals: { test } }) {
@@ -30,6 +32,9 @@ export default {
     }
   },
   computed: {
+    imgSrc() {
+      return getPublicAssets('home', 'home.svg')
+    },
     stateTest() {
       return getState(this.$store, 'user', 'test')
     },

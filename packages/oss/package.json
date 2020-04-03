@@ -1,13 +1,13 @@
 {
-  "name": "@web-steps/release",
+  "name": "@web-steps/oss",
   "version": "0.0.1-alpha.19",
-  "description": "@web-steps/release",
+  "description": "@web-steps/oss",
   "main": "index.js",
   "files": [
     "index.js",
     "dist"
   ],
-  "types": "dist/release.d.ts",
+  "types": "dist/oss.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imsunhao/utils.git"
@@ -18,12 +18,9 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/release#readme",
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/oss#readme",
   "dependencies": {
-    "@web-steps/oss": "0.0.1-alpha.19",
-    "conventional-changelog-cli": "^2.0.31",
-    "enquirer": "^2.3.4",
-    "execa": "^4.0.0",
-    "semver": "^7.1.3"
+    "ali-oss": "^6.5.1",
+    "co": "^4.6.0"
   }
 }
