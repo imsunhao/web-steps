@@ -126,7 +126,7 @@ export async function start(args: Args) {
         const key: keyof TFILES_MANIFEST = keys[i] as any
         const filePathsList = FILESManifest[key]
         if (!filePathsList || !filePathsList.length) continue
-        const md5 = !(key === 'SSR' || key === 'dll' || key === 'template' || key === 'common-assets')
+        const md5 = !(key === 'SSR' || key === 'dll' || key === 'common-assets')
         targetManifestFile[key] = await deploy.upload(FILESManifest[key], {
           remoteDirPath: key !== 'common-assets' ? remoteDirPath : '/',
           md5

@@ -158,7 +158,6 @@ export function start(args: Args) {
       base: [relative(config.userConfigPath.startConfig)],
       dll: [],
       SSR: [],
-      template: [],
       public: [],
       'common-assets': []
     }
@@ -210,14 +209,22 @@ export function start(args: Args) {
 
       const templatePath = SSR.server.render.templatePath
       if (templatePath) {
-        FILES_MANIFEST.template.push(relative(templatePath))
+        FILES_MANIFEST.base.push(relative(templatePath))
       }
 
       statsList.forEach(stats => {
         FILES_MANIFEST.SSR = FILES_MANIFEST.SSR.concat(
-          Object.keys(stats.compilation.assets).map(asset => relative(path.resolve(config.setting.output, asset)))
+          Object.keys(stats.compilation.assets)
+            .filter(asset => !asset.includes('vue-ssr'))
+            .map(asset => relative(path.resolve(config.setting.output, asset)))
         )
       })
+
+      FILES_MANIFEST.base = FILES_MANIFEST.base.concat(
+        ['vue-ssr-client-manifest.json', 'vue-ssr-server-bundle.json'].map(asset =>
+          relative(path.resolve(config.setting.output, asset))
+        )
+      )
     }
 
     writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')
