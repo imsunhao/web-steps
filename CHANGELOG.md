@@ -1,3 +1,12 @@
+## [0.0.1-alpha.23](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.22...v0.0.1-alpha.23) (2020-04-10)
+
+
+### Features
+
+* download 确保目标文件夹存在 ([f7d6e5e](https://github.com/imsunhao/utils/commit/f7d6e5e4e7e2cd8954f4698b9e6f2b4ae7400d03))
+
+
+
 ## [0.0.1-alpha.22](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.21...v0.0.1-alpha.22) (2020-04-10)
 
 

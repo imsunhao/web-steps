@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import OSS from 'ali-oss'
 import co from 'co'
+import { ensureDirectoryExistence } from 'shared/fs'
 
 export class AliyunOss implements OSSInterface {
   name: TAliyunCDNOptions['name'] = 'aliyun'
@@ -38,6 +39,7 @@ export class AliyunOss implements OSSInterface {
 
   async downloadFile(remoteFilePath: string, localFilePath: any) {
     const client = this.client
+    ensureDirectoryExistence(localFilePath)
     return co(function*() {
       return yield client.get(remoteFilePath, localFilePath)
     })
