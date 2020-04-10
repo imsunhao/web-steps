@@ -1,6 +1,6 @@
 import { log, Execa } from './'
 import { Args, ProcessMessage } from '@types'
-import { processSend, processOnMessage } from 'packages/shared'
+import { processSend, processOnMessage } from 'shared/node'
 
 export function start(args: Args) {
   const childProcess = Execa.runCommand('server', [], { isRead: false })

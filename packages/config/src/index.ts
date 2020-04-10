@@ -9,19 +9,13 @@ import fs from 'fs'
 import path from 'path'
 import { TSetting, TConfig, TOptionsInject, StartupOptions, TGetConfigPayload } from './type'
 
-import {
-  processSend,
-  mergeBase,
-  cloneDeep,
-  merge,
-  Log,
-  requireFromPath,
-  convertObjToSource,
-  ensureDirectoryExistence,
-  requireSourceString,
-  getCache,
-  getSetting
-} from 'packages/shared'
+import { Log } from 'packages/shared'
+import { processSend } from 'shared/node'
+import { mergeBase, cloneDeep, merge } from 'shared/lodash'
+import { requireFromPath, requireSourceString } from 'shared/require'
+import { getCache, getSetting } from 'shared/config'
+import { ensureDirectoryExistence } from 'shared/fs'
+import { convertObjToSource } from 'shared/toString'
 import { sync as rmrfSync } from 'rimraf'
 
 import getConfigWebpackConfig from './webpack/default-config.webpack'

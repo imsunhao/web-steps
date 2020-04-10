@@ -1,3 +1,20 @@
+## [0.0.1-alpha.20](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.12...v0.0.1-alpha.20) (2020-04-10)
+
+
+### Bug Fixes
+
+* [ts] shared 问题 ([5f51b7d](https://github.com/imsunhao/utils/commit/5f51b7d2fb1684ccdd58a74e92e987163dc8b9e1))
+
+
+### Features
+
+* add start port ([2c76986](https://github.com/imsunhao/utils/commit/2c76986f70f19ff6312b81de9cd7f2b285f782ec))
+* release ([30a7083](https://github.com/imsunhao/utils/commit/30a70838312a6f3e3bbe4d9fccd421446a5025e2))
+* test 添加 过滤无用目录 ([a35cdac](https://github.com/imsunhao/utils/commit/a35cdac57f2270d61e4f1d70104efd307663ff69))
+* 添加 cache-loader 与 thread-loader ([f3ab683](https://github.com/imsunhao/utils/commit/f3ab683efd5012a5de78214b0d173634b191ac2c))
+
+
+
 ## [0.0.1-alpha.19](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.18...v0.0.1-alpha.19) (2020-04-04)
 
 

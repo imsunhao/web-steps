@@ -4,7 +4,7 @@ import execa from 'execa'
 import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
 import { setupPuppeteer } from './e2eUtils'
-import { requireFromPath } from '@web-steps/shared'
+import { requireFromPath } from 'shared/require'
 import { ClickOptions, Page } from 'puppeteer-core'
 
 type TOutput = {

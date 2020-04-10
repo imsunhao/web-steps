@@ -1,6 +1,8 @@
 import { existsSync } from 'fs'
 import webpack, { Configuration } from 'webpack'
-import { getProcessMessageMap, getInitChildProcessConfig, requireFromPath } from 'packages/shared'
+import { getProcessMessageMap } from 'shared/node'
+import { requireFromPath } from 'shared/require'
+import { getInitChildProcessConfig } from 'shared/child-process-config'
 
 // eslint-disable-next-line prefer-const
 let { processMessageMap, localArgs } = getInitChildProcessConfig()
@@ -46,7 +48,7 @@ class WebpackConfig implements Configuration {
     if (existsSync(args.webpackPath)) {
       const config = requireFromPath(args.webpackPath)
       Object.keys(config).forEach(key => {
-        (this as any)[key] = config[key]
+        ;(this as any)[key] = config[key]
       })
     }
   }

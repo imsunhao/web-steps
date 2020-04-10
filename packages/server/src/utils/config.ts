@@ -1,4 +1,5 @@
-import { getInitChildProcessConfig, getProcessMessageMap } from 'packages/shared'
+import { getInitChildProcessConfig } from 'shared/child-process-config'
+import { getProcessMessageMap } from 'shared/node'
 import { log } from '..'
 import { TServer } from '@web-steps/config'
 

@@ -1,5 +1,7 @@
 import { getInitConfig, CompilerConfig } from './utils'
-import { processSend, Log, getEnv } from 'packages/shared'
+import { Log } from 'packages/shared'
+import { processSend } from 'shared/node'
+import { getEnv } from 'shared/config'
 import { SSRMessageBus } from '@types'
 // import threadLoader from 'thread-loader'
 

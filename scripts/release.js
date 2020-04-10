@@ -11,6 +11,7 @@ const preId = args.preid || semver.prerelease(currentVersion)[0] || 'alpha'
 const isDryRun = args.dry
 const skipTests = args.skipTests
 const skipBuild = args.skipBuild
+
 const packages = fs
   .readdirSync(path.resolve(__dirname, '../packages'))
   .filter(p => !p.endsWith('.ts') && !p.startsWith('.'))
@@ -65,6 +66,14 @@ async function main() {
     return
   }
 
+  // build all packages with types
+  step('\nBuilding all packages...')
+  if (!skipBuild && !isDryRun) {
+    await run('yarn', ['build', '--release'])
+  } else {
+    console.log(`(skipped)`)
+  }
+
   // run tests before release
   step('\nRunning tests...')
   if (!skipTests && !isDryRun) {
@@ -77,14 +86,6 @@ async function main() {
   // update all package versions and inter-dependencies
   step('\nUpdating cross dependencies...')
   updateVersions(targetVersion)
-
-  // build all packages with types
-  step('\nBuilding all packages...')
-  if (!skipBuild && !isDryRun) {
-    await run('yarn', ['build', '--release'])
-  } else {
-    console.log(`(skipped)`)
-  }
 
   // generate changelog
   await run(`yarn`, ['changelog'])

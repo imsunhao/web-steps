@@ -21,7 +21,8 @@
     "types": ["jest", "puppeteer", "node"],
     "rootDir": ".",
     "paths": {
-      "@web-steps/*": ["packages/*/src"]
+      "@web-steps/*": ["packages/*/src"],
+      "shared/*": ["packages/shared/src/utils/*"]
     }
   },
   "include": ["packages/global.d.ts", "packages/*/src", "packages/*/__tests__", "*.vue"]

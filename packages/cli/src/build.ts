@@ -5,18 +5,12 @@ import { config, TConfig } from '@web-steps/config'
 import { log } from './'
 import { start as compilerStart } from '@web-steps/compiler'
 import { sync as rmrfSync } from 'rimraf'
-import {
-  getCache,
-  cloneDeep,
-  ensureDirectoryExistence,
-  requireSourceString,
-  requireFromPath,
-  convertObjToSource,
-  getResolve,
-  getDirFilePathList,
-  processSend,
-  processOnMessage
-} from 'packages/shared'
+import { getCache, getResolve } from 'shared/config'
+import { ensureDirectoryExistence, getDirFilePathList } from 'shared/fs'
+import { requireSourceString, requireFromPath } from 'shared/require'
+import { processSend, processOnMessage } from 'shared/node'
+import { convertObjToSource } from 'shared/toString'
+import { cloneDeep } from 'shared/lodash'
 import { writeFileSync, existsSync } from 'fs'
 import path from 'path'
 

@@ -1,6 +1,6 @@
 import webpack from 'webpack'
 
-import { processSend } from 'packages/shared'
+import { processSend } from 'shared/node'
 import { log } from '../'
 
 export function compilerDone(stats: webpack.Stats, resolve: any, reject: any, webpackConfig: webpack.Configuration) {

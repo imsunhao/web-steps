@@ -1,7 +1,7 @@
 import { Args, TFILES_MANIFEST } from '@types'
 import { log } from './'
 import { config, TConfig } from '@web-steps/config'
-import { getDirFilePathObject, ensureDirectoryExistence, getMD5FilePath } from 'packages/shared'
+import { getDirFilePathObject, ensureDirectoryExistence, getMD5FilePath } from 'shared/fs'
 import { writeFileSync } from 'fs'
 import path from 'path'
 

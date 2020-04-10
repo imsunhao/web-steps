@@ -1,4 +1,4 @@
 import { defaultTemplatePath } from '@web-steps/config'
-import { requireFromPath } from 'packages/shared'
+import { requireFromPath } from 'shared/require'
 
 export const DEFAULT_TEMPLATE = requireFromPath(defaultTemplatePath)

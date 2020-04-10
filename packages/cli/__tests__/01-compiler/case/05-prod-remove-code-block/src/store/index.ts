@@ -7,8 +7,6 @@ import actions, { dispatch, TActions } from './actions'
 import mutations, { commit, getState, TMutations } from './mutations'
 import getters, { getGetter } from './getters'
 
-import { WebpackHelper } from '@web-steps/helper'
-
 function state(): Tstore.state {
   return {
     count: 0,
@@ -23,7 +21,7 @@ Vue.use(Vuex)
 let store: Store<Tstore.state>
 
 /// <RemoveCodeBlock=server-production>
-const webpackHelper: WebpackHelper = require('@web-steps/helper').webpackHelper
+import { webpackHelper } from '@web-steps/helper'
 webpackHelper.hotReload(
   module,
   () => (require as any).context('.', true, /(?<!\.d)\.ts/),

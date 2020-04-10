@@ -2,7 +2,7 @@ import { Log } from 'packages/shared'
 import { config } from '@web-steps/config'
 import path from 'path'
 
-import { requireFromPath } from 'packages/shared'
+import { requireFromPath } from 'shared/require'
 import semver from 'semver'
 import { prompt } from 'enquirer'
 import execa from 'execa'

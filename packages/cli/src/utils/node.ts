@@ -1,4 +1,4 @@
-import { merge } from 'packages/shared'
+import { merge } from 'shared/lodash'
 import { ExecaChildProcess } from 'execa'
 import { RunOptions, CustomRunOptions } from '../type'
 import { log } from '../'

@@ -1,6 +1,7 @@
 import { ServerConfig, ServerStart } from './type'
 import { getInitConfig } from './utils'
-import { Log, getEnv } from 'packages/shared'
+import { Log } from 'packages/shared'
+import { getEnv } from 'shared/config'
 import { SSRMessageBus } from '@types'
 
 const major = 'server'

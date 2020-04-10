@@ -1,7 +1,8 @@
 import { log } from './'
 import { config } from '@web-steps/config'
 import { Args, ProcessMessage, TSSRMessageBus } from '@types'
-import { processOnMessage, MessageBus } from 'packages/shared'
+import { MessageBus } from 'shared/message-bus'
+import { processOnMessage } from 'shared/node'
 import { start as serverStart } from '@web-steps/server'
 import { start as compilerStart } from '@web-steps/compiler'
 

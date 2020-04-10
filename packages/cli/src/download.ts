@@ -1,6 +1,6 @@
 import { Args, DOWNLOAD_MANIFEST_FILE } from '@types'
 import { log } from './'
-import { requireFromPath } from 'packages/shared'
+import { requireFromPath } from 'shared/require'
 import { createOSS } from '@web-steps/oss'
 import path from 'path'
 import fs from 'fs'

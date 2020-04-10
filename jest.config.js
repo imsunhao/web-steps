@@ -21,6 +21,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
   moduleNameMapper: {
     '^packages/(.*?)$': '<rootDir>/packages/$1',
+    '^shared/(.*?)$': '<rootDir>/packages/shared/src/utils/$1',
     '^@web-steps/(.*?)$': '<rootDir>/packages/$1/src'
   },
   rootDir: __dirname,

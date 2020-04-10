@@ -1,8 +1,8 @@
 import path from 'path'
 import { TDeplayUploadOptions, TDeplaydoUploadOptions, OSSInterface, TAliyunCDNOptions, createOSS } from '@web-steps/oss'
-import { getMD5FilePath } from 'packages/shared'
+import { getMD5FilePath } from 'shared/fs'
 import { TConfig } from '@web-steps/config'
-import { merge } from 'packages/shared'
+import { merge } from 'shared/lodash'
 
 export class Deploy {
   protected suportExts: string[]

@@ -1,6 +1,6 @@
 import { TSSRExcludeModuleOptions, TExcludeModuleOption } from '../type'
 import { Compiler } from 'webpack'
-import { join, dirname } from 'packages/shared'
+import { join, dirname } from 'shared/fs'
 
 const DEFAULT_REPLACE = '@web-steps/config/dist/empty-module.js'
 

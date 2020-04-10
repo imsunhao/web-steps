@@ -81,7 +81,12 @@ const { args, setting, isDev } = {
     env: "production",
     target: "SSR",
     skipBuild: false,
-    skipTest: false
+    skipTests: false,
+    skipDeploy: undefined,
+    skipChangelog: undefined,
+    skipPush: undefined,
+    skipRunBin: undefined,
+    downloadManifestPath: undefined
   },
   setting: {
     entry:
@@ -304,9 +309,9 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
   if (!this.config.rootDir) {
     this.config.rootDir = this.startupOptions.args.rootDir;
   }
-  if (!this.config["common-assets"]) {
-    this.config["common-assets"] = {
-      path: resolve("./common-assets")
+  if (!this.config.static) {
+    this.config.static = {
+      path: resolve("./static")
     };
   }
   if (!this.config.public) {

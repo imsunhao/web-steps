@@ -1,4 +1,4 @@
-import { getHostGlobal } from 'packages/shared'
+import { getHostGlobal } from 'shared/SSR'
 
 const hostGlobal = getHostGlobal()
 

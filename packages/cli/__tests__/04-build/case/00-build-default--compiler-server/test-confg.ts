@@ -27,9 +27,13 @@ const testConfig: TTestConfig = {
       filesManifest: {
         path: resolve(__dirname, './dist/web-steps/files-manifest.json'),
         content: {
-          base: ['dist/web-steps/start-config.js'],
+          base: [
+            'dist/web-steps/start-config.js',
+            'index.template.html',
+            'dist/web-steps/vue-ssr-client-manifest.json',
+            'dist/web-steps/vue-ssr-server-bundle.json'
+          ],
           dll: [],
-          template: ['index.template.html'],
           public: ['public/text.txt'],
           static: []
         }

@@ -1,6 +1,6 @@
 import { Args as TArgs } from '../packages/cli/src'
 import { Config as TConfig, TDLL } from '../packages/config/src'
-import { MessageBus } from 'packages/shared'
+import { MessageBus } from 'shared/message-bus'
 import webpack from 'webpack'
 import MFS from 'memory-fs'
 
