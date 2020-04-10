@@ -1,3 +1,12 @@
+## [0.0.1-alpha.22](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.21...v0.0.1-alpha.22) (2020-04-10)
+
+
+### Bug Fixes
+
+* 修复 下载路径错误 问题 ([8220e44](https://github.com/imsunhao/utils/commit/8220e44e6f30d1940ea5cb7190574abfbdc718f4))
+
+
+
 ## [0.0.1-alpha.21](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.20...v0.0.1-alpha.21) (2020-04-10)
 
 

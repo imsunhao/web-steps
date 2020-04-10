@@ -27,7 +27,7 @@ export function start(args: Args) {
       const nameSplitList = pathInfo.name.split('.')
       pathInfo.name = nameSplitList.slice(0, nameSplitList.length - 1).join('.')
       delete pathInfo.base
-      pathInfo.dir = args.rootDir
+      pathInfo.dir = path.join(args.rootDir, pathInfo.dir)
       return {
         remoteFilePath: p,
         localFilePath: path.format(pathInfo)
