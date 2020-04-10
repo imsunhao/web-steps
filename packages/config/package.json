@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/config",
-  "version": "0.0.1-alpha.20",
+  "version": "0.0.1-alpha.21",
   "description": "@web-steps/config",
   "main": "index.js",
   "files": [
@@ -42,6 +42,6 @@
     "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
-    "@web-steps/compiler": "0.0.1-alpha.20"
+    "@web-steps/compiler": "0.0.1-alpha.21"
   }
 }

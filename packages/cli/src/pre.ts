@@ -10,19 +10,23 @@ export function start(args: Args) {
 
   const promiseList: Array<Promise<any>> = []
 
-  const getStaticFilePathObject = (key: keyof TConfig & keyof TFILES_MANIFEST) => {
+  const getAssetsFilePathObject = (key: keyof TConfig & keyof TFILES_MANIFEST, md5?: boolean) => {
     const dirOption = config.config[key]
     const dirPath = dirOption.path
     return getDirFilePathObject(dirPath, dirOption, (obj, dirent, filePath) => {
       const resolve = config.resolve.bind(config)
-      const promise = getMD5FilePath(filePath, resolve)
-      promise.then(fileHash => {
-        const filePathInfo = path.parse(filePath)
-        const { name, ext } = filePathInfo
-        filePathInfo.base = `${name}.${fileHash}${ext}`
-        obj[dirent.name] = config.relative(path.format(filePathInfo))
-      })
-      promiseList.push(promise)
+      if (md5) {
+        const promise = getMD5FilePath(filePath, resolve)
+        promise.then(fileHash => {
+          const filePathInfo = path.parse(filePath)
+          const { name, ext } = filePathInfo
+          filePathInfo.base = `${name}.${fileHash}${ext}`
+          obj[dirent.name] = config.relative(path.format(filePathInfo))
+        })
+        promiseList.push(promise)
+      } else {
+        obj[dirent.name] = config.relative(filePath)
+      }
     })
   }
 
@@ -32,8 +36,8 @@ export function start(args: Args) {
 
     ensureDirectoryExistence(helperAssetsPath)
 
-    const PUBLIC_ASSETS = getStaticFilePathObject('public')
-    const STATIC_ASSETS = getStaticFilePathObject('static')
+    const PUBLIC_ASSETS = getAssetsFilePathObject('public', true)
+    const STATIC_ASSETS = getAssetsFilePathObject('static')
 
     await Promise.all(promiseList)
 

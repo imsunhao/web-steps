@@ -139,6 +139,8 @@ export async function start(args: Args) {
       }
 
       fs.writeFileSync(targetManifestFilePath, JSON.stringify(downloadManifestPath, null, 2), 'utf-8')
+
+      log.log('targetManifestFilePath =', targetManifestFilePath)
     }
 
     if (!skipDeploy) {

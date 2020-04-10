@@ -49,6 +49,28 @@ export class AssetsHelper {
       k2: keyof T[K][K1],
       k3: keyof T[K][K1][K2]
     ): string
+    function GPA<
+      T extends P,
+      K extends keyof T,
+      K1 extends keyof T[K],
+      K2 extends keyof T[K][K1],
+      K3 extends keyof T[K][K1][K2]
+    >(k: K, k1: keyof T[K], k2: keyof T[K][K1], k3: keyof T[K][K1][K2], k4: keyof T[K][K1][K2][K3]): string
+    function GPA<
+      T extends P,
+      K extends keyof T,
+      K1 extends keyof T[K],
+      K2 extends keyof T[K][K1],
+      K3 extends keyof T[K][K1][K2],
+      K4 extends keyof T[K][K1][K2][K3]
+    >(
+      k: K,
+      k1: keyof T[K],
+      k2: keyof T[K][K1],
+      k3: keyof T[K][K1][K2],
+      k4: keyof T[K][K1][K2][K3],
+      k5: keyof T[K][K1][K2][K3][K4]
+    ): string
     function GPA(...args: any) {
       return baseGetPath('/public', PUBLIC_ASSETS, args)
     }
@@ -65,6 +87,28 @@ export class AssetsHelper {
       k1: keyof T[K],
       k2: keyof T[K][K1],
       k3: keyof T[K][K1][K2]
+    ): string
+    function GSA<
+      T extends P,
+      K extends keyof T,
+      K1 extends keyof T[K],
+      K2 extends keyof T[K][K1],
+      K3 extends keyof T[K][K1][K2]
+    >(k: K, k1: keyof T[K], k2: keyof T[K][K1], k3: keyof T[K][K1][K2], k4: keyof T[K][K1][K2][K3]): string
+    function GSA<
+      T extends P,
+      K extends keyof T,
+      K1 extends keyof T[K],
+      K2 extends keyof T[K][K1],
+      K3 extends keyof T[K][K1][K2],
+      K4 extends keyof T[K][K1][K2][K3]
+    >(
+      k: K,
+      k1: keyof T[K],
+      k2: keyof T[K][K1],
+      k3: keyof T[K][K1][K2],
+      k4: keyof T[K][K1][K2][K3],
+      k5: keyof T[K][K1][K2][K3][K4]
     ): string
     function GSA(...args: any) {
       return baseGetPath('/static', STATIC_ASSETS, args)

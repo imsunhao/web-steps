@@ -1,17 +1,17 @@
 {
   "base": [
-    "/dist/web-steps/start-config.d23a992f20dd6dfa22919226a1cba13a.js",
-    "/dist/web-steps/vue-ssr-client-manifest.8626702bbaf50c6f32f1f7bd70dbf2e7.json",
-    "/dist/web-steps/vue-ssr-server-bundle.0f4eb272c0cab50a99639893dd609556.json"
+    "/dist/web-steps/start-config.d9382d4792def565ba5784c0cbff9936.js",
+    "/dist/web-steps/vue-ssr-client-manifest.e68f55fe39490b899b8921be9e75cd63.json",
+    "/dist/web-steps/vue-ssr-server-bundle.afbc4cc612aedfc76d8639318cf6c99b.json"
   ],
   "dll": [
-    "/dist/web-steps/Vue.dll.6d65533f7cf0706e3e76.js",
-    "/dist/web-steps/Vuex.dll.0bb56af0e8634c7ebf26.js",
-    "/dist/web-steps/VueRouter.dll.39fa24b1dd041168eae4.js"
+    "/dist/web-steps/Vue.dll.346c8a2df60e9153f0c0.js",
+    "/dist/web-steps/Vuex.dll.a0242c506c4ea1c29379.js",
+    "/dist/web-steps/VueRouter.dll.a99199c945f8ab7003c6.js"
   ],
   "SSR": [
-    "/dist/web-steps/client.811624d3de302f39ddf0.js",
-    "/dist/web-steps/1.5bcba0b6bc3fbc2d7804.js"
+    "/dist/web-steps/client.51bca9596c96e03deeb1.js",
+    "/dist/web-steps/1.b353c6b8ab617fb9c874.js"
   ],
   "public": [
     "/public/home/home.74b183e2d867fc9b68beda2d0c51e3ff.svg",

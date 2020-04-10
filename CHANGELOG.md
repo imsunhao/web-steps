@@ -1,3 +1,12 @@
+## [0.0.1-alpha.21](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.20...v0.0.1-alpha.21) (2020-04-10)
+
+
+### Features
+
+* 类型注释等优化 ([4100c9e](https://github.com/imsunhao/utils/commit/4100c9ef66ae6729d73fb2d71e989636101ca291))
+
+
+
 ## [0.0.1-alpha.20](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.12...v0.0.1-alpha.20) (2020-04-10)
 
 
