@@ -27,12 +27,12 @@ export class AssetsHelper {
       if (isDev) {
         result = args.join('/')
       } else {
+        let stepAssets = assets
         for (let i = 0; i < args.length; i++) {
-          const arg = args[i]
-          result = assets[arg]
+          stepAssets = stepAssets[args[i]]
         }
+        result = stepAssets
       }
-
       return isDev ? getPathWithHost(result, prefix) : getPathWithHost(result, host)
     }
 
@@ -75,28 +75,28 @@ export class AssetsHelper {
       return baseGetPath('/public', PUBLIC_ASSETS, args)
     }
 
-    function GSA<T extends P>(key: keyof T): string
-    function GSA<T extends P, K extends keyof T>(k: K, k1: keyof T[K]): string
-    function GSA<T extends P, K extends keyof T, K1 extends keyof T[K]>(
+    function GSA<T extends S>(key: keyof T): string
+    function GSA<T extends S, K extends keyof T>(k: K, k1: keyof T[K]): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K]>(
       k: K,
       k1: keyof T[K],
       k2: keyof T[K][K1]
     ): string
-    function GSA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(
       k: K,
       k1: keyof T[K],
       k2: keyof T[K][K1],
       k3: keyof T[K][K1][K2]
     ): string
     function GSA<
-      T extends P,
+      T extends S,
       K extends keyof T,
       K1 extends keyof T[K],
       K2 extends keyof T[K][K1],
       K3 extends keyof T[K][K1][K2]
     >(k: K, k1: keyof T[K], k2: keyof T[K][K1], k3: keyof T[K][K1][K2], k4: keyof T[K][K1][K2][K3]): string
     function GSA<
-      T extends P,
+      T extends S,
       K extends keyof T,
       K1 extends keyof T[K],
       K2 extends keyof T[K][K1],

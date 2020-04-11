@@ -41,7 +41,8 @@ const getConfig: TGetWebpackConfig = function({ args: { env, rootDir }, resolve 
     plugins: [
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({
-        filename: '[contenthash].css'
+        filename: '[contenthash].css',
+        ignoreOrder: true
       })
     ]
   }
