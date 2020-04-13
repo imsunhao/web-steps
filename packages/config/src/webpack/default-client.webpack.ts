@@ -79,33 +79,6 @@ const getDefaultClientWebpackConfig: TGetWebpackConfig = function(
               }
             }
           ]
-        },
-        {
-          test: /\.(png|jpe?g|gif|svg|webp)$/i,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {}
-            }
-          ]
-        },
-        {
-          test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/i,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {}
-            }
-          ]
-        },
-        {
-          test: /\.(webm|mp4|ogv)$/i,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {}
-            }
-          ]
         }
       ]
     },

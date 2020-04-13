@@ -1,3 +1,26 @@
+## [0.0.1-alpha.25](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.12...v0.0.1-alpha.25) (2020-04-13)
+
+
+### Bug Fixes
+
+* [ts] shared 问题 ([5f51b7d](https://github.com/imsunhao/utils/commit/5f51b7d2fb1684ccdd58a74e92e987163dc8b9e1))
+* 修复 下载路径错误 问题 ([8220e44](https://github.com/imsunhao/utils/commit/8220e44e6f30d1940ea5cb7190574abfbdc718f4))
+
+
+### Features
+
+* add start port ([2c76986](https://github.com/imsunhao/utils/commit/2c76986f70f19ff6312b81de9cd7f2b285f782ec))
+* download 确保目标文件夹存在 ([f7d6e5e](https://github.com/imsunhao/utils/commit/f7d6e5e4e7e2cd8954f4698b9e6f2b4ae7400d03))
+* release ([30a7083](https://github.com/imsunhao/utils/commit/30a70838312a6f3e3bbe4d9fccd421446a5025e2))
+* remove default file-loader ([2f2a33e](https://github.com/imsunhao/utils/commit/2f2a33e36912e013b57fcbe377153d06d2d0a3c0))
+* test 添加 过滤无用目录 ([a35cdac](https://github.com/imsunhao/utils/commit/a35cdac57f2270d61e4f1d70104efd307663ff69))
+* 添加 AssetsHelper 测试 ([4f3c35b](https://github.com/imsunhao/utils/commit/4f3c35b71f9fab30961e192d1e4c7ea95f44130d))
+* 添加 cache-loader 与 thread-loader ([f3ab683](https://github.com/imsunhao/utils/commit/f3ab683efd5012a5de78214b0d173634b191ac2c))
+* 添加 server-life, base webpack-merge 支持 ([e9f8ea3](https://github.com/imsunhao/utils/commit/e9f8ea3f063c1ddd746f08563ab4d9965d43e1f2))
+* 类型注释等优化 ([4100c9e](https://github.com/imsunhao/utils/commit/4100c9ef66ae6729d73fb2d71e989636101ca291))
+
+
+
 ## [0.0.1-alpha.24](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.23...v0.0.1-alpha.24) (2020-04-13)
 
 

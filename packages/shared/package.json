@@ -1,7 +1,7 @@
 {
   "name": "@web-steps/shared",
   "private": true,
-  "version": "0.0.1-alpha.24",
+  "version": "0.0.1-alpha.25",
   "description": "@web-steps/shared",
   "main": "index.js",
   "files": [
