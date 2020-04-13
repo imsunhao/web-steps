@@ -64,6 +64,8 @@ function serverCreating(APP: TAPP, { statics, proxyTable, env }: TServer<'finish
       if (typeof options === 'string') {
         options = { target: options }
       }
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      options.onError = options.onError || ((err: any) => log.warn(err))
       APP.use(proxyMiddleware(proxyKey, options))
     })
   }

@@ -1,3 +1,13 @@
+## [0.0.1-alpha.24](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.23...v0.0.1-alpha.24) (2020-04-13)
+
+
+### Features
+
+* 添加 AssetsHelper 测试 ([4f3c35b](https://github.com/imsunhao/utils/commit/4f3c35b71f9fab30961e192d1e4c7ea95f44130d))
+* 添加 server-life, base webpack-merge 支持 ([e9f8ea3](https://github.com/imsunhao/utils/commit/e9f8ea3f063c1ddd746f08563ab4d9965d43e1f2))
+
+
+
 ## [0.0.1-alpha.23](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.22...v0.0.1-alpha.23) (2020-04-10)
 
 

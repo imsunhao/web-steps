@@ -11,6 +11,7 @@ const preId = args.preid || semver.prerelease(currentVersion)[0] || 'alpha'
 const isDryRun = args.dry
 const skipTests = args.skipTests
 const skipBuild = args.skipBuild
+const skipPush = args.skipPush
 
 const packages = fs
   .readdirSync(path.resolve(__dirname, '../packages'))
@@ -107,9 +108,13 @@ async function main() {
 
   // push to GitHub
   step('\nPushing to GitHub...')
-  await runIfNotDry('git', ['tag', `v${targetVersion}`])
-  await runIfNotDry('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
-  await runIfNotDry('git', ['push', '--set-upstream', 'origin', 'master'])
+  if (!skipPush) {
+    await runIfNotDry('git', ['tag', `v${targetVersion}`])
+    await runIfNotDry('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
+    await runIfNotDry('git', ['push', '--set-upstream', 'origin', 'master'])
+  } else {
+    console.log(`(skipped)`)
+  }
 
   if (isDryRun) {
     console.log(`\nDry run finished - run git diff to see package changes.`)

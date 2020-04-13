@@ -3,7 +3,11 @@ import express from 'express'
 
 import { APITest } from '../@types'
 
+import { test } from '@test'
+
 const getServerConfig: GetUserServerConfig = () => {
+  // eslint-disable-next-line jest/expect-expect
+  test()
   return {
     beforeRender(req, res, next) {
       console.log('[beforeRender] 1', req.url, req.method, req.url.startsWith("/private"))

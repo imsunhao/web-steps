@@ -75,13 +75,17 @@ export class Config {
   private getDefaultLifeCycleConfigWebpackConfig() {
     const lifeCycle: string = this.config.src.SSR.server.lifeCycle as any
     if (!fs.existsSync(lifeCycle) && !fs.existsSync(lifeCycle + '.ts') && !fs.existsSync(lifeCycle + '.js')) return
-    return getConfigWebpackConfig('life-cycle', lifeCycle, this.setting.cache)
+    return getConfigWebpackConfig('life-cycle', lifeCycle, this.setting.cache, this.config.src.SSR.base.webpack)
   }
 
   private async compiler(payload: TGetConfigPayload) {
     let skipLifeCycle = false
     if (payload.target === 'base') {
-      const defaultConfigWebpackConfig = getConfigWebpackConfig('config', this.setting.entry, this.setting.cache)
+      const defaultConfigWebpackConfig = getConfigWebpackConfig(
+        'config',
+        this.setting.entry,
+        this.setting.cache
+      )
       await require('@web-steps/compiler').start(
         {
           webpackConfigs: [defaultConfigWebpackConfig],
@@ -370,7 +374,8 @@ export class Config {
       this.config.injectContext = getConfigWebpackConfig(
         'inject-context',
         this.config.injectContext,
-        this.setting.cache
+        this.setting.cache,
+        this.config.src.SSR.base.webpack
       ) as any
     } else {
       this.config.injectContext = undefined

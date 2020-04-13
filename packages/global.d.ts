@@ -39,3 +39,7 @@ declare module 'svgson' {
   const parseSync: any
   const stringify: any
 }
+
+declare module '@test' {
+  function test(): void
+}

@@ -330,7 +330,8 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
     this.config.injectContext = getConfigWebpackConfig(
       "inject-context",
       this.config.injectContext,
-      this.setting.cache
+      this.setting.cache,
+      this.config.src.SSR.base.webpack
     );
   } else {
     this.config.injectContext = undefined;
@@ -525,38 +526,44 @@ const nodeExternals = require("webpack-node-externals");
 const getConfigWebpackConfig = function getConfigWebpackConfig(
   name,
   entryPath,
-  outputPath
+  outputPath,
+  base = {}
 ) {
-  return {
-    name,
-    mode: "production",
-    devtool: false,
-    target: "node",
-    optimization: {
-      minimize: false
+  return webpackMerge(
+    {
+      resolve: base.resolve
     },
-    entry: {
-      [name]: entryPath
-    },
-    output: {
-      path: outputPath,
-      filename: "[name].js",
-      libraryTarget: "commonjs2"
-    },
-    externals: [nodeExternals()],
-    resolve: {
-      extensions: [".ts", ".js", ".json"]
-    },
-    module: {
-      rules: [
-        {
-          test: /\.tsx?$/,
-          exclude: /node_modules/,
-          use: ["ts-loader"]
-        }
-      ]
+    {
+      name,
+      mode: "production",
+      devtool: false,
+      target: "node",
+      optimization: {
+        minimize: false
+      },
+      entry: {
+        [name]: entryPath
+      },
+      output: {
+        path: outputPath,
+        filename: "[name].js",
+        libraryTarget: "commonjs2"
+      },
+      externals: [nodeExternals()],
+      resolve: {
+        extensions: [".ts", ".js", ".json"]
+      },
+      module: {
+        rules: [
+          {
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            use: ["ts-loader"]
+          }
+        ]
+      }
     }
-  };
+  );
 };
 context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleConfigWebpackConfig() {
   const lifeCycle = this.config.src.SSR.server.lifeCycle;
@@ -566,7 +573,12 @@ context.getDefaultLifeCycleConfigWebpackConfig = function getDefaultLifeCycleCon
     !fs__default.existsSync(lifeCycle + ".js")
   )
     return;
-  return getConfigWebpackConfig("life-cycle", lifeCycle, this.setting.cache);
+  return getConfigWebpackConfig(
+    "life-cycle",
+    lifeCycle,
+    this.setting.cache,
+    this.config.src.SSR.base.webpack
+  );
 };
 
 stuffConfig.call(

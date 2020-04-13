@@ -1,7 +1,12 @@
 import { TGetWebpackConfig } from '@web-steps/config'
 
-const getConfig: TGetWebpackConfig = function() {
+const getConfig: TGetWebpackConfig = function({ resolve }) {
   return {
+    resolve: {
+      alias: {
+        '@test': resolve('@test')
+      }
+    },
     optimization: {
       minimize: false
     },
