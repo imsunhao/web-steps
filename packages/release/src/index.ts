@@ -153,13 +153,6 @@ export async function start(args: Args) {
 
     if (!skipChangelog) {
       await run(`yarn`, ['changelog'])
-    } else {
-      log.info(`(skipped)`)
-    }
-
-    step('\nPushing to GitHub...')
-
-    if (!skipPush) {
       const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
       if (stdout) {
         step('\nCommitting changes...')
@@ -168,11 +161,17 @@ export async function start(args: Args) {
       } else {
         log.info('No changes to commit.')
       }
+    } else {
+      log.info(`(skipped)`)
+    }
 
+    step('\nPushing to GitHub...')
+
+    if (!skipPush) {
       // push to GitHub
       await run('git', ['tag', `v${targetVersion}`])
       await run('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
-      await run('git', ['push', '--set-upstream', 'origin', 'master'])
+      await run('git', ['push', '--set-upstream', 'origin', target])
     } else {
       log.info(`(skipped)`)
     }
