@@ -151,13 +151,15 @@ export async function start(args: Args) {
 
     step('\nGit changelog...')
 
+    const gitTag = target !== 'production' ? `${target}-v${targetVersion}` : `v${targetVersion}`
+
     if (!skipChangelog) {
       await run(`yarn`, ['changelog'])
       const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
       if (stdout) {
         step('\nCommitting changes...')
         await run('git', ['add', '-A'])
-        await run('git', ['commit', '-m', `release: v${targetVersion}`])
+        await run('git', ['commit', '-m', `release: ${gitTag}`])
       } else {
         log.info('No changes to commit.')
       }
@@ -168,10 +170,19 @@ export async function start(args: Args) {
     step('\nPushing to GitHub...')
 
     if (!skipPush) {
-      // push to GitHub
-      await run('git', ['tag', `v${targetVersion}`])
-      await run('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
-      await run('git', ['push', '--set-upstream', 'origin', target])
+      const pushing = async () => {
+        await run('git', ['tag', gitTag])
+        await run('git', ['push', 'origin', `refs/tags/${gitTag}`])
+        await run('git', ['push', 'origin', target])
+      }
+      const { stdout: ABBREV_REF_HEAD } = await run('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { stdio: 'pipe' })
+      if (ABBREV_REF_HEAD !== target) {
+        await run('git', ['checkout', '-B', target])
+        await pushing()
+        await run('git', ['checkout', ABBREV_REF_HEAD])
+      } else {
+        await pushing()
+      }
     } else {
       log.info(`(skipped)`)
     }
@@ -191,10 +202,10 @@ export async function start(args: Args) {
       if (bin) {
         let cmd = ''
         if (typeof bin === 'function') {
-          const { stdout: gitHash } = await run('git', ['rev-parse', '--short', 'HEAD'], { stdio: 'pipe' })
-          if (gitHash) {
-            const downloadManifestPath = path.resolve(rootDir, `./${target}.manifest.json`)
-            cmd = bin({ gitHash, downloadManifestPath })
+          const { stdout: SHORT_HEAD } = await run('git', ['rev-parse', '--short', 'HEAD'], { stdio: 'pipe' })
+          if (SHORT_HEAD) {
+            const downloadManifestPath = `./${target}.manifest.json`
+            cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath })
           } else {
             log.error('can not get git hash!')
           }
