@@ -40,6 +40,12 @@ export class Args {
    */
   target: 'SSR-server' | 'SSR-client' | 'SSR' | 'custom'
 
+  /**
+   * 空运行
+   * - 只显示命令 不会真正运行
+   */
+  dry: boolean
+
   /// config
 
   /**
@@ -69,6 +75,14 @@ export class Args {
   skipDeploy: boolean
 
   /**
+   * 跳过 版本变更
+   *
+   * 如果 为true 那么
+   * - 会 跳过 改变ChangeLog
+   */
+  skipVersion: boolean
+
+  /**
    * 跳过 改变ChangeLog
    */
   skipChangelog: boolean
@@ -76,10 +90,10 @@ export class Args {
   /**
    * 跳过 git 操作
    */
-  skipPush: boolean
+  skipGit: boolean
 
   /**
-   * 跳过 git 操作
+   * 跳过 执行自定义 bin 函数
    */
   skipRunBin: boolean
 
@@ -108,9 +122,11 @@ export class Args {
     this.skipBuild = args['skip-build']
     this.skipTests = args['skip-tests']
     this.skipDeploy = args['skip-deploy']
+    this.skipVersion = args['skip-version']
     this.skipChangelog = args['skip-changelog']
-    this.skipPush = args['skip-push']
+    this.skipGit = args['skip-git']
     this.skipRunBin = args['skip-run-bin']
+    this.dry = args.dry
 
     this.downloadManifestPath = args['download-manifest-path']
   }
