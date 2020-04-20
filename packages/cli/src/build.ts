@@ -129,7 +129,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
   log.info('export SSR StartConfig success!\n    path =', config.userConfigPath.startConfig)
 }
 
-export function start(args: Args) {
+export async function start(args: Args) {
   async function main() {
     args.env = 'production'
     const env = args.env
@@ -234,5 +234,10 @@ export function start(args: Args) {
       })
     }
   }
-  main().catch(e => log.catchError(e))
+
+  try {
+    await main()
+  } catch (e) {
+    log.catchError(e)
+  }
 }
