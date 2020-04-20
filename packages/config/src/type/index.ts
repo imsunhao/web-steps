@@ -182,7 +182,7 @@ type TWebpack<T extends 'finish' | 'ready'> = {
   webpack: TWebpackConfig<T>
 }
 
-type TReleaseBin = string | ((p: { gitHash: string; downloadManifestPath: string }) => string)
+type TReleaseBin = string | ((p: { gitHash: string; downloadManifestPath: string, args: Args }) => string)
 
 type TSrc<T extends 'finish' | 'ready', INJECT_CONTEXT> = {
   /**

@@ -105,7 +105,9 @@ export class Args {
   downloadManifestPath: string
 
   constructor() {
-    const args: any = (this.args = minimist(process.argv.slice(2), { boolean: ['skip-build', 'skip-tests'] }))
+    const args: any = (this.args = minimist(process.argv.slice(2), {
+      boolean: ['skip-build', 'skip-tests', 'skip-deploy', 'skip-version', 'skip-changelog', 'skip-git', 'skip-run-bin']
+    }))
 
     this.rootDir = args['root-dir'] || process.cwd()
     this.injectContext = args['inject-context']

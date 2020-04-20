@@ -49,7 +49,7 @@ export async function start(args: Args) {
           fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
         }
 
-    let targetVersion = (new Date()).getTime().toString()
+    let targetVersion = new Date().getTime().toString()
 
     step('\nSelecting version...')
     if (!skipVersion) {
@@ -168,7 +168,7 @@ export async function start(args: Args) {
     step('\nPushing to GitHub...')
 
     if (!skipGit) {
-      const gitTag = target !== 'production' ? `${target}-v${targetVersion}` : `v${targetVersion}`
+      const gitTag = target !== 'production' ? `deploy-${target}-${targetVersion}` : `v${targetVersion}`
       const gitBranch = skipVersion ? `${target}-${targetVersion}` : target
       const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
       if (stdout) {
@@ -179,20 +179,19 @@ export async function start(args: Args) {
         log.info('No changes to commit.')
       }
 
-      const pushing = async () => {
-        if (!skipVersion) {
-          await run('git', ['tag', gitTag])
-          await run('git', ['push', 'origin', `refs/tags/${gitTag}`])
-        }
-        await run('git', ['push', 'origin', gitBranch])
-      }
       const { stdout: ABBREV_REF_HEAD } = await run('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { stdio: 'pipe' })
-      if (ABBREV_REF_HEAD !== gitBranch) {
-        await run('git', ['checkout', '-B', gitBranch])
-        await pushing()
-        await run('git', ['checkout', ABBREV_REF_HEAD])
-      } else {
-        await pushing()
+
+      await run('git', ['tag', gitTag])
+      await run('git', ['push', 'origin', `refs/tags/${gitTag}`])
+
+      if (!skipVersion) {
+        if (ABBREV_REF_HEAD !== gitBranch) {
+          await run('git', ['checkout', '-B', gitBranch])
+          await run('git', ['push', 'origin', gitBranch])
+          await run('git', ['checkout', ABBREV_REF_HEAD])
+        } else {
+          await run('git', ['push', 'origin', gitBranch])
+        }
       }
     } else {
       log.info(`(skipped)`)
@@ -215,7 +214,7 @@ export async function start(args: Args) {
           const { stdout: SHORT_HEAD } = await run('git', ['rev-parse', '--short', 'HEAD'], { stdio: 'pipe' })
           if (SHORT_HEAD) {
             const downloadManifestPath = `./${target}.manifest.json`
-            cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath })
+            cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath, args })
           } else {
             log.error('can not get git hash!')
           }
