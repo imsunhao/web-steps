@@ -234,3 +234,5 @@ export async function start(args: Args) {
 
   await main().catch(err => log.catchError(err))
 }
+
+export * from './utils/deploy'
