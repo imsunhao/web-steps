@@ -1,3 +1,49 @@
+## [0.0.1-alpha.33](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.8...v0.0.1-alpha.33) (2020-04-20)
+
+
+### Bug Fixes
+
+* [start] error lifeCycle undefined ([eb1cf2d](https://github.com/imsunhao/utils/commit/eb1cf2d7b12f7a09ca7e5bc036657a2e53501a01))
+* [test] error ([4958712](https://github.com/imsunhao/utils/commit/4958712565af4a427d1f84f74b5b3f76dc6a3af0))
+* [ts] shared 问题 ([5f51b7d](https://github.com/imsunhao/utils/commit/5f51b7d2fb1684ccdd58a74e92e987163dc8b9e1))
+* build ts error ([be7ca6c](https://github.com/imsunhao/utils/commit/be7ca6cedf71fb0f14d9a746b6cb18035bbeed9a))
+* export 修复 getConfigWebpackConfig is undefined ([81eddc5](https://github.com/imsunhao/utils/commit/81eddc5746797c1a30c4dff9cbcc9c337b0efc68))
+* 修复 release脚本 ([2b19ac0](https://github.com/imsunhao/utils/commit/2b19ac07b7c1c104558e1789642c0645177b7e80))
+* 修复 whitelist 失效 ([f420da9](https://github.com/imsunhao/utils/commit/f420da927788b18e0c107459dd0eb35bed6cdfc9))
+* 修复 下载路径错误 问题 ([8220e44](https://github.com/imsunhao/utils/commit/8220e44e6f30d1940ea5cb7190574abfbdc718f4))
+
+
+### Features
+
+* [release] 添加 依赖注入 tag ([d60fbd1](https://github.com/imsunhao/utils/commit/d60fbd1eb5e0146256ababfebea2ff98518a5c82))
+* [server] 添加 default beforeRenderSend ([4b5a6d0](https://github.com/imsunhao/utils/commit/4b5a6d0ad251d08dcd6068b6814fed7f73ec8bd0))
+* add start port ([2c76986](https://github.com/imsunhao/utils/commit/2c76986f70f19ff6312b81de9cd7f2b285f782ec))
+* args 添加 inject-context 支持 ([da0ad2a](https://github.com/imsunhao/utils/commit/da0ad2aeabb03c72dba5e14b3475213059ad703f))
+* build 命令支持同步操作 ([8a44250](https://github.com/imsunhao/utils/commit/8a44250cb5a9cbb3244cf1ccf211bc640312b0ce))
+* common-asset -> common-assets ([867014a](https://github.com/imsunhao/utils/commit/867014aa51ca285bad352b9cc6c8d4f145cbd8ce))
+* dev html hot-reload ([48cf949](https://github.com/imsunhao/utils/commit/48cf9492a8e63816041885334e0819e0a7d6e979))
+* download 确保目标文件夹存在 ([f7d6e5e](https://github.com/imsunhao/utils/commit/f7d6e5e4e7e2cd8954f4698b9e6f2b4ae7400d03))
+* release ([30a7083](https://github.com/imsunhao/utils/commit/30a70838312a6f3e3bbe4d9fccd421446a5025e2))
+* release 拓展 ([71b8f96](https://github.com/imsunhao/utils/commit/71b8f96cc018f66e64651574fcc323b9644d90dc))
+* release 添加 skip-version dry 命令 ([69fc71a](https://github.com/imsunhao/utils/commit/69fc71ad3890ab0055f66414620c86f1c39267a4))
+* remove default file-loader ([2f2a33e](https://github.com/imsunhao/utils/commit/2f2a33e36912e013b57fcbe377153d06d2d0a3c0))
+* ssr-exclude-module 添加 emptyModule ([ff80d3d](https://github.com/imsunhao/utils/commit/ff80d3d15064bf82ffc4fe4a7cbb9203b7b70989))
+* start exportSSRStartConfig 添加 pathResolve ([a1a39e1](https://github.com/imsunhao/utils/commit/a1a39e1ea7720d40c69472c515c883abd336d9ac))
+* test 添加 过滤无用目录 ([a35cdac](https://github.com/imsunhao/utils/commit/a35cdac57f2270d61e4f1d70104efd307663ff69))
+* 优化 发布流程 ([8f5b8c6](https://github.com/imsunhao/utils/commit/8f5b8c6228960f8855bdf12c1c3b28e08ebcdd74))
+* 完善 exclude 与 whitelist 的关系 ([4b7c279](https://github.com/imsunhao/utils/commit/4b7c2792c567a792bd8c02e25560a775f26ef1b5))
+* 暴露 release 内部方法 ([cdb775c](https://github.com/imsunhao/utils/commit/cdb775c452468052ea9461618f1473a75c8409c1))
+* 添加 AssetsHelper 测试 ([4f3c35b](https://github.com/imsunhao/utils/commit/4f3c35b71f9fab30961e192d1e4c7ea95f44130d))
+* 添加 cache-loader 与 thread-loader ([f3ab683](https://github.com/imsunhao/utils/commit/f3ab683efd5012a5de78214b0d173634b191ac2c))
+* 添加 server-life, base webpack-merge 支持 ([e9f8ea3](https://github.com/imsunhao/utils/commit/e9f8ea3f063c1ddd746f08563ab4d9965d43e1f2))
+* 添加 terser-webpack-plugin options ([ccc308d](https://github.com/imsunhao/utils/commit/ccc308d47420d58fdd27d116c95ef2f85ca9128d))
+* 添加 todo ([42a7780](https://github.com/imsunhao/utils/commit/42a77809d85f0e74a37775a09e28d78bb19b293b))
+* 移除 无用的 devDependencies ([69eb9cc](https://github.com/imsunhao/utils/commit/69eb9cc940bcd47a60a9ab0345445c090236f961))
+* 类型注释等优化 ([4100c9e](https://github.com/imsunhao/utils/commit/4100c9ef66ae6729d73fb2d71e989636101ca291))
+* 调整 port 规则 ([e9dc02b](https://github.com/imsunhao/utils/commit/e9dc02b9971e3e1cf36b698cf944f55bca2d5be7))
+
+
+
 ## [0.0.1-alpha.32](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.8...v0.0.1-alpha.32) (2020-04-20)
 
 
