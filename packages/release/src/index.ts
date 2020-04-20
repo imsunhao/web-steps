@@ -166,9 +166,9 @@ export async function start(args: Args) {
     }
 
     step('\nPushing to GitHub...')
+    const gitTag = target !== 'production' ? `deploy-${target}-${targetVersion}` : `v${targetVersion}`
 
     if (!skipGit) {
-      const gitTag = target !== 'production' ? `deploy-${target}-${targetVersion}` : `v${targetVersion}`
       const gitBranch = skipVersion ? `${target}-${targetVersion}` : target
       const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
       if (stdout) {
@@ -214,7 +214,7 @@ export async function start(args: Args) {
           const { stdout: SHORT_HEAD } = await run('git', ['rev-parse', '--short', 'HEAD'], { stdio: 'pipe' })
           if (SHORT_HEAD) {
             const downloadManifestPath = `./${target}.manifest.json`
-            cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath, args })
+            cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath, args, tag: gitTag })
           } else {
             log.error('can not get git hash!')
           }
