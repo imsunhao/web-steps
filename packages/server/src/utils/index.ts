@@ -3,7 +3,7 @@ import { createBundleRenderer } from 'vue-server-renderer'
 import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log, TAPP } from '../'
 import { DEFAULT_TEMPLATE } from '../setting'
 import { randomStringAsBase64Url } from './random'
-import http from 'http'
+import http, { IncomingHttpHeaders } from 'http'
 import { basename } from 'path'
 import { TServer, TRender, TSetting, TDLL, DEFAULT_PORT, DEFAULT_INJECT_CONTEXT } from '@web-steps/config'
 import { processSend } from 'shared/node'
@@ -142,7 +142,7 @@ const createBundleRendererRenderToString: (
 
 export const noop: any = function() {}
 
-function getRenderContext(req: { url: any }, res: { locals: any }) {
+function getRenderContext(req: { url: string; headers: IncomingHttpHeaders }, res: { locals: any }) {
   const injectContext: TServerInjectContext = process.__INJECT_CONTEXT__
   const context: TServerContext = {
     injectContext,
@@ -151,6 +151,7 @@ function getRenderContext(req: { url: any }, res: { locals: any }) {
       keywords: '',
       description: ''
     },
+    headers: req.headers,
     url: req.url,
     locals: res.locals,
     nonce: '',

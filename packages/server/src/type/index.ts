@@ -1,7 +1,7 @@
 import { Express, NextFunction, Request, Response } from 'express'
 import { Args, getInitConfig } from '../utils'
 import { createBundleRenderer } from 'vue-server-renderer'
-import http from 'http'
+import http, { IncomingHttpHeaders } from 'http'
 
 export type ServerStart = SniffPromise<ReturnType<typeof getInitConfig>>
 export type ServerConfig = ServerStart & { env: Args['env'] }
@@ -34,8 +34,25 @@ export type ServerLifeCycle = {
 }
 
 export type TServerInfos = string[]
-export type TServerInjectContext = any
-export type TServerContext = any
+export type TServerInjectContext = Partial<{
+  CSP_DISABLED: boolean
+  SERVER_HOST: string
+}>
+
+export type TServerContext<INJECT_CONTEXT = TServerInjectContext, LOCALS = TServerContextLocals> = {
+  pageInfo: {
+    title: string,
+    keywords: string,
+    description: string
+  }
+  injectContext: INJECT_CONTEXT
+  url: string
+  locals: LOCALS
+  nonce?: string
+  head: string
+  headers: IncomingHttpHeaders
+}
 
 export type TRenderError = any
 export type TRenderHTML = string
+export type TServerContextLocals = any

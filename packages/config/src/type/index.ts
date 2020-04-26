@@ -14,7 +14,10 @@ export type UserConfig<INJECT_CONTEXT> = {
   test?: string
 } & Partial<TBaseConfig<'ready', INJECT_CONTEXT>>
 
-export type StartupOptions = any
+export type StartupOptions = {
+  args: Args
+  resolve: (...args: string[]) => string
+}
 
 export type GetUserConfig<INJECT_CONTEXT = any> = (startupOptions: StartupOptions) => UserConfig<INJECT_CONTEXT>
 export type GetUserServerConfig = (startupOptions: StartupOptions) => ServerLifeCycle
