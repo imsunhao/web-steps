@@ -82,10 +82,12 @@ const { args, setting, isDev } = {
     target: "SSR",
     skipBuild: false,
     skipTests: false,
-    skipDeploy: undefined,
-    skipChangelog: undefined,
-    skipPush: undefined,
-    skipRunBin: undefined,
+    skipDeploy: false,
+    skipVersion: false,
+    skipChangelog: false,
+    skipGit: false,
+    skipRunBin: false,
+    dry: undefined,
     downloadManifestPath: undefined
   },
   setting: {
