@@ -221,9 +221,10 @@ export async function start(args: Args) {
         } else {
           cmd = bin
         }
-
-        const cmds = cmd.split(' ')
-        await run(cmds[0], cmds.slice(1, cmds.length))
+        if (cmd) {
+          const cmds = cmd.split(' ')
+          await run(cmds[0], cmds.slice(1, cmds.length))
+        }
       } else {
         log.info(`bin not find (skipped)`)
       }
