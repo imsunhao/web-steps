@@ -1,6 +1,3 @@
-// eslint-disable-next-line no-var
-export var defaultTemplatePath = ''
-
 import { Args } from '@types'
 import webpack from 'webpack'
 import webpackMerge from 'webpack-merge'
@@ -9,13 +6,14 @@ import fs from 'fs'
 import path from 'path'
 import { TSetting, TConfig, TOptionsInject, StartupOptions, TGetConfigPayload } from './type'
 
-import { Log } from 'packages/shared'
+import { Log } from 'shared/log'
 import { processSend } from 'shared/node'
 import { mergeBase, cloneDeep, merge } from 'shared/lodash'
 import { requireFromPath, requireSourceString } from 'shared/require'
 import { getCache, getSetting } from 'shared/config'
 import { ensureDirectoryExistence } from 'shared/fs'
 import { convertObjToSource } from 'shared/toString'
+import { DEFAULT_PORT, DEFAULT_OPENSSL_CONFIG, DEFAULT_V3_EXT_CONFIG, HTTPS_README } from 'shared/setting'
 import { sync as rmrfSync } from 'rimraf'
 
 import getConfigWebpackConfig from './webpack/default-config.webpack'
@@ -25,7 +23,6 @@ import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import getDefaultServerWebpackConfig from './webpack/default-server.webpack'
 import { Execa } from '@web-steps/cli'
 import { ServerLifeCycle } from '@web-steps/server'
-import { DEFAULT_PORT, DEFAULT_OPENSSL_CONFIG, DEFAULT_V3_EXT_CONFIG, HTTPS_README } from './setting'
 
 export let log: Log
 
@@ -674,4 +671,3 @@ export class Config {
 export const config = new Config()
 
 export * from './type'
-export * from './setting'

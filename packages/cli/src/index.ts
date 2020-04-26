@@ -1,5 +1,5 @@
 import { Args } from './utils'
-import { Log } from 'packages/shared'
+import { Log } from 'shared/log'
 
 const args = new Args()
 

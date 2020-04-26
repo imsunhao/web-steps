@@ -1,6 +1,6 @@
 import { ServerConfig, ServerStart } from './type'
 import { getInitConfig } from './utils'
-import { Log } from 'packages/shared'
+import { Log } from 'shared/log'
 import { getEnv } from 'shared/config'
 import { SSRMessageBus } from '@types'
 

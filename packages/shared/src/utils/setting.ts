@@ -51,3 +51,18 @@ export const TERSER_PLUGIN_OPTIONS: TerserPlugin.TerserPluginOptions = {
   extractComments: false,
   sourceMap: false
 }
+
+export const DEFAULT_TEMPLATE = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ pageInfo.title }}</title>
+    <meta name="keywords" content="{{ pageInfo.keywords }}">
+    <meta name="description" content="{{ pageInfo.description }}">
+  </head>
+
+  <body>
+    <!--vue-ssr-outlet-->
+  </body>
+</html>
+`

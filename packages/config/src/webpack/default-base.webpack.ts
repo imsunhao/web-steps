@@ -3,7 +3,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { TGetWebpackConfig } from '@web-steps/config'
 import webpack from 'webpack'
-import { TERSER_PLUGIN_OPTIONS } from '../setting'
+import { TERSER_PLUGIN_OPTIONS } from 'shared/setting'
 
 const getConfig: TGetWebpackConfig = function({ args: { env, rootDir }, resolve }) {
   const base: webpack.Configuration = {

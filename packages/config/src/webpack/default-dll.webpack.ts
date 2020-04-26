@@ -2,7 +2,7 @@ import webpack from 'webpack'
 import { join } from 'path'
 import { TGetDLLWebpackConfig } from '@web-steps/config'
 import TerserPlugin from 'terser-webpack-plugin'
-import { TERSER_PLUGIN_OPTIONS } from '../setting'
+import { TERSER_PLUGIN_OPTIONS } from 'shared/setting'
 
 const getDllWebpackConfig: TGetDLLWebpackConfig = function({ entry, outputPath, context, refs }) {
   const libraryName = '[name]_[hash]_DLL'

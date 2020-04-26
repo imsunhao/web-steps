@@ -1,4 +1,4 @@
-import { Log } from 'packages/shared'
+import { Log } from 'shared/log'
 import { config } from '@web-steps/config'
 import path from 'path'
 

@@ -170,7 +170,7 @@ async function publishPackage(pkgName, version, runIfNotDry) {
 
   step(`Publishing ${pkgName}...`)
   try {
-    await runIfNotDry('npm', ['publish', '--tag', releaseTag, '--access', 'public'], {
+    await runIfNotDry('npm', ['publish', '--tag', releaseTag, '--access', 'public', '--registry=https://registry.npmjs.org'], {
       cwd: pkgRoot,
       stdio: 'pipe'
     })
