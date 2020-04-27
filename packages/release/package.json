@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/release",
-  "version": "0.0.1-alpha.37",
+  "version": "0.0.1-alpha.38",
   "description": "@web-steps/release",
   "main": "index.js",
   "files": [
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/release#readme",
   "dependencies": {
-    "@web-steps/oss": "0.0.1-alpha.37",
+    "@web-steps/oss": "0.0.1-alpha.38",
     "conventional-changelog-cli": "^2.0.31",
     "enquirer": "^2.3.4",
     "execa": "^4.0.0",

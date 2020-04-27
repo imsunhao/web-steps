@@ -111,6 +111,7 @@ export async function start(args: Args) {
     }
 
     step(`\nDeploy to ${target}...`)
+    const downloadManifestPath = `./${target}.manifest.json`
 
     const doDeploy = async function() {
       args.args.cache = 'true'
@@ -123,9 +124,9 @@ export async function start(args: Args) {
 
       const FILESManifest: TFILES_MANIFEST = requireFromPath(FILESManifestPath)
 
-      const targetManifestFilePath = path.resolve(rootDir, `./${target}.manifest.json`)
+      const targetManifestFilePath = path.resolve(rootDir, downloadManifestPath)
 
-      const downloadManifestPath: DOWNLOAD_MANIFEST_FILE = {} as any
+      const downloadManifest: DOWNLOAD_MANIFEST_FILE = {} as any
 
       const deploy = createDeploy(rootDir, target, release)
 
@@ -136,18 +137,18 @@ export async function start(args: Args) {
         const filePathsList = FILESManifest[key]
         if (!filePathsList || !filePathsList.length) continue
         const md5 = !(key === 'SSR' || key === 'dll' || key === 'static')
-        downloadManifestPath[key] = await deploy.upload(FILESManifest[key], {
+        downloadManifest[key] = await deploy.upload(FILESManifest[key], {
           remoteDirPath: '/',
           md5
         })
       }
 
-      downloadManifestPath.oss = {
+      downloadManifest.oss = {
         name: deploy.OSS.name,
         options: deploy.OSS.options
       }
 
-      fs.writeFileSync(targetManifestFilePath, JSON.stringify(downloadManifestPath, null, 2), 'utf-8')
+      fs.writeFileSync(targetManifestFilePath, JSON.stringify(downloadManifest, null, 2), 'utf-8')
 
       log.log('targetManifestFilePath =', targetManifestFilePath)
     }
@@ -173,7 +174,9 @@ export async function start(args: Args) {
       const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
       if (stdout) {
         step('\nCommitting changes...')
-        await run('git', ['add', '-A'])
+        await run('git', ['add', 'package.json'])
+        await run('git', ['add', 'CHANGELOG.md'])
+        await run('git', ['add', downloadManifestPath])
         await run('git', ['commit', '-m', `release: ${gitTag}`])
       } else {
         log.info('No changes to commit.')
@@ -209,11 +212,10 @@ export async function start(args: Args) {
       const bin = release.target[target].bin
 
       if (bin) {
-        let cmd = ''
+        let cmd: any
         if (typeof bin === 'function') {
           const { stdout: SHORT_HEAD } = await run('git', ['rev-parse', '--short', 'HEAD'], { stdio: 'pipe' })
           if (SHORT_HEAD) {
-            const downloadManifestPath = `./${target}.manifest.json`
             cmd = bin({ gitHash: SHORT_HEAD, downloadManifestPath, args, tag: gitTag })
           } else {
             log.error('can not get git hash!')
