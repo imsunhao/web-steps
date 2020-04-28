@@ -1,3 +1,23 @@
+# [0.1.0](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.33...v0.1.0) (2020-04-28)
+
+
+### Bug Fixes
+
+* 修复 如果 release bin cmd为空 那么不会启动 ([2f19020](https://github.com/imsunhao/utils/commit/2f1902022d90868cae6ab624cbdd5496260386e8))
+
+
+### Features
+
+* 修复 changelog ([546c946](https://github.com/imsunhao/utils/commit/546c946f2c8012c1a81f72d3d1b47755e76e98a7))
+* 修复 setting 带来的依赖混乱 ([0e4ef45](https://github.com/imsunhao/utils/commit/0e4ef45f500f03a7c3eede92d4b171d2656a5da9))
+* 完善 类型支持 ([25553b5](https://github.com/imsunhao/utils/commit/25553b5d3c926f80b2078b056d5852e9db02db60))
+* 扩展 relase 可以配置 inject-context ([8aa02a9](https://github.com/imsunhao/utils/commit/8aa02a9c861673fbf9ff8f0201f254251c01774a))
+* 添加 helper 帮助 ([b7f96b5](https://github.com/imsunhao/utils/commit/b7f96b5b0ef60a9a9881d447a861acb1041a2231))
+* 移除 start测试 ([8fc83c9](https://github.com/imsunhao/utils/commit/8fc83c90093eeed0a02f71dd9a9b5a2853498b62))
+* 调整 git add -A 为精确 add ([456095b](https://github.com/imsunhao/utils/commit/456095ba1ff51cd73c5cf31d6d2185c39bb8b134))
+
+
+
 ## [0.0.1-alpha.38](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.8...v0.0.1-alpha.38) (2020-04-27)
 
 
