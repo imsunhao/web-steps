@@ -4,8 +4,24 @@ import { requireFromPath } from 'shared/require'
 import { createOSS } from '@web-steps/oss'
 import path from 'path'
 import fs from 'fs'
+import { checkHelper } from 'shared/log'
+import { COMMON_HELPER_INFO } from 'shared/setting'
+
+const helperInfo = `
+${COMMON_HELPER_INFO}
+- UNIQUE
+  download-manifest-path:  下载 manifest 路径
+`
 
 export function start(args: Args) {
+  checkHelper(args, {
+    majorCommand: {
+      name: 'download',
+      info: helperInfo
+    },
+    minorCommand: []
+  })
+
   args.env = 'development'
 
   async function main() {

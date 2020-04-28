@@ -8,6 +8,6 @@ export const PUBLIC_ASSETS = {
 }
 
 export const STATIC_ASSETS = {
-  "favicon.ico": "static/favicon.7b9e28e2da3abaeb195a7fd58944c23e.ico",
-  "static.txt": "static/static.1165b02742a1240e3c553fdcedfafbe6.txt"
+  "favicon.ico": "static/favicon.ico",
+  "static.txt": "static/static.txt"
 }

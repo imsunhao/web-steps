@@ -43,6 +43,17 @@ declare namespace WebSteps {
 
   type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'static', string[]>
   type DOWNLOAD_MANIFEST_FILE = TFILES_MANIFEST & { oss: any }
+
+  type THelperInfo = {
+    majorCommand: {
+      name: TArgs['majorCommand']
+      info: string
+    }
+    minorCommand: Array<{
+      name: TArgs['minorCommand']
+      info: string
+    }>
+  }
 }
 
 export = WebSteps

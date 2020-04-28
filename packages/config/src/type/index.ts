@@ -60,7 +60,8 @@ export type TDirOptions = {
 
 type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   /**
-   * 根目录 默认值为运行命令的目录
+   * 根目录 string
+   * - 默认值为运行命令的目录
    */
   rootDir: string
 

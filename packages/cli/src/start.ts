@@ -7,6 +7,18 @@ import { getSetting } from 'shared/config'
 import { start as serverStart } from '@web-steps/server'
 import requireFromString from 'require-from-string'
 import { StartupOptions } from '@web-steps/config'
+import { COMMON_HELPER_INFO } from 'shared/setting'
+import { checkHelper } from 'shared/log'
+
+const helperInfo = `
+- ENV (可接受-环境变量)
+  PORT:                  启动端口号 string | number
+                         - 最高优先级
+${COMMON_HELPER_INFO}
+- UNIQUE
+  port:                  启动端口号 string | number
+                         - 优先级 仅低于 ENV 中 PORT
+`
 
 function requrieFromString(source: string) {
   try {
@@ -18,6 +30,14 @@ function requrieFromString(source: string) {
 }
 
 export function start(args: Args) {
+  checkHelper(args, {
+    majorCommand: {
+      name: 'start',
+      info: helperInfo
+    },
+    minorCommand: []
+  })
+
   args.env = 'production'
 
   const setting = getSetting(args)

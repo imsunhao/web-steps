@@ -17,13 +17,14 @@ export class Args {
   /**
    * server运行端口号
    * - 默认值 8080
+   * - 优先级 仅低于 ENV 中 PORT
    */
   port: string
 
   /**
    * 配置文件的相对路径
    *
-   * - 配置文件 JSON 类型, 例如 web-steps.json
+   * - 文件类型为 JSON 类型, 例如 web-steps.json
    */
   settingPath: string
 
@@ -104,9 +105,22 @@ export class Args {
    */
   downloadManifestPath: string
 
+  /// helper
+
+  helper: boolean
+
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2), {
-      boolean: ['skip-build', 'skip-tests', 'skip-deploy', 'skip-version', 'skip-changelog', 'skip-git', 'skip-run-bin']
+      boolean: [
+        'skip-build',
+        'skip-tests',
+        'skip-deploy',
+        'skip-version',
+        'skip-changelog',
+        'skip-git',
+        'skip-run-bin',
+        'helper'
+      ]
     }))
 
     this.rootDir = args['root-dir'] || process.cwd()
@@ -131,6 +145,8 @@ export class Args {
     this.dry = args.dry
 
     this.downloadManifestPath = args['download-manifest-path']
+
+    this.helper = args.helper
   }
 }
 

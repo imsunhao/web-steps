@@ -10,8 +10,12 @@ export type MajorCommandKey =
   | 'config'
   | 'create'
   | 'test'
+  | 'pre'
   | 'compiler'
-export type MinorCommandKey = 'upload' | 'download' | 'export'
+  | 'download'
+  | 'cli'
+
+export type MinorCommandKey = 'export'
 
 export type RunOptions = Options<string> & CustomRunOptions
 

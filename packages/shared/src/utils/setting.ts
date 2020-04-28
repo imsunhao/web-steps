@@ -66,3 +66,23 @@ export const DEFAULT_TEMPLATE = `
   </body>
 </html>
 `
+
+export const COMMON_HELPER_INFO = `
+- COMMON
+  root-dir:              根目录路径 string
+  inject-context:        注入自定义数据路径 string
+  setting-path:           web-steps 配置文件路径 string
+                         - 文件类型为 JSON 类型, 例如 web-steps.json
+                         - 详情查看 web-steps config --helper
+`
+export const DEFAULT_HELPER_INFO = `
+${COMMON_HELPER_INFO}
+- MAJOR_COMMAND_LIST
+  build:                 编译代码
+  config:                配置文件
+  dev:                   开发模式启动
+  start:                 启动已经编译完成的代码
+  pre:                   预编译
+  download:              下载代码
+  release:               发布版本
+`

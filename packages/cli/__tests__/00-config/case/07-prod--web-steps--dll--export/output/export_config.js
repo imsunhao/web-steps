@@ -88,7 +88,8 @@ const { args, setting, isDev } = {
     skipGit: false,
     skipRunBin: false,
     dry: undefined,
-    downloadManifestPath: undefined
+    downloadManifestPath: undefined,
+    helper: false
   },
   setting: {
     entry:
@@ -328,16 +329,6 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
       : resolve(injectContextPath);
   } else if (!this.config.injectContext)
     this.config.injectContext = resolve("./inject-context.ts");
-  if (fs__default.existsSync(this.config.injectContext)) {
-    this.config.injectContext = getConfigWebpackConfig(
-      "inject-context",
-      this.config.injectContext,
-      this.setting.cache,
-      this.config.src.SSR.base.webpack
-    );
-  } else {
-    this.config.injectContext = undefined;
-  }
   if (this.config.customBuild) {
     this.config.customBuild = this.config.customBuild.map(webpackConfig => {
       return webpackConfig instanceof Function
@@ -470,6 +461,29 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
     };
     stuffServer();
     stuffWebpack();
+  }
+  if (process.env.RELEASE) {
+    const releaseConfig = this.config.release.target[process.env.RELEASE];
+    if (releaseConfig) {
+      if (releaseConfig.injectContext) {
+        const injectContextPath = releaseConfig.injectContext;
+        this.config.injectContext = injectContextPath.startsWith("/")
+          ? injectContextPath
+          : resolve(injectContextPath);
+      }
+    } else {
+      console.warn(`未找到 ${process.env.RELEASE} 对应的 release 配置!`);
+    }
+  }
+  if (fs__default.existsSync(this.config.injectContext)) {
+    this.config.injectContext = getConfigWebpackConfig(
+      "inject-context",
+      this.config.injectContext,
+      this.setting.cache,
+      this.config.src.SSR.base.webpack
+    );
+  } else {
+    this.config.injectContext = undefined;
   }
 };
 const stuffConfigByDll = function stuffConfigByDll(

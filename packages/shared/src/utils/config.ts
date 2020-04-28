@@ -14,6 +14,7 @@ export function getEnv(payload: { env: string }) {
  */
 export function getCache(_this: Args): boolean {
   const args = _this.args
+  if (args.cache === true) return true
   let cache = _this.env !== 'production'
   args.cache = (args.cache || '').toLowerCase()
   if (args.cache === 'false') cache = false

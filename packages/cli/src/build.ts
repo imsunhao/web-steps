@@ -9,8 +9,10 @@ import { getCache, getResolve } from 'shared/config'
 import { ensureDirectoryExistence, getDirFilePathList } from 'shared/fs'
 import { requireSourceString, requireFromPath } from 'shared/require'
 import { processSend, processOnMessage } from 'shared/node'
+import { checkHelper } from 'shared/log'
 import { convertObjToSource } from 'shared/toString'
 import { cloneDeep } from 'shared/lodash'
+import { COMMON_HELPER_INFO } from 'shared/setting'
 import { writeFileSync, existsSync } from 'fs'
 import path from 'path'
 
@@ -129,20 +131,30 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
   log.info('export SSR StartConfig success!\n    path =', config.userConfigPath.startConfig)
 }
 
+const helperInfo = `
+- ENV (可接受-环境变量)
+  RELEASE:               web-stpes relase 中的 taget
+                         - 根据taget中配置, 覆盖config配置
+${COMMON_HELPER_INFO}
+- UNIQUE
+  target:                编译目标
+                         - 默认值 SSR
+                         - 可选值 'SSR-server' | 'SSR-client' | 'SSR' | 'custom'
+                         - 可选值 你在customBuild中配置的name
+`
+
 export async function start(args: Args) {
-  async function main() {
-    args.env = 'production'
-    const env = args.env
+  checkHelper(args, {
+    majorCommand: {
+      name: 'build',
+      info: helperInfo
+    },
+    minorCommand: []
+  })
+  args.env = 'production'
+  const env = args.env
 
-    await config.init(args, {
-      afterGetSetting(c: any) {
-        if (!getCache(args)) {
-          log.info('清空 输出目录:', c.setting.output)
-          rmrfSync(c.setting.output)
-        }
-      }
-    })
-
+  async function SSR() {
     const rootDir = config.args.rootDir
     const relative = (to: string) => {
       return path.relative(rootDir, to)
@@ -190,36 +202,34 @@ export async function start(args: Args) {
     getStaticFilePath('public')
     getStaticFilePath('static')
 
-    if (args.target === 'SSR') {
-      const SSR = config.config.src.SSR
-      exportSSRStartConfig(DLL, injectContext)
-      const statsList: Stats[] = await compilerStart(
-        {
-          webpackConfigs: [SSR.client.webpack, SSR.server.webpack],
-          env
-        },
-        { notTestExit: true }
-      )
+    const SSR = config.config.src.SSR
+    exportSSRStartConfig(DLL, injectContext)
+    const statsList: Stats[] = await compilerStart(
+      {
+        webpackConfigs: [SSR.client.webpack, SSR.server.webpack],
+        env
+      },
+      { notTestExit: true }
+    )
 
-      const templatePath = SSR.server.render.templatePath
-      if (templatePath) {
-        FILES_MANIFEST.base.push(relative(templatePath))
-      }
-
-      statsList.forEach(stats => {
-        FILES_MANIFEST.SSR = FILES_MANIFEST.SSR.concat(
-          Object.keys(stats.compilation.assets)
-            .filter(asset => !asset.includes('vue-ssr'))
-            .map(asset => relative(path.resolve(config.setting.output, asset)))
-        )
-      })
-
-      FILES_MANIFEST.base = FILES_MANIFEST.base.concat(
-        ['vue-ssr-client-manifest.json', 'vue-ssr-server-bundle.json'].map(asset =>
-          relative(path.resolve(config.setting.output, asset))
-        )
-      )
+    const templatePath = SSR.server.render.templatePath
+    if (templatePath) {
+      FILES_MANIFEST.base.push(relative(templatePath))
     }
+
+    statsList.forEach(stats => {
+      FILES_MANIFEST.SSR = FILES_MANIFEST.SSR.concat(
+        Object.keys(stats.compilation.assets)
+          .filter(asset => !asset.includes('vue-ssr'))
+          .map(asset => relative(path.resolve(config.setting.output, asset)))
+      )
+    })
+
+    FILES_MANIFEST.base = FILES_MANIFEST.base.concat(
+      ['vue-ssr-client-manifest.json', 'vue-ssr-server-bundle.json'].map(asset =>
+        relative(path.resolve(config.setting.output, asset))
+      )
+    )
 
     writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')
 
@@ -235,8 +245,46 @@ export async function start(args: Args) {
     }
   }
 
+  async function custom() {
+    let webpackConfigs = config.config.customBuild
+    const SSR = config.config.src.SSR
+    if (args.target === 'custom') {
+      webpackConfigs = config.config.customBuild
+    } else if (args.target === 'SSR-client') {
+      webpackConfigs = [SSR.client.webpack]
+    } else if (args.target === 'SSR-server') {
+      webpackConfigs = [SSR.server.webpack]
+    } else {
+      const webpackCustomConfig = webpackConfigs.find(({ name }: any) => args.target === name)
+      if (!webpackCustomConfig)
+        log.error('[build target=custom]', `target = ${args.target}`, '未在 customBuild 列表中 找到! 请检查 name')
+      webpackConfigs = [webpackCustomConfig]
+    }
+
+    await compilerStart(
+      {
+        webpackConfigs,
+        env
+      },
+      { notTestExit: true }
+    )
+  }
+
   try {
-    await main()
+    await config.init(args, {
+      afterGetSetting(c: any) {
+        if (!getCache(args)) {
+          log.info('清空 输出目录:', c.setting.output)
+          rmrfSync(c.setting.output)
+        }
+      }
+    })
+
+    if (args.target === 'SSR') {
+      await SSR()
+    } else {
+      await custom()
+    }
   } catch (e) {
     log.catchError(e)
   }

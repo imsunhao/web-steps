@@ -4,8 +4,22 @@ import { config, TConfig } from '@web-steps/config'
 import { getDirFilePathObject, ensureDirectoryExistence, getMD5FilePath } from 'shared/fs'
 import { writeFileSync } from 'fs'
 import path from 'path'
+import { checkHelper } from 'shared/log'
+import { COMMON_HELPER_INFO } from 'shared/setting'
+
+const helperInfo = `
+${COMMON_HELPER_INFO}
+`
 
 export function start(args: Args) {
+  checkHelper(args, {
+    majorCommand: {
+      name: 'pre',
+      info: helperInfo
+    },
+    minorCommand: []
+  })
+
   args.env = 'development'
 
   const promiseList: Array<Promise<any>> = []
