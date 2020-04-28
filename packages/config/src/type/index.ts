@@ -71,7 +71,7 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   port: string | number
 
   /**
-   * 注入自定义数据
+   * 注入自定义数据 路径
    * - 注入的上下文 配置文件目录
    * - 默认值 ./inject-context.js
    */
@@ -171,7 +171,11 @@ type TReleaseTarget<T extends 'finish' | 'ready'> = {
    * 服务器地址
    */
   host: string
-} & T extends 'finish'
+  /**
+   * 注入自定义数据 路径
+   */
+  injectContext?: string
+} & (T extends 'finish'
   ? {
       cdn: TAliyunCDNOptions
       bin: TReleaseBin
@@ -179,13 +183,15 @@ type TReleaseTarget<T extends 'finish' | 'ready'> = {
   : {
       cdn?: Partial<TAliyunCDNOptions>
       bin?: TReleaseBin
-    }
+    })
 
 type TWebpack<T extends 'finish' | 'ready'> = {
   webpack: TWebpackConfig<T>
 }
 
-type TReleaseBin = string | ((p: { gitHash: string; downloadManifestPath: string; args: Args; tag: string }) => string | void)
+type TReleaseBin =
+  | string
+  | ((p: { gitHash: string; downloadManifestPath: string; args: Args; tag: string }) => string | void)
 
 type TSrc<T extends 'finish' | 'ready', INJECT_CONTEXT> = {
   /**

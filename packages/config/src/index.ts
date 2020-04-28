@@ -78,11 +78,7 @@ export class Config {
   private async compiler(payload: TGetConfigPayload) {
     let skipLifeCycle = false
     if (payload.target === 'base') {
-      const defaultConfigWebpackConfig = getConfigWebpackConfig(
-        'config',
-        this.setting.entry,
-        this.setting.cache
-      )
+      const defaultConfigWebpackConfig = getConfigWebpackConfig('config', this.setting.entry, this.setting.cache)
       await require('@web-steps/compiler').start(
         {
           webpackConfigs: [defaultConfigWebpackConfig],
@@ -367,17 +363,6 @@ export class Config {
       this.config.injectContext = injectContextPath.startsWith('/') ? injectContextPath : resolve(injectContextPath)
     } else if (!this.config.injectContext) this.config.injectContext = resolve('./inject-context.ts')
 
-    if (fs.existsSync(this.config.injectContext)) {
-      this.config.injectContext = getConfigWebpackConfig(
-        'inject-context',
-        this.config.injectContext,
-        this.setting.cache,
-        this.config.src.SSR.base.webpack
-      ) as any
-    } else {
-      this.config.injectContext = undefined
-    }
-
     if (this.config.customBuild) {
       this.config.customBuild = this.config.customBuild.map(webpackConfig => {
         return webpackConfig instanceof Function ? webpackConfig(this.startupOptions, this.config) : webpackConfig
@@ -491,6 +476,30 @@ export class Config {
 
       stuffServer()
       stuffWebpack()
+    }
+
+    if (process.env.RELEASE) {
+      const releaseConfig = this.config.release.target[process.env.RELEASE]
+      if (releaseConfig) {
+        if (releaseConfig.injectContext) {
+          const injectContextPath = releaseConfig.injectContext
+          this.config.injectContext = injectContextPath.startsWith('/') ? injectContextPath : resolve(injectContextPath)
+        }
+      } else {
+        console.warn(`未找到 ${process.env.RELEASE} 对应的 release 配置!`)
+      }
+    }
+
+
+    if (fs.existsSync(this.config.injectContext)) {
+      this.config.injectContext = getConfigWebpackConfig(
+        'inject-context',
+        this.config.injectContext,
+        this.setting.cache,
+        this.config.src.SSR.base.webpack
+      ) as any
+    } else {
+      this.config.injectContext = undefined
     }
   }
 

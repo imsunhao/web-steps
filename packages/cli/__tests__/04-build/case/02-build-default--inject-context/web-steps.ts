@@ -55,6 +55,7 @@ const getConfig: GetUserConfig = function({ resolve }) {
       target: {
         stage: {
           host: 'https://stage.qingcut.com',
+          injectContext: resolve('inject-context/production.ts'),
           cdn: {
             options: {
               staticHost: 'https://test.aliyuncs.com/stage',

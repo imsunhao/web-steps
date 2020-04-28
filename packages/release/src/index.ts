@@ -105,7 +105,7 @@ export async function start(args: Args) {
 
     step('\nBuilding all packages...')
     if (!skipBuild) {
-      await run('yarn', ['build'])
+      await run('cross-env', [`RELEASE=${target}`, 'yarn', 'build'])
     } else {
       log.info(`(skipped)`)
     }
