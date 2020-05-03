@@ -7,7 +7,9 @@ const currentVersion = require('../package.json').version
 const { prompt } = require('enquirer')
 const execa = require('execa')
 
-const preId = args.preid || semver.prerelease(currentVersion)[0] || 'alpha'
+const semverPreId = semver.prerelease(currentVersion)
+
+const preId = args.preid || (semverPreId ? semverPreId[0] : '') || 'alpha'
 const isDryRun = args.dry
 const skipTests = args.skipTests
 const skipBuild = args.skipBuild
@@ -170,10 +172,14 @@ async function publishPackage(pkgName, version, runIfNotDry) {
 
   step(`Publishing ${pkgName}...`)
   try {
-    await runIfNotDry('npm', ['publish', '--tag', releaseTag, '--access', 'public', '--registry=https://registry.npmjs.org'], {
-      cwd: pkgRoot,
-      stdio: 'pipe'
-    })
+    await runIfNotDry(
+      'npm',
+      ['publish', '--tag', releaseTag, '--access', 'public', '--registry=https://registry.npmjs.org'],
+      {
+        cwd: pkgRoot,
+        stdio: 'pipe'
+      }
+    )
     console.log(chalk.green(`Successfully published ${pkgName}@${version}`))
   } catch (e) {
     if (e.stderr.match(/previously published/)) {

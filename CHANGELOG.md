@@ -1,3 +1,13 @@
+## [0.1.1](https://github.com/imsunhao/utils/compare/v0.1.0...v0.1.1) (2020-05-03)
+
+
+### Features
+
+* [config] 补充 dependencies ([6402e78](https://github.com/imsunhao/utils/commit/6402e786de845bba73b5def936b316160d7b9de9))
+* [server] 自动添加 NODE_ENV ([6048846](https://github.com/imsunhao/utils/commit/6048846ac5c42f8c8bf00e54306155cda1d922cd))
+
+
+
 # [0.1.0](https://github.com/imsunhao/utils/compare/v0.0.1-alpha.33...v0.1.0) (2020-04-28)
 
 

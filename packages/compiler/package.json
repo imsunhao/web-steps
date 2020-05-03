@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/compiler",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "@web-steps/compiler",
   "main": "index.js",
   "files": [
