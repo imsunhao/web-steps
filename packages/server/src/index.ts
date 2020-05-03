@@ -11,6 +11,7 @@ export let log: Log
 export async function start(payload?: ServerConfig, opts?: { messageBus: SSRMessageBus }) {
   async function main() {
     const env = getEnv({ env: payload ? payload.env : __NODE_ENV__ })
+    process.env.NODE_ENV = env
     log = new Log(major, { env })
     const startOptions: ServerStart = payload || (await getInitConfig())
 
