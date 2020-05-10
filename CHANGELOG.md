@@ -1,3 +1,18 @@
+## [0.1.2](https://github.com/imsunhao/utils/compare/v0.1.1...v0.1.2) (2020-05-10)
+
+
+### Bug Fixes
+
+* 修复 测试错误 ([154fd3a](https://github.com/imsunhao/utils/commit/154fd3ae5a16151426a43e182937e37c77e8e2cb))
+
+
+### Features
+
+* [compiler] 移除 dependencies ([32b1f7e](https://github.com/imsunhao/utils/commit/32b1f7ebc3e4e9e4d1939773f2e089f996fbc0dc))
+* server-life-cycle 添加 TServerStartOptions 支持 ([7178a5a](https://github.com/imsunhao/utils/commit/7178a5a3a6e44c30e76890c86f053f7dfe34c80e))
+
+
+
 ## [0.1.1](https://github.com/imsunhao/utils/compare/v0.1.0...v0.1.1) (2020-05-03)
 
 
