@@ -11,8 +11,8 @@ const semverPreId = semver.prerelease(currentVersion)
 
 const preId = args.preid || (semverPreId ? semverPreId[0] : '') || 'alpha'
 const isDryRun = args.dry
-const skipTests = args.skipTests
-const skipBuild = args.skipBuild
+const skipTests = args['skip-tests']
+const skipBuild = args['skip-build']
 const skipPush = args.skipPush
 
 const packages = fs
