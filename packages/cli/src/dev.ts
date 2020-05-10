@@ -55,7 +55,7 @@ export function start(args: Args) {
           webpackConfigs: [injectContext as any, SSR.server.lifeCycle as any, SSR.client.webpack, SSR.server.webpack],
           env
         },
-        { messageBus }
+        { messageBus, notTestExit: true }
       )
       messageBus.emit('config', { config })
     }
