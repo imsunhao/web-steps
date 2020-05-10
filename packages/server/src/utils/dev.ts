@@ -13,6 +13,8 @@ import { DEFAULT_PORT, DEFAULT_INJECT_CONTEXT, DEFAULT_TEMPLATE } from 'shared/s
 import http from 'http'
 import https from 'https'
 
+let isHotReload = false
+
 export class DevService extends Service {
   SSR = {
     clientManifest: false,
@@ -95,7 +97,8 @@ export class DevService extends Service {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const startDebounce = debounce(this.start, 100).bind(this)
     this.hotReload = () => {
-      startDebounce(this.app, { isHotReload: true })
+      startDebounce(this.app, { isHotReload })
+      if (!isHotReload) isHotReload = true
     }
   }
 
