@@ -1,6 +1,6 @@
 import express from 'express'
 import { createBundleRenderer } from 'vue-server-renderer'
-import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log, TAPP } from '../'
+import { ServerLifeCycle, TServerContext, TServerInjectContext, TServerInfos, log, TAPP, TServerStartOptions } from '../'
 import { randomStringAsBase64Url } from './random'
 import http, { IncomingHttpHeaders } from 'http'
 import { basename } from 'path'
@@ -228,12 +228,13 @@ export class Service {
     this.app = app
   }
 
-  start(app = this.app, { isHotReload } = { isHotReload: false }) {
+  start(app = this.app, options: TServerStartOptions = { isHotReload: false }) {
+    const { isHotReload } = options
     app.status = 'beforeCreated'
-    this.lifeCycle.beforeCreated(app)
+    this.lifeCycle.beforeCreated(app, options)
 
     app.status = 'creating'
-    this.lifeCycle.creating(app, this.server, this.setting)
+    this.lifeCycle.creating(app, this.server, this.setting, options)
 
     if (!isHotReload) {
       app.status = 'devMiddleware'
@@ -241,7 +242,7 @@ export class Service {
     }
 
     app.status = 'beforeStart'
-    this.lifeCycle.beforeStart(app)
+    this.lifeCycle.beforeStart(app, options)
 
     if (!isHotReload) {
       app.status = 'start'
@@ -281,7 +282,7 @@ export class Service {
     }
 
     app.status = 'router'
-    this.lifeCycle.router(app)
+    this.lifeCycle.router(app, options)
 
     app.status = undefined
   }
