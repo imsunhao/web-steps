@@ -1,3 +1,17 @@
+## [0.1.3](https://github.com/imsunhao/utils/compare/v0.1.2...v0.1.3) (2020-05-10)
+
+
+### Bug Fixes
+
+* 修复 isHotReload 初始化值 错误的问题 ([ae9eeef](https://github.com/imsunhao/utils/commit/ae9eeef99507405e15dd95d38e14d67064aa28ef))
+
+
+### Features
+
+* 调整 release 命令,  参数统一 ([3c84e75](https://github.com/imsunhao/utils/commit/3c84e757a33eacae6dce7c8ca210ef180124df7e))
+
+
+
 ## [0.1.2](https://github.com/imsunhao/utils/compare/v0.1.1...v0.1.2) (2020-05-10)
 
 
