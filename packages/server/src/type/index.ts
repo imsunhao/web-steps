@@ -19,15 +19,10 @@ export type TAPP = {
 }
 
 export type ServerLifeCycle = {
-  beforeCreated?: (APP: TAPP, options: TServerStartOptions) => void
-  creating?: (
-    APP: TAPP,
-    server: ServerConfig['server'],
-    setting: ServerConfig['setting'],
-    options: TServerStartOptions
-  ) => void
+  beforeCreated?: (APP: TAPP) => void
+  creating?: (APP: TAPP, server: ServerConfig['server'], setting: ServerConfig['setting']) => void
   devMiddleware?: (APP: TAPP) => void
-  beforeStart?: (APP: TAPP, options: TServerStartOptions) => void
+  beforeStart?: (APP: TAPP) => void
   start?: (APP: TAPP) => http.Server[]
   getDefaultRenderContext?: (req: Request, res: Response) => any
   beforeRender?: (req: Request, res: Response, next: NextFunction) => void
@@ -35,7 +30,7 @@ export type ServerLifeCycle = {
   renderToString?: ReturnType<typeof createBundleRenderer>['renderToString']
   beforeRenderSend?: (err: TRenderError, html: TRenderHTML, next: NextFunction) => void
   renderSend?: (html: string, req: Request, res: Response, next: NextFunction) => void
-  router?: (APP: TAPP, options: TServerStartOptions) => void
+  router?: (APP: TAPP) => void
 }
 
 export type TServerInfos = string[]
@@ -46,8 +41,8 @@ export type TServerInjectContext = Partial<{
 
 export type TServerContext<INJECT_CONTEXT = TServerInjectContext, LOCALS = TServerContextLocals> = {
   pageInfo: {
-    title: string
-    keywords: string
+    title: string,
+    keywords: string,
     description: string
   }
   injectContext: INJECT_CONTEXT
@@ -61,5 +56,3 @@ export type TServerContext<INJECT_CONTEXT = TServerInjectContext, LOCALS = TServ
 export type TRenderError = any
 export type TRenderHTML = string
 export type TServerContextLocals = any
-
-export type TServerStartOptions = { isHotReload: boolean }
