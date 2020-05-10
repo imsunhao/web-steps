@@ -64,15 +64,19 @@ async function unpublishPackage(pkgName, version, runIfNotDry) {
     return
   }
 
-  step(`Publishing ${pkgName}...`)
+  step(`Unpublishing ${pkgName}...`)
   try {
-    await runIfNotDry('npm', ['unpublish', '--force', '--registry=https://registry.npmjs.org'], {
-      cwd: pkgRoot,
-      stdio: 'pipe'
-    })
+    await runIfNotDry(
+      'npm',
+      ['unpublish', '--force', '--registry=https://registry.npmjs.org', `@web-steps/${pkgName}@${version}`],
+      {
+        cwd: pkgRoot,
+        stdio: 'pipe'
+      }
+    )
     console.log(chalk.green(`Successfully unpublish ${pkgName}@${version}`))
   } catch (e) {
-    throw e
+    console.error(e)
   }
 }
 
