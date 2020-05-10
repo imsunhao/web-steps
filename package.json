@@ -18,6 +18,7 @@
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "debug:test": "cross-env NODE_ENV=test DEBUG_PORT=32000 jest --runInBand",
     "release": "node scripts/release.js",
+    "unpublish": "node scripts/unpublish.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "gitHooks": {
