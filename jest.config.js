@@ -1,3 +1,4 @@
+process.env.TEST_ENV='jest'
 module.exports = {
   preset: 'ts-jest',
   globals: {

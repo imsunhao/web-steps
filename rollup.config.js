@@ -100,7 +100,7 @@ function createReplacePlugin() {
   const replacements = {
     __DEV__: `(process.env.NODE_ENV === 'development')`,
     __PRODUCTION__: `(process.env.NODE_ENV === 'production')`,
-    __TEST__: `(process.env.NODE_ENV === 'test')`,
+    __TEST__: `(process.env.TEST_ENV === 'jest')`,
 
     __NODE_ENV__: `(process.env.NODE_ENV)`,
     __WEB_STEPS__: `(!!process.env.WEB_STEPS)`,
