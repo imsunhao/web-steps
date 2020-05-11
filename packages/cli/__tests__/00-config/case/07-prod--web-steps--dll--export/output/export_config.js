@@ -89,7 +89,9 @@ const { args, setting, isDev } = {
     skipRunBin: false,
     dry: undefined,
     downloadManifestPath: undefined,
-    helper: false
+    helper: false,
+    debugPort: 32000,
+    debugPath: "node_modules/@web-steps/cli/bin/web-steps"
   },
   setting: {
     entry:
