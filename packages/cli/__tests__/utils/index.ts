@@ -48,6 +48,7 @@ export type TTestConfig = {
       result: any
     }
     output?: TOutput[]
+    debug?: string[]
     cache?: Record<string, string>
     e2e?: {
       debug?: boolean
@@ -145,6 +146,14 @@ async function resolveMessageKey(
           childProcess.send({ messageKey: 'e2e' })
           return false
         }
+      case 'debug': {
+        if (!result.debug) return true
+        for (let i = 0; i < result.debug.length; i++) {
+          const res = result.debug[i]
+          expect(payload.includes(res)).toBeTruthy()
+        }
+        return true
+      }
       default:
         break
     }

@@ -109,6 +109,21 @@ export class Args {
 
   helper: boolean
 
+  /// debuger
+
+  /**
+   * 调试接口
+   * - 默认值 process.env.DEBUG_PORT
+   * - 默认值 32000
+   */
+  debugPort: string
+
+  /**
+   * web-steps调试路径
+   * - 默认 node_modules/@web-steps/cli/bin/web-steps
+   */
+  debugPath: string
+
   constructor() {
     const args: any = (this.args = minimist(process.argv.slice(2), {
       boolean: [
@@ -147,6 +162,9 @@ export class Args {
     this.downloadManifestPath = args['download-manifest-path']
 
     this.helper = args.helper
+
+    this.debugPort = args['debug-port'] || process.env.DEBUG_PORT || 32000
+    this.debugPath = args['debug-path'] || 'node_modules/@web-steps/cli/bin/web-steps'
   }
 }
 
