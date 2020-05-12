@@ -1,3 +1,12 @@
+## [0.1.6](https://github.com/imsunhao/utils/compare/v0.1.5...v0.1.6) (2020-05-12)
+
+
+### Features
+
+* 拓展 DLL performance ([1034e73](https://github.com/imsunhao/utils/commit/1034e732f492acbd484efa8a8ffef1bdca5e89f1))
+
+
+
 ## [0.1.5](https://github.com/imsunhao/utils/compare/v0.1.4...v0.1.5) (2020-05-11)
 
 
