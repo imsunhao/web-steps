@@ -23,8 +23,8 @@ const getDllWebpackConfig: TGetDLLWebpackConfig = function({ entry, outputPath, 
       extensions: ['.js']
     },
     performance: {
-      maxEntrypointSize: 1024 * 500,
-      maxAssetSize: 1024 * 500,
+      maxEntrypointSize: 1024 * 800,
+      maxAssetSize: 1024 * 800,
       hints: 'warning'
     },
     plugins: [
