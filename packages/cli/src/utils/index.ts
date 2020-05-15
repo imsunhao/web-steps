@@ -149,6 +149,7 @@ export class Args {
     this.env = args.env || process.env.NODE_ENV || 'production'
 
     this.target = this.args.target || 'SSR'
+    this.port = this.args.port
 
     this.skipBuild = args['skip-build']
     this.skipTests = args['skip-tests']
