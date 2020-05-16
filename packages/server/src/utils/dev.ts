@@ -272,7 +272,9 @@ export class DevAPP extends APP {
           return initInfoStack(this.statusInfoMap[status].id)
         }
       }
-      return this.useInit(args)
+      this.useInit(args)
+      this.statusInfoMap[this.status].isClear = true
+      return
     }
     if (!statusInfo.isClear) {
       const layerPos = this.stack.findIndex(({ id }) => id === statusInfo.id)
