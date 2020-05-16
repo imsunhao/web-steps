@@ -273,7 +273,9 @@ export class DevAPP extends APP {
         }
       }
       this.useInit(args)
-      this.statusInfoMap[this.status].isClear = true
+      statusInfo = this.statusInfoMap[this.status]
+      statusInfo.isClear = true
+      statusInfo.pos = this.stack.length
       return
     }
     if (!statusInfo.isClear) {
