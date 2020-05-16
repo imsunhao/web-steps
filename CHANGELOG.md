@@ -1,3 +1,12 @@
+## [0.1.9](https://github.com/imsunhao/utils/compare/v0.1.8...v0.1.9) (2020-05-16)
+
+
+### Bug Fixes
+
+* hot-reload 初始化中间件 [2df228e] ([685cd47](https://github.com/imsunhao/utils/commit/685cd4751b41eef792eefb6cf492dc2a213e8c08))
+
+
+
 ## [0.1.8](https://github.com/imsunhao/utils/compare/v0.1.7...v0.1.8) (2020-05-16)
 
 
