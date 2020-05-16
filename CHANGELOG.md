@@ -1,3 +1,17 @@
+## [0.1.8](https://github.com/imsunhao/utils/compare/v0.1.7...v0.1.8) (2020-05-16)
+
+
+### Bug Fixes
+
+* hot-reload 初始化中间件 bug ([2df228e](https://github.com/imsunhao/utils/commit/2df228efe16e6392b03d5d30265f805efe85b6b0))
+
+
+### Features
+
+* server listening 更加醒目 ([757a5c0](https://github.com/imsunhao/utils/commit/757a5c045b81170937b558051c7828db46563873))
+
+
+
 ## [0.1.7](https://github.com/imsunhao/utils/compare/v0.1.6...v0.1.7) (2020-05-15)
 
 
