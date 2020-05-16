@@ -103,7 +103,7 @@ const serverStart: RequiredServerLifeCycle['start'] = function(APP) {
   })
 
   SERVER.on('listening', function() {
-    log.info(`server started at ${port}`)
+    log.info(`\n\nserver listening at ${port}\n\n`)
   })
 
   start()
