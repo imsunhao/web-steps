@@ -239,3 +239,4 @@ export async function start(args: Args) {
 }
 
 export * from './utils/deploy'
+export * from './robot'
