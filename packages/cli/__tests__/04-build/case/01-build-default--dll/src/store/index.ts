@@ -7,7 +7,7 @@ import actions, { dispatch, TActions } from './actions'
 import mutations, { commit, getState, TMutations } from './mutations'
 import getters, { getGetter } from './getters'
 
-import { WebpackHelper } from '@web-steps/helper'
+import { WebpackHelper } from '@web-steps/helper-webpack'
 
 function state(): Tstore.state {
   return {

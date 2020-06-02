@@ -1,0 +1,22 @@
+{
+  "name": "@web-steps/helper-view-router",
+  "version": "0.1.10",
+  "description": "@web-steps/helper-view-router",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "types": "dist/helper-view-router.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsunhao/utils.git"
+  },
+  "keywords": [],
+  "author": "imsunhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imsunhao/utils/issues"
+  },
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper-view-router#readme"
+}

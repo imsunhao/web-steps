@@ -1,13 +1,13 @@
 {
-  "name": "@web-steps/helper",
+  "name": "@web-steps/helper-vue-router",
   "version": "0.1.10",
-  "description": "@web-steps/helper",
+  "description": "@web-steps/helper-vue-router",
   "main": "index.js",
   "files": [
     "index.js",
     "dist"
   ],
-  "types": "dist/helper.d.ts",
+  "types": "dist/helper-vue-router.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/imsunhao/utils.git"
@@ -18,10 +18,8 @@
   "bugs": {
     "url": "https://github.com/imsunhao/utils/issues"
   },
-  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper#readme",
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper-vue-router#readme",
   "peerDependencies": {
-    "axios": "^0.19.2",
-    "vue-router": "^3.1.5",
-    "vuex": "^3.1.2"
+    "vue-router": "^3.1.5"
   }
 }

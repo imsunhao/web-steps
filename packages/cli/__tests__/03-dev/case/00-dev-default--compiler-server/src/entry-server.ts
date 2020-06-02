@@ -1,5 +1,6 @@
 import { createApp } from './app'
-import { RouterReadyHelper, VuexStoreHelper } from '@web-steps/helper'
+import { RouterReadyHelper } from '@web-steps/helper-vue-router'
+import { VuexStoreHelper } from '@web-steps/helper-vuex'
 
 export default (context: any) => {
   return new Promise((resolve, reject) => {

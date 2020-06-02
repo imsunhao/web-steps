@@ -80,6 +80,7 @@ const { args, setting, isDev } = {
     minorCommand: "export",
     env: "production",
     target: "SSR",
+    port: undefined,
     skipBuild: false,
     skipTests: false,
     skipDeploy: false,
