@@ -2,6 +2,7 @@ import Router from 'vue-router'
 
 class RouterHelper {
   static getHookFromComponent(compo: any, name: string) {
+    if (!compo) return
     return (
       compo[name] ||
       (compo.$options && compo.$options[name]) ||
