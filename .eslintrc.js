@@ -36,6 +36,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-misused-promises': 'off', // 耗时太长
+    '@typescript-eslint/no-use-before-define': 'off',
     'vue/no-parsing-error': [
       'error',
       {
