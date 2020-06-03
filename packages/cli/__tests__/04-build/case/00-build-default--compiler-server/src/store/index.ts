@@ -27,7 +27,7 @@ Vue.use(Vuex)
 let store: Store<Tstore.state>
 
 /// <RemoveCodeBlock=server-production>
-const webpackHelper: WebpackHelper = require('@web-steps/helper').webpackHelper
+const webpackHelper: WebpackHelper = require('@web-steps/helper-webpack').webpackHelper
 webpackHelper.hotReload(
   module,
   () => (require as any).context('.', true, /(?<!\.d)\.ts/),

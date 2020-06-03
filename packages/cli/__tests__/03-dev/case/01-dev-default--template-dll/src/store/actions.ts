@@ -4,7 +4,7 @@ import { globalHelper } from './helpers'
 
 import { commit } from '../store'
 
-import { testApi } from '../api/test'
+
 
 export const actions = globalHelper.makeActions({
   /**
@@ -15,12 +15,12 @@ export const actions = globalHelper.makeActions({
     async function aaa() {}
     await aaa()
   },
-  async API_GET(ctx) {
-    const data = await testApi.getTest()
+  API_GET(ctx) {
+    const data: any = { test: 'get' }
     commit(ctx, 'SET_API', data)
   },
-  async API_POST(ctx) {
-    const data = await testApi.create()
+  API_POST(ctx) {
+    const data: any = { test: 'post' }
     commit(ctx, 'SET_API', data)
   }
 })
