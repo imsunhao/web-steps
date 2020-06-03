@@ -8,7 +8,7 @@ const { makeWrapper } = new VuexStoreHelper<TestStore.State, TestStore.Getters>(
 const DEFAULT_TEST_STRING = 'DEFAULT_TEST_STRING'
 const DEFAULT_TEST_NUMBER = 1
 
-describe('Vux base-utils.spec', () => {
+describe('Vux', () => {
   const localVue = createLocalVue()
 
   function getTestState(): TestStore.State['test'] {
