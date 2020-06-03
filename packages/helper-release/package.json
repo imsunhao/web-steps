@@ -1,0 +1,22 @@
+{
+  "name": "@web-steps/helper-release",
+  "version": "0.1.10",
+  "description": "@web-steps/helper-release",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "types": "dist/helper-release.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imsunhao/utils.git"
+  },
+  "keywords": [],
+  "author": "imsunhao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/imsunhao/utils/issues"
+  },
+  "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/helper-release#readme"
+}
