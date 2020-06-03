@@ -1,3 +1,21 @@
+# [0.2.0-alpha.0](https://github.com/imsunhao/utils/compare/v0.1.10...v0.2.0-alpha.0) (2020-06-03)
+
+
+### Bug Fixes
+
+* 保证 getHookFromComponent 传入参数 ([b17da11](https://github.com/imsunhao/utils/commit/b17da1109646d65545cde455ab929edbe6631e2c))
+
+
+### Features
+
+* 升级依赖 ([befb370](https://github.com/imsunhao/utils/commit/befb370bb2d7e029f9bf6cc2969c4574d871bf98))
+* 拆分 helper ([85218af](https://github.com/imsunhao/utils/commit/85218af67b7a8abdb920c34fec3e141c16bb2f1a))
+* 拆分 relase -> release -helper ([4cca1b8](https://github.com/imsunhao/utils/commit/4cca1b8d210382f721d90ad8a0ccb374259cfd30))
+* 添加 helper-api ([02f255d](https://github.com/imsunhao/utils/commit/02f255d0a3c9e30118430f56d7f492566c665f18))
+* 调整 test ([519f3bc](https://github.com/imsunhao/utils/commit/519f3bc056e2eab209c8e4f36c282e389d752e74))
+
+
+
 ## [0.1.10](https://github.com/imsunhao/utils/compare/v0.1.9...v0.1.10) (2020-05-20)
 
 
