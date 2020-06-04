@@ -1,3 +1,12 @@
+# [0.2.0-alpha.3](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.2...v0.2.0-alpha.3) (2020-06-04)
+
+
+### Features
+
+* 拆分类型 防止强覆盖 导致丢失类型 ([541057e](https://github.com/imsunhao/utils/commit/541057e0c252108dfac3281d6af6afa1bb534058))
+
+
+
 # [0.2.0-alpha.2](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.1...v0.2.0-alpha.2) (2020-06-04)
 
 
