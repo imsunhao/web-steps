@@ -1,3 +1,12 @@
+# [0.2.0-alpha.1](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.0...v0.2.0-alpha.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* 完善 api 类型增强 ([667face](https://github.com/imsunhao/utils/commit/667face0477bc956812a5fcab3a1ed20b5421aa8))
+
+
+
 # [0.2.0-alpha.0](https://github.com/imsunhao/utils/compare/v0.1.10...v0.2.0-alpha.0) (2020-06-03)
 
 
