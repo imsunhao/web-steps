@@ -42,7 +42,6 @@ export type TRouterConformation = {
   method?: SERVER_ROUTER_METHOD
   children?: Record<string, TRouterConformation>
 }
-
 export type TActorContext = {
   url: string
   method: string
@@ -61,7 +60,13 @@ export function createRequestHelper<
   P4 extends keyof SRC[P1]['children'][P2]['children'][P3]['children']
 >(SRC: SRC) {
   type POST<Req, Res> = RequestHandler<any, Res, Req, any>
-  type APIExtends = Record<string, { req?: any; res?: any }>
+
+  type APIExtend = { req?: any; res?: any; err?: any }
+  type APIExtends = Record<string, APIExtend>
+  type APIExtendTypeHelper<T extends APIExtend, K extends keyof APIExtend, R> = T extends { [key in K]: APIExtend[K] }
+    ? T[K]
+    : R
+
   type HRType<T, P extends APIExtends, E> = {
     use: <K extends T & keyof P>(key: K, handler: POST<P[K]['req'], P[K]['res'] | E>) => void
   }
@@ -73,6 +78,12 @@ export function createRequestHelper<
     P2 extends keyof RCP1<P1>,
     P3 extends keyof RCP2<P1, P2>
   > = SRC[P1]['children'][P2]['children'][P3]['children']
+  type RCP4<
+    P1 extends keyof SRC,
+    P2 extends keyof RCP1<P1>,
+    P3 extends keyof RCP2<P1, P2>,
+    P4 extends keyof RCP3<P1, P2, P3>
+  > = SRC[P1]['children'][P2]['children'][P3]['children'][P4]['children']
 
   function createRouterHelper<P extends APIExtends, E = ResError>(router: R, p1: P1): HRType<keyof RCP1<P1>, P, E>
   function createRouterHelper<P extends APIExtends, E = ResError>(
@@ -92,7 +103,7 @@ export function createRequestHelper<
     p2: P2,
     p3: P3,
     p4: P4
-  ): HRType<keyof RCP3<P1, P2, P3>[P4]['children'], P, E>
+  ): HRType<keyof RCP4<P1, P2, P3, P4>, P, E>
   function createRouterHelper<P extends APIExtends, E = ResError>(router: R, ...paths: string[]): any {
     let lib: TRouterConformation = { children: SRC }
     paths.forEach(p => {
@@ -122,12 +133,15 @@ export function createRequestHelper<
     }
   }
 
-  type ARType<K extends keyof P, P extends APIExtends, E> = Record<
-    K,
-    <Req = P[K]['req'], Res = P[K]['res'], Error = E>(
-      config?: AxiosRequestConfigPlus<Req>
-    ) => AxiosPromisePlus<Res, Error>
-  >
+  type ARType<KS extends keyof P, P extends APIExtends, E> = <
+    K extends KS,
+    Req extends APIExtendTypeHelper<P[K], 'req', any>,
+    Res extends APIExtendTypeHelper<P[K], 'res', any>,
+    Err extends APIExtendTypeHelper<P[K], 'err', E>
+  >(
+    key: K,
+    config?: AxiosRequestConfigPlus<Req>
+  ) => AxiosPromisePlus<Res, Err>
 
   function createAxiosHelper<P extends APIExtends, E = ResError>(axios: X, p1: P1): ARType<keyof RCP1<P1>, P, E>
   function createAxiosHelper<P extends APIExtends, E = ResError>(
@@ -147,7 +161,7 @@ export function createRequestHelper<
     p2: P2,
     p3: P3,
     p4: P4
-  ): ARType<keyof RCP3<P1, P2, P3>[P4]['children'], P, E>
+  ): ARType<keyof RCP4<P1, P2, P3, P4>, P, E>
   function createAxiosHelper(axios: X, ...paths: string[]) {
     let lib: TRouterConformation = { children: SRC }
     let url = ''
@@ -177,9 +191,10 @@ export function createRequestHelper<
       }
     }
 
-    const axiosHelper: any = {
-      $map: {}
+    const axiosHelper: any = function(key: string, data: any) {
+      return axiosHelper[key](data)
     }
+    axiosHelper.$contextMap = {}
 
     Object.keys(lib.children).forEach(key => {
       const target = lib.children[key]
@@ -187,7 +202,7 @@ export function createRequestHelper<
         url: url + (target.path || `/${key}`),
         method: getMethod(target.method)
       }
-      axiosHelper.$map[key] = context
+      axiosHelper.$contextMap[key] = context
       axiosHelper[key] = actor.bind(context)
     })
 

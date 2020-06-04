@@ -2,26 +2,13 @@
 import { createRequestHelper, SERVER_ROUTER_METHOD } from '@web-steps/helper-api'
 import { AxiosRequestConfig } from 'axios'
 
-const { createRouterHelper, createAxiosHelper } = createRequestHelper({
-  api: {
-    children: {
-      user: {
-        children: {
-          login: {
-            method: SERVER_ROUTER_METHOD.POST
-          }
-        }
-      }
-    }
-  }
-})
-
 namespace Api {
   export type User = {
     login: {
-      req: Pick<Schema.User, 'ID' | 'name'>
+      req: Pick<Schema.User, 'ID' | 'password'>
       res: Omit<Schema.User, 'password'>
     }
+    logout: any
   }
 }
 
@@ -33,13 +20,34 @@ namespace Schema {
   }
 }
 
-describe('Api', () => {
+function createTools() {
+  const { createRouterHelper, createAxiosHelper } = createRequestHelper({
+    api: {
+      children: {
+        user: {
+          children: {
+            login: {
+              method: SERVER_ROUTER_METHOD.POST
+            },
+            logout: {
+              method: SERVER_ROUTER_METHOD.POST
+            }
+          }
+        }
+      }
+    }
+  })
   const router: any = createMockRouter('/api/user')
   const axios: any = createMockAxios(router)
-
   const routerHelper = createRouterHelper<Api.User>(router, 'api', 'user')
   const userApi = createAxiosHelper<Api.User>(axios, 'api', 'user')
+  return {
+    routerHelper,
+    userApi
+  }
+}
 
+describe('Api', () => {
   const USERID: Schema.User['ID'] = 'ID'
   const USERNAME: Schema.User['name'] = 'username'
   const PASSWORD: Schema.User['password'] = 'password'
@@ -48,25 +56,29 @@ describe('Api', () => {
   it(
     'login success',
     done => {
-      const USERID: Schema.User['ID'] = 'ID'
+      const { routerHelper, userApi } = createTools()
       routerHelper.use('login', (req, res) => {
         res.json({
           ID: req.body.ID,
           name: USERNAME
         })
       })
-      userApi
-        .login({
-          data: {
-            ID: USERID,
-            password: PASSWORD
-          }
-        })
+      userApi('login', {
+        data: {
+          ID: USERID,
+          password: PASSWORD
+        }
+      })
         .then(({ data }) => {
           expect(data.name).toEqual(USERNAME)
           expect(data.ID).toEqual(USERID)
           done()
         })
+        .catch(e => {
+          e.response.data.code
+        })
+
+      // userApi.logout({})
     },
     3000
   )
@@ -74,20 +86,19 @@ describe('Api', () => {
   it(
     'login fail',
     done => {
+      const { routerHelper, userApi } = createTools()
       routerHelper.use('login', (req, res) => {
         res.status(400).json({ code: 1 })
       })
-      userApi
-        .login({
-          data: {
-            ID: USERID,
-            password: PASSWORD
-          }
-        })
-        .catch(err => {
-          expect(err.response.data.code).toEqual(ERRORCODE)
-          done()
-        })
+      userApi('login', {
+        data: {
+          ID: USERID,
+          password: PASSWORD
+        }
+      }).catch(err => {
+        expect(err.response.data.code).toEqual(ERRORCODE)
+        done()
+      })
     },
     3000
   )
