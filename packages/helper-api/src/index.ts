@@ -1,6 +1,26 @@
-import { Router as R, RequestHandler } from 'express'
-// import { RequestHandler } from 'express-serve-static-core'
-import { AxiosStatic as X, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import { Router as R } from 'express'
+import { AxiosStatic as X, AxiosResponse, AxiosError } from 'axios'
+import { ResError, RouterConformation, POST, AxiosRequestConfigPlus, ActorContext } from '@web-steps/helper-api/@types'
+
+export type PromisePlus<T, E> = {
+  then<R1 = T, R2 = never>(
+    onfulfilled?: ((value: T) => R1 | PromiseLike<R1>) | undefined | null,
+    onrejected?: ((reason: any) => R2 | PromiseLike<R2>) | undefined | null
+  ): PromisePlus<R1 | R2, E>
+
+  catch<TResult = never>(
+    onrejected?: ((reason: E) => TResult | PromiseLike<TResult>) | undefined | null
+  ): PromisePlus<T | TResult, E>
+
+  finally(onfinally: () => void): any
+}
+export type AxiosPromisePlus<T, E> = PromisePlus<AxiosResponse<T>, AxiosError<E>>
+
+type APIExtend = { req?: any; res?: any; err?: any }
+type APIExtends = Record<string, APIExtend>
+type APIExtendTypeHelper<T extends APIExtend, K extends keyof APIExtend, R> = T extends { [key in K]: APIExtend[K] }
+  ? T[K]
+  : R
 
 export enum SERVER_ROUTER_METHOD {
   '*',
@@ -10,63 +30,13 @@ export enum SERVER_ROUTER_METHOD {
   DELETE
 }
 
-type PromisePlus<T, E> = {
-  then<TResult1 = T, TResult2 = never>(
-    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null
-  ): PromisePlus<TResult1 | TResult2, E>
-
-  catch<TResult = never>(
-    onrejected?: ((reason: E) => TResult | PromiseLike<TResult>) | undefined | null
-  ): PromisePlus<T | TResult, E>
-
-  finally(onfinally: () => void): any
-}
-
-type AxiosRequestConfigPlus<DATA = any> = Omit<AxiosRequestConfig, 'data' | 'params'> & {
-  data?: DATA
-  params?: DATA
-}
-
-type AxiosPromisePlus<T, E> = PromisePlus<AxiosResponse<T>, AxiosError<E>>
-
-export type TRouterConformation = {
-  /**
-   * 默认值: `/${key}`
-   */
-  path?: string
-  /**
-   * 请求方法
-   * - 默认值 '*' // 将会使用 use 方法
-   */
-  method?: SERVER_ROUTER_METHOD
-  children?: Record<string, TRouterConformation>
-}
-export type TActorContext = {
-  url: string
-  method: string
-}
-
-export type ResError = {
-  code: number
-  data?: any
-}
-
 export function createRequestHelper<
-  SRC extends Record<string, TRouterConformation>,
+  SRC extends Record<string, RouterConformation>,
   P1 extends keyof SRC,
   P2 extends keyof SRC[P1]['children'],
   P3 extends keyof SRC[P1]['children'][P2]['children'],
   P4 extends keyof SRC[P1]['children'][P2]['children'][P3]['children']
 >(SRC: SRC) {
-  type POST<Req, Res> = RequestHandler<any, Res, Req, any>
-
-  type APIExtend = { req?: any; res?: any; err?: any }
-  type APIExtends = Record<string, APIExtend>
-  type APIExtendTypeHelper<T extends APIExtend, K extends keyof APIExtend, R> = T extends { [key in K]: APIExtend[K] }
-    ? T[K]
-    : R
-
   type HRType<T, P extends APIExtends, E> = {
     use: <K extends T & keyof P>(key: K, handler: POST<P[K]['req'], P[K]['res'] | E>) => void
   }
@@ -105,12 +75,12 @@ export function createRequestHelper<
     p4: P4
   ): HRType<keyof RCP4<P1, P2, P3, P4>, P, E>
   function createRouterHelper<P extends APIExtends, E = ResError>(router: R, ...paths: string[]): any {
-    let lib: TRouterConformation = { children: SRC }
+    let lib: RouterConformation = { children: SRC }
     paths.forEach(p => {
       lib = lib.children[p]
     })
     return {
-      use: function<K extends keyof TRouterConformation['children'] & keyof P>(
+      use: function<K extends keyof RouterConformation['children'] & keyof P>(
         key: K,
         handler: POST<P[K]['req'], P[K]['res'] | E>
       ) {
@@ -163,14 +133,14 @@ export function createRequestHelper<
     p4: P4
   ): ARType<keyof RCP4<P1, P2, P3, P4>, P, E>
   function createAxiosHelper(axios: X, ...paths: string[]) {
-    let lib: TRouterConformation = { children: SRC }
+    let lib: RouterConformation = { children: SRC }
     let url = ''
     paths.forEach(p => {
       lib = lib.children[p]
       url += lib.path || `/${p}`
     })
 
-    function actor(this: TActorContext, options: AxiosRequestConfigPlus = {}) {
+    function actor(this: ActorContext, options: AxiosRequestConfigPlus = {}) {
       return axios(
         Object.assign(
           {
@@ -198,7 +168,7 @@ export function createRequestHelper<
 
     Object.keys(lib.children).forEach(key => {
       const target = lib.children[key]
-      const context: TActorContext = {
+      const context: ActorContext = {
         url: url + (target.path || `/${key}`),
         method: getMethod(target.method)
       }

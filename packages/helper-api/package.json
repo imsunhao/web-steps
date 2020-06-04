@@ -5,6 +5,7 @@
   "main": "index.js",
   "files": [
     "index.js",
+    "@types",
     "dist"
   ],
   "types": "dist/helper-api.d.ts",
