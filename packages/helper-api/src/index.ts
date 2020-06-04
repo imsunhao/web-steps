@@ -1,6 +1,9 @@
 import { Router as R } from 'express'
 import { AxiosStatic as X, AxiosResponse, AxiosError } from 'axios'
-import { ResError, RouterConformation, POST, AxiosRequestConfigPlus } from '@web-steps/helper-api/@types'
+import { ResError } from '@web-steps/helper-api/@types/request'
+import { RouterConformation } from '@web-steps/helper-api/@types/router-conformation'
+import { POST } from '@web-steps/helper-api/@types/express'
+import { AxiosRequestConfigPlus } from '@web-steps/helper-api/@types/axios'
 
 type PromisePlus<T, E> = {
   then<R1 = T, R2 = never>(
