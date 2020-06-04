@@ -1,8 +1,8 @@
 import { Router as R } from 'express'
 import { AxiosStatic as X, AxiosResponse, AxiosError } from 'axios'
-import { ResError, RouterConformation, POST, AxiosRequestConfigPlus, ActorContext } from '@web-steps/helper-api/@types'
+import { ResError, RouterConformation, POST, AxiosRequestConfigPlus } from '@web-steps/helper-api/@types'
 
-export type PromisePlus<T, E> = {
+type PromisePlus<T, E> = {
   then<R1 = T, R2 = never>(
     onfulfilled?: ((value: T) => R1 | PromiseLike<R1>) | undefined | null,
     onrejected?: ((reason: any) => R2 | PromiseLike<R2>) | undefined | null
@@ -14,13 +14,17 @@ export type PromisePlus<T, E> = {
 
   finally(onfinally: () => void): any
 }
-export type AxiosPromisePlus<T, E> = PromisePlus<AxiosResponse<T>, AxiosError<E>>
+type AxiosPromisePlus<T, E> = PromisePlus<AxiosResponse<T>, AxiosError<E>>
 
 type APIExtend = { req?: any; res?: any; err?: any }
 type APIExtends = Record<string, APIExtend>
 type APIExtendTypeHelper<T extends APIExtend, K extends keyof APIExtend, R> = T extends { [key in K]: APIExtend[K] }
   ? T[K]
   : R
+type ActorContext = {
+  url: string
+  method: string
+}
 
 export enum SERVER_ROUTER_METHOD {
   '*',
