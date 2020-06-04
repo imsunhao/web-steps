@@ -1,3 +1,12 @@
+# [0.2.0-alpha.2](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.1...v0.2.0-alpha.2) (2020-06-04)
+
+
+### Features
+
+* 添加 typescript 类型拓展解决方案 ([357571d](https://github.com/imsunhao/utils/commit/357571d236a2e61bd2e0e3b01a22056f1afa9889))
+
+
+
 # [0.2.0-alpha.1](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.0...v0.2.0-alpha.1) (2020-06-04)
 
 
