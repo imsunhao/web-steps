@@ -1,3 +1,12 @@
+# [0.2.0-alpha.4](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.3...v0.2.0-alpha.4) (2020-06-04)
+
+
+### Bug Fixes
+
+* 不能使用 统一入口, 必须使用多入口方式引用 ([53bd2c6](https://github.com/imsunhao/utils/commit/53bd2c653d250d6b4bed93a506d4b407b167b35c))
+
+
+
 # [0.2.0-alpha.3](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.2...v0.2.0-alpha.3) (2020-06-04)
 
 
