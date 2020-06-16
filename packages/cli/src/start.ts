@@ -25,7 +25,7 @@ function requrieFromString(source: string) {
     const ex = requireFromString(source)
     return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex
   } catch (error) {
-    log.error(`[requrieFromString] ${path} not find!`)
+    log.error(`[requrieFromString] error\nsource = ${source}\nerror = ${error}`)
   }
 }
 
