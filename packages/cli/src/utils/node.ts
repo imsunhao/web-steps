@@ -3,7 +3,7 @@ import { ExecaChildProcess } from 'execa'
 import { RunOptions, CustomRunOptions } from '../type'
 import { log } from '../'
 
-export const customRunOptionKeys: Array<keyof CustomRunOptions> = ['isRead', 'isSilence']
+export const customRunOptionKeys: Array<keyof CustomRunOptions> = ['isRead', 'isSilence', 'envs']
 
 export class Execa {
   static run(bin: string, args: string[] = [], opts: RunOptions = {}) {
@@ -15,6 +15,14 @@ export class Execa {
       } else {
         (opts as any).stdio = 'ignore'
       }
+    }
+
+    if (opts.envs) {
+      args.unshift(bin)
+      bin = 'cross-env'
+      Object.keys(opts.envs).forEach(key => {
+        args.unshift(`${key}=${opts.envs[key]}`)
+      })
     }
 
     if (opts.isRead) {

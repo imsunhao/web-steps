@@ -1,0 +1,15 @@
+FROM node:12 as student-management-system
+
+ENV workspace=/student-management-system
+
+RUN mkdir -p $workspace
+
+WORKDIR $workspace
+
+# web-steps-copy-outlet
+COPY ./package*.json $workspace/
+COPY ./mongodb/mongo.env $workspace/mongodb/
+
+EXPOSE 8060
+
+CMD ["/bin/bash", "/student-management-system/docker-bin/start.sh"]

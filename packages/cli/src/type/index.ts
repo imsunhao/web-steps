@@ -30,4 +30,9 @@ export type CustomRunOptions = {
    * 是否启用 沉默运行
    */
   isSilence?: boolean
+
+  /**
+   * 环境变量
+   */
+  envs?: Record<string, string>
 }

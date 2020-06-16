@@ -371,6 +371,17 @@ export class Config {
 
     if (!this.config.src) this.config.src = {} as any
 
+    const dockerDefaultOutputPath = path.resolve(this.setting.output, 'Dockerfile')
+    if (!this.config.docker) {
+      this.config.docker = {
+        enable: false,
+        outputPath: dockerDefaultOutputPath,
+        templatePath: ''
+      }
+    } else {
+      if (!this.config.docker.outputPath) this.config.docker.outputPath = dockerDefaultOutputPath
+    }
+
     this.config.port = this.startupOptions.args.port || process.env.PORT || this.config.port || DEFAULT_PORT
     process.env.PORT = this.config.port as any
 
@@ -489,7 +500,6 @@ export class Config {
         console.warn(`未找到 ${process.env.RELEASE} 对应的 release 配置!`)
       }
     }
-
 
     if (fs.existsSync(this.config.injectContext)) {
       this.config.injectContext = getConfigWebpackConfig(

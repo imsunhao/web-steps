@@ -1,5 +1,5 @@
 import minimist from 'minimist'
-import { existsSync, unlinkSync } from 'fs'
+import { existsSync, unlinkSync, readFileSync } from 'fs'
 import execa from 'execa'
 import { Execa } from '../../src/utils/node'
 import { ProcessMessage } from '@types'
@@ -30,12 +30,17 @@ export type TTestConfig = {
     target: 'web-steps' | 'web-steps--compiler'
     rootDir: string
     env?: 'production' | 'development'
+    envs?: Record<string, string>
     argv?: string[]
   }
   webSteps?: {
     target: 'SSR' | 'SSR-client' | 'SSR-server' | 'custom'
   }
   result: {
+    docker?: {
+      path: string
+      content: string
+    }
     build?: {
       filesManifest?: {
         path: string
@@ -111,6 +116,12 @@ async function resolveMessageKey(
         }
         childProcess.send({ messageKey: 'exit' })
         return true
+      case 'docker':
+        const { path: dockerFileOutputPath, content: dockerFileContent } = result.docker
+        expect(existsSync(dockerFileOutputPath)).toBeTruthy()
+        expect(readFileSync(dockerFileOutputPath, 'utf-8')).toMatch(dockerFileContent)
+        childProcess.send({ messageKey: 'exit' })
+        return true
       case 'e2e':
         const { url, texts, debug: e2eDebug, action } = result.e2e
         if (e2eDebug && __DEBUG_PORT__) {
@@ -168,7 +179,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
     skip,
     todo,
     node,
-    node: { target, argv, rootDir },
+    node: { target, argv, rootDir, envs },
     cache,
     webSteps,
     result,
@@ -214,7 +225,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
 
       nodeArgv = nodeArgv.concat(argv || [])
 
-      const childProcess = Execa.runNodeIPC(nodeArgv, { isSilence: !args.show, isRead: args.read })
+      const childProcess = Execa.runNodeIPC(nodeArgv, { isSilence: !args.show, isRead: args.read, envs })
       if (!('on' in childProcess)) return done()
 
       const resultSet = new Set<string>()

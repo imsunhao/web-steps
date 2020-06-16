@@ -7,6 +7,12 @@ import { checkHelper } from 'shared/log'
 
 const helperInfo = `
 ${COMMON_HELPER_INFO}
+
+- ENV (可接受-环境变量)
+  MODE:                  编译模式
+                         - 默认 OSS上传服务器端代码, 服务端下载
+                         - docker 使用 image 保存服务器端代码
+
 - UNIQUE
   skip-tests:            跳过测试
   skip-build:            跳过编译

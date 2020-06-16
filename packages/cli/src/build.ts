@@ -13,8 +13,10 @@ import { checkHelper } from 'shared/log'
 import { convertObjToSource } from 'shared/toString'
 import { cloneDeep } from 'shared/lodash'
 import { COMMON_HELPER_INFO } from 'shared/setting'
-import { writeFileSync, existsSync } from 'fs'
+import { writeFileSync, existsSync, readFileSync } from 'fs'
 import path from 'path'
+
+// const manifestBaseOutputPath = path.resolve(config.setting.output, 'docker')
 
 function pathResolve(
   server: TConfig['src']['SSR']['server'],
@@ -134,7 +136,11 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
 const helperInfo = `
 - ENV (可接受-环境变量)
   RELEASE:               web-stpes relase 中的 taget
-                         - 根据taget中配置, 覆盖config配置
+                         - 根据 relase-taget 中配置, 覆盖config配置
+  MODE:                  编译模式
+                         - 默认 OSS上传服务器端代码, 服务端下载
+                         - docker 使用 image 保存服务器端代码
+
 ${COMMON_HELPER_INFO}
 - UNIQUE
   target:                编译目标
@@ -154,7 +160,28 @@ export async function start(args: Args) {
   args.env = 'production'
   const env = args.env
 
-  async function SSR() {
+  try {
+    await config.init(args, {
+      afterGetSetting(c: any) {
+        if (!getCache(args)) {
+          log.info('清空 输出目录:', c.setting.output)
+          rmrfSync(c.setting.output)
+        }
+      }
+    })
+
+    const isDocker = process.env.MODE === 'docker' || config.config.docker.enable
+
+    if (args.target === 'SSR') {
+      await SSR(isDocker)
+    } else {
+      await custom()
+    }
+  } catch (e) {
+    log.catchError(e)
+  }
+
+  async function SSR(isDocker: boolean) {
     const rootDir = config.args.rootDir
     const relative = (to: string) => {
       return path.relative(rootDir, to)
@@ -231,11 +258,34 @@ export async function start(args: Args) {
       )
     )
 
+    if (isDocker) {
+      const docker = config.config.docker
+      if (!existsSync(docker.templatePath)) log.error('docker.templatePath not find!', docker.templatePath)
+      let dockerFileCopyString = ''
+      const getDockerFileCopyString = (p: string) => {
+        return `COPY ${p} ${path.join('$workspace', p)}\n`
+      }
+      FILES_MANIFEST.base.forEach(path => {
+        dockerFileCopyString += getDockerFileCopyString(path)
+      })
+      delete FILES_MANIFEST.base
+      const dockerFileTemplate = readFileSync(docker.templatePath, 'utf-8')
+      const dockerFile = dockerFileTemplate.replace(/# web-steps-copy-outlet/g, dockerFileCopyString)
+
+      writeFileSync(docker.outputPath, dockerFile, 'utf-8')
+    }
+
     writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')
+    debugger
 
     if (!('send' in process) || !__TEST__) {
     } else {
-      processSend(process, { messageKey: 'build' })
+      debugger
+      if (isDocker) {
+        processSend(process, { messageKey: 'docker' })
+      } else {
+        processSend(process, { messageKey: 'build' })
+      }
       processOnMessage(process, (payload: ProcessMessage) => {
         log.debug(log.packagePrefix, 'process', payload.messageKey)
         if (payload.messageKey === 'exit') {
@@ -268,24 +318,5 @@ export async function start(args: Args) {
       },
       { notTestExit: true }
     )
-  }
-
-  try {
-    await config.init(args, {
-      afterGetSetting(c: any) {
-        if (!getCache(args)) {
-          log.info('清空 输出目录:', c.setting.output)
-          rmrfSync(c.setting.output)
-        }
-      }
-    })
-
-    if (args.target === 'SSR') {
-      await SSR()
-    } else {
-      await custom()
-    }
-  } catch (e) {
-    log.catchError(e)
   }
 }

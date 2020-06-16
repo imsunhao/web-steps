@@ -152,7 +152,37 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
    * 发布配置
    */
   release: TRelease<T>
+
+  /**
+   * 启用 Docker 服务
+   */
+  docker: TDocker<T>
 }
+
+type TDocker<T extends 'finish' | 'ready'> = {
+  /**
+   * 是否 启用 Docker 服务
+   */
+  enable: boolean
+
+  /**
+   * Dockerfile 模板地址
+   */
+  templatePath: string
+} & (T extends 'finish'
+  ? {
+      /**
+       * Dockerfile 输出地址
+       */
+      outputPath: string
+    }
+  : {
+      /**
+       * Dockerfile 输出地址
+       * - 默认 为 输出目录/Dockerfile
+       */
+      outputPath?: string
+    })
 
 type TRelease<T extends 'finish' | 'ready'> = {
   /**
