@@ -340,6 +340,20 @@ const stuffConfig = function stuffConfig(defaultWebpackConfig, DEFAULT_PORT) {
     });
   }
   if (!this.config.src) this.config.src = {};
+  const dockerDefaultOutputPath = path__default.resolve(
+    this.setting.output,
+    "Dockerfile"
+  );
+  if (!this.config.docker) {
+    this.config.docker = {
+      enable: false,
+      outputPath: dockerDefaultOutputPath,
+      templatePath: ""
+    };
+  } else {
+    if (!this.config.docker.outputPath)
+      this.config.docker.outputPath = dockerDefaultOutputPath;
+  }
   this.config.port =
     this.startupOptions.args.port ||
     process.env.PORT ||

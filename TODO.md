@@ -5,3 +5,4 @@
 3. file-loader
 4. dev websocket loading
 5. babel
+5. local_module 代替测试

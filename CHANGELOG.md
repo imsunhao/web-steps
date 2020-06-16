@@ -1,3 +1,12 @@
+## [0.2.1-alpha.0](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.4...v0.2.1-alpha.0) (2020-06-16)
+
+
+### Features
+
+* 添加 build docker 模式 ([c415fbf](https://github.com/imsunhao/utils/commit/c415fbfd04b14b8fa99c724c627ef90ad0584b87))
+
+
+
 # [0.2.0-alpha.4](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.3...v0.2.0-alpha.4) (2020-06-04)
 
 
