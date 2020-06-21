@@ -5,3 +5,5 @@ coverage
 temp
 explorations
 *.log
+
+!submodule/tests-source/node_modules
