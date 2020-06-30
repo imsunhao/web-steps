@@ -1,7 +1,7 @@
 import minimist from 'minimist'
 import { existsSync, unlinkSync, readFileSync } from 'fs'
 import execa from 'execa'
-import { Execa } from '../../src/utils/node'
+import { Execa } from 'shared/node'
 import { ProcessMessage } from '@types'
 import { setupPuppeteer } from './e2eUtils'
 import { requireFromPath } from 'shared/require'

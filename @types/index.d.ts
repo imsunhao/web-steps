@@ -8,8 +8,8 @@ declare namespace WebSteps {
   type Args = TArgs
   type Config = TConfig
 
-  type ProcessMessage = {
-    messageKey: string
+  type ProcessMessage<T= string> = {
+    key: T
     payload?: any
   }
 

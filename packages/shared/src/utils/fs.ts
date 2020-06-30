@@ -2,8 +2,9 @@ import path from 'path'
 import fs from 'fs'
 import crypto from 'crypto'
 
-export function ensureDirectoryExistence(filePath: string) {
-  const dirname = path.dirname(filePath)
+export function ensureFolderExistence(filePath: string) {
+  const extname = path.extname(filePath)
+  const dirname = !extname ? filePath : path.dirname(filePath)
   if (fs.existsSync(dirname)) return true
   fs.mkdirSync(dirname, { recursive: true })
 }
@@ -161,7 +162,6 @@ export function dirname(fs: any, absPath: string): string {
   }
 }
 
-
 export async function getMD5FilePath(filePath: string, resolve: (...args: any) => string) {
   return new Promise<string>(r => {
     const md5Hash = crypto.createHash('md5')
@@ -175,4 +175,43 @@ export async function getMD5FilePath(filePath: string, resolve: (...args: any) =
       return r(md5Hash.digest('hex'))
     })
   })
+}
+
+export function copyFileSync(source: string, targetFile: string) {
+  ensureFolderExistence(targetFile)
+  fs.writeFileSync(targetFile, fs.readFileSync(source))
+}
+
+export function copyFolderRecursiveSync(source: string, targetFolder: string) {
+  ensureFolderExistence(targetFolder)
+
+  const files = fs.readdirSync(source)
+
+  files.forEach(function(file) {
+    if (file.startsWith('.DS_Store')) return
+    if (file.startsWith('.git')) return
+    const curSource = path.join(source, file)
+    const target = path.join(targetFolder, file)
+    if (fs.lstatSync(curSource).isDirectory()) {
+      copyFolderRecursiveSync(curSource, target)
+    } else {
+      copyFileSync(curSource, target)
+    }
+  })
+}
+
+export function deleteFolder(path: fs.PathLike) {
+  let files = []
+  if (fs.existsSync(path)) {
+    files = fs.readdirSync(path)
+    files.forEach(function(file) {
+      const curPath = path + '/' + file
+      if (fs.statSync(curPath).isDirectory()) {
+        deleteFolder(curPath)
+      } else {
+        fs.unlinkSync(curPath)
+      }
+    })
+    fs.rmdirSync(path)
+  }
 }

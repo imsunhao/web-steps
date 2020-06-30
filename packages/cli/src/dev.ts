@@ -67,8 +67,8 @@ export function start(args: Args) {
     if (!('send' in process) || !__TEST__) {
     } else {
       processOnMessage(process, (payload: ProcessMessage) => {
-        log.debug(log.packagePrefix, 'process', payload.messageKey)
-        if (payload.messageKey === 'e2e') {
+        log.debug(log.packagePrefix, 'process', payload.key)
+        if (payload.key === 'e2e') {
           process.exit(0)
         }
       })

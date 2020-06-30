@@ -40,7 +40,7 @@ export function start(args: Args) {
 
     if ('send' in process && __TEST__) {
       processSend(process, {
-        messageKey: 'debug',
+        key: 'debug',
         payload: stdout
       })
     }

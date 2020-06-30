@@ -1,7 +1,7 @@
 import { Args, TFILES_MANIFEST } from '@types'
 import { log } from './'
 import { config, TConfig } from '@web-steps/config'
-import { getDirFilePathObject, ensureDirectoryExistence, getMD5FilePath } from 'shared/fs'
+import { getDirFilePathObject, ensureFolderExistence, getMD5FilePath } from 'shared/fs'
 import { writeFileSync } from 'fs'
 import path from 'path'
 import { checkHelper } from 'shared/log'
@@ -48,7 +48,7 @@ export function start(args: Args) {
     await config.init(args)
     const helperAssetsPath = config.resolve('src/helpers/assets.ts')
 
-    ensureDirectoryExistence(helperAssetsPath)
+    ensureFolderExistence(helperAssetsPath)
 
     const PUBLIC_ASSETS = getAssetsFilePathObject('public', true)
     const STATIC_ASSETS = getAssetsFilePathObject('static')

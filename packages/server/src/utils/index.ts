@@ -127,7 +127,7 @@ const createBundleRendererRenderToString: (
       clientManifest: Service.getClientManifestAfterAddDll(requireFromPath(clientManifestPath), DLL)
     })
     if (__TEST__ && __WEB_STEPS__) {
-      processSend(process, { messageKey: 'e2e' })
+      processSend(process, { key: 'e2e' })
     }
     // eslint-disable-next-line @typescript-eslint/unbound-method
     return renderer.renderToString

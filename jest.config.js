@@ -1,4 +1,5 @@
-process.env.TEST_ENV='jest'
+process.env.TEST_ENV = 'jest'
+
 module.exports = {
   preset: 'ts-jest',
   globals: {
@@ -26,7 +27,7 @@ module.exports = {
     '^@web-steps/(.*?)$': '<rootDir>/packages/$1/src'
   },
   rootDir: __dirname,
-  testMatch: ['<rootDir>/packages/**/__tests__/**/*spec.[jt]s?(x)'],
+  testMatch: ['<rootDir>/**/__tests__/**/*spec.ts'],
   testPathIgnorePatterns: process.env.SKIP_E2E
     ? // ignore example tests on netlify builds since they don't contribute
       // to coverage and can cause netlify builds to fail

@@ -11,8 +11,9 @@ import { processSend } from 'shared/node'
 import { mergeBase, cloneDeep, merge } from 'shared/lodash'
 import { requireFromPath, requireSourceString } from 'shared/require'
 import { getCache, getSetting } from 'shared/config'
-import { ensureDirectoryExistence } from 'shared/fs'
+import { ensureFolderExistence } from 'shared/fs'
 import { convertObjToSource } from 'shared/toString'
+import { Execa } from 'shared/node'
 import { DEFAULT_PORT, DEFAULT_OPENSSL_CONFIG, DEFAULT_V3_EXT_CONFIG, HTTPS_README } from 'shared/setting'
 import { sync as rmrfSync } from 'rimraf'
 
@@ -21,7 +22,6 @@ import getDllWebpackConfig from './webpack/default-dll.webpack'
 import getDefaultBaseWebpackConfig from './webpack/default-base.webpack'
 import getDefaultClientWebpackConfig from './webpack/default-client.webpack'
 import getDefaultServerWebpackConfig from './webpack/default-server.webpack'
-import { Execa } from '@web-steps/cli'
 import { ServerLifeCycle } from '@web-steps/server'
 
 export let log: Log
@@ -147,7 +147,7 @@ export class Config {
 
     if (__TEST__) {
       processSend(process, {
-        messageKey: 'cache',
+        key: 'cache',
         payload: payload.target
       })
     }
@@ -223,7 +223,7 @@ export class Config {
            * sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain web-steps.crt
            */
           if (!hasCredentials) {
-            ensureDirectoryExistence(this.config.dev.credentials.key)
+            ensureFolderExistence(this.config.dev.credentials.key)
 
             if (!fs.existsSync(this.config.dev.cnf)) {
               fs.writeFileSync(this.config.dev.cnf, DEFAULT_OPENSSL_CONFIG, {
@@ -665,7 +665,7 @@ export class Config {
 
       if (__TEST__) {
         processSend(process, {
-          messageKey: 'config',
+          key: 'config',
           payload: this.config
         })
       }
@@ -677,12 +677,12 @@ export class Config {
   exportStatic() {
     if (!this.isInit) throw log.error('Config need init first. try await config.init()')
     const exportPath = path.resolve(this.setting.output, 'export_config.js')
-    ensureDirectoryExistence(exportPath)
+    ensureFolderExistence(exportPath)
     if (existsSync(exportPath)) unlinkSync(exportPath)
     writeFileSync(exportPath, this.getExportConfig(), { encoding: 'utf-8', flag: 'w' })
     log.success('export config = ' + exportPath)
     if (__TEST__) {
-      processSend(process, { messageKey: 'EXPORT_CONFIG' })
+      processSend(process, { key: 'EXPORT_CONFIG' })
     }
   }
 }

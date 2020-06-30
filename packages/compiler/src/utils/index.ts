@@ -6,7 +6,7 @@ import { log } from '../'
 export function compilerDone(stats: webpack.Stats, resolve: any, reject: any, webpackConfig: webpack.Configuration) {
   log.success('compilerDone')
   if (__TEST__ && process.send) {
-    processSend(process, { messageKey: 'output', payload: { name: webpackConfig.name } })
+    processSend(process, { key: 'output', payload: { name: webpackConfig.name } })
   }
   if (stats.hasErrors()) {
     reject(stats)

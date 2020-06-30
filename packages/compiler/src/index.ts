@@ -35,7 +35,7 @@ export async function start(
 
     if (!notTestExit && __WEB_STEPS__ && __TEST__) {
       processSend(process, {
-        messageKey: 'exit',
+        key: 'exit',
         payload: {
           name: major,
           code: 0

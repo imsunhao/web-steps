@@ -6,7 +6,7 @@ import { log } from './'
 import { start as compilerStart } from '@web-steps/compiler'
 import { sync as rmrfSync } from 'rimraf'
 import { getCache, getResolve } from 'shared/config'
-import { ensureDirectoryExistence, getDirFilePathList } from 'shared/fs'
+import { ensureFolderExistence, getDirFilePathList } from 'shared/fs'
 import { requireSourceString, requireFromPath } from 'shared/require'
 import { processSend, processOnMessage } from 'shared/node'
 import { checkHelper } from 'shared/log'
@@ -124,7 +124,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
     }
   }
 
-  ensureDirectoryExistence(config.userConfigPath.startConfig)
+  ensureFolderExistence(config.userConfigPath.startConfig)
 
   writeFileSync(config.userConfigPath.startConfig, getStartConfigJs(), {
     encoding: 'utf-8',
@@ -282,13 +282,13 @@ export async function start(args: Args) {
     } else {
       debugger
       if (isDocker) {
-        processSend(process, { messageKey: 'docker' })
+        processSend(process, { key: 'docker' })
       } else {
-        processSend(process, { messageKey: 'build' })
+        processSend(process, { key: 'build' })
       }
       processOnMessage(process, (payload: ProcessMessage) => {
-        log.debug(log.packagePrefix, 'process', payload.messageKey)
-        if (payload.messageKey === 'exit') {
+        log.debug(log.packagePrefix, 'process', payload.key)
+        if (payload.key === 'exit') {
           process.exit(0)
         }
       })
