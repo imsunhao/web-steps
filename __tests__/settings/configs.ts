@@ -2,6 +2,7 @@ import { TestSetting, OnMessage } from '../types'
 
 import path from 'path'
 import { existsSync } from 'fs'
+import { requireFromPath } from 'shared/require'
 
 export const major = 'config'
 
@@ -35,6 +36,40 @@ const tests: TestSetting[] = [
       }
       if (key === 'config') {
         expect(payload).toMatchObject({ test: 'prod--web-steps' })
+      }
+    }
+  },
+  {
+    name: '读取默认配置并导出配置',
+    hash: 'f151c2bb596e18cea43d8ba250b9601993aa6eec',
+    skip: false,
+    web_steps: {
+      cache: true,
+      argv: ['export']
+    },
+    onMessage({ message: { key }, test }) {
+      if (key === 'EXPORT_CONFIG') {
+        const exportPath = path.resolve(test.rootDir, './temp/export_config.js')
+        expect(existsSync(exportPath)).toBeTruthy()
+        expect(requireFromPath(exportPath)).toMatchObject({
+          args: {
+            rootDir: test.rootDir
+          },
+          config: {
+            src: {
+              SSR: {
+                client: {
+                  webpack: {
+                    mode: 'production'
+                  }
+                },
+                server: {
+                  lifeCycle: {}
+                }
+              }
+            }
+          }
+        })
       }
     }
   }
