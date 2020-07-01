@@ -1,5 +1,3 @@
-import { Options } from 'execa'
-
 export type MajorCommandKey =
   | 'dev'
   | 'build'

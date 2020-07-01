@@ -168,5 +168,3 @@ export class Args {
     this.debugPath = args['debug-path'] || 'node_modules/@web-steps/cli/bin/web-steps'
   }
 }
-
-export * from './node'

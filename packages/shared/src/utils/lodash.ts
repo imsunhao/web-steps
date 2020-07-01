@@ -62,7 +62,7 @@ export function debounce(func: any, wait?: number, immediate?: any) {
     const last = Date.now() - timestamp
 
     if (last < wait && last >= 0) {
-      timeout = setTimeout(later, wait - last)
+      timeout = global.setTimeout(later, wait - last)
     } else {
       timeout = null
       if (!immediate) {
@@ -77,7 +77,7 @@ export function debounce(func: any, wait?: number, immediate?: any) {
     args = arg
     timestamp = Date.now()
     const callNow = immediate && !timeout
-    if (!timeout) timeout = setTimeout(later, wait)
+    if (!timeout) timeout = global.setTimeout(later, wait)
     if (callNow) {
       result = func.apply(context, args)
       context = args = null

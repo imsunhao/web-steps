@@ -5,7 +5,8 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     tsconfigRootDir: __dirname,
     extraFileExtensions: ['.vue'],
-    project: ['./tsconfig.json']
+    project: ['./tsconfig.json'],
+    createDefaultProgram: true
   },
   plugins: ['@typescript-eslint', 'jest', 'vue', 'html'],
   env: {
@@ -30,6 +31,7 @@ module.exports = {
     'jest/no-disabled-tests': 'off',
     'jest/no-export': 'off',
     'jest/no-standalone-expect': 'off',
+    '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-var-requires': 'off',

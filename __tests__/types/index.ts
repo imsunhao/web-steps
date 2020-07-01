@@ -6,33 +6,6 @@ type TOutput = {
   filePath: string
 }
 
-type TInspectSetting = {
-  /**
-   * 超时时间
-   * - 默认 15000ms
-   */
-  timeout?: number
-  vscodeDebug?: boolean
-  skip?: boolean
-  todo?: boolean
-  /**
-   * 是否启用缓存
-   * - 默认启用
-   */
-  cache?: boolean
-  node: {
-    target: 'web-steps' | 'web-steps--compiler'
-    rootDir: string
-    env?: 'production' | 'development'
-    envs?: Record<string, string>
-    argv?: string[]
-  }
-  webSteps?: {
-    target: 'SSR' | 'SSR-client' | 'SSR-server' | 'custom'
-  }
-  close?: boolean
-}
-
 type TExpect = {
   docker?: {
     path: string
@@ -67,5 +40,5 @@ type TExpect = {
   }
 }
 
-export type TestSetting = TTestSetting<TInspectSetting, TExpect>
-export type OnMessage<T = TExpect> = TOnMessage<T>
+export type TestSetting = TTestSetting<TExpect>
+export type OnMessage<T = TestSetting> = TOnMessage<T>

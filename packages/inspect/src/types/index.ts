@@ -1,9 +1,10 @@
 import { ProcessMessage } from '@types'
+import execa from 'execa'
 
 /**
  * 测试 test 配置
  */
-export type TTestSetting<S = any, T = any> = {
+export type TTestSetting<T = any> = {
   /**
    * 测试名称
    */
@@ -16,29 +17,46 @@ export type TTestSetting<S = any, T = any> = {
 
   /**
    * 测试的项目地址
-   * - 不需要配置
+   * - 不需要配置 自动注入
    */
   rootDir?: string
 
   /**
-   * web_steps 基础配置
+   * 测试的项目地址
+   * - 不需要配置 自动注入
+   * - 37000 开始自加
+   */
+  port?: number
+
+  /**
+   * nodejs 环境变量
+   */
+  envs?: Record<string, string>
+
+  /**
+   * 是否启用调试
+   */
+  debug?: boolean
+
+  /**
+   * 是否跳过测试
+   */
+  skip?: boolean
+
+  /**
+   * web_steps 配置
    */
   web_steps?: TTestWebSteps
 
   /**
-   * 测试环境变量设置
-   */
-  setting: (inject: TTestSettingInject) => S
-
-  /**
    * 期望值
    */
-  expect: T
+  expect?: T
 
   /**
    * web-steps进程的钩子函数
    */
-  onMessage?: TOnMessage<T>
+  onMessage?: TOnMessage
 }
 
 /**
@@ -65,14 +83,37 @@ export type TTestSettingInject = {
 
 export type TTestWebSteps = {
   /**
+   * web-steps 目标
+   */
+  target?: 'SSR' | 'custom'
+
+  /**
+   * 测试超时时间
+   * - 默认 15000ms
+   */
+  timeout?: number
+
+  /**
    * major-command
    */
   major?: string
 
   /**
-   * web_steps 路径
+   * 启用缓存
    */
-  path?: string
+  cache?: boolean
+
+  /**
+   * 生产环境 or 开发环境
+   */
+  env?: 'production' | 'development'
+
+  /**
+   * nodejs 命令参数
+   */
+  argv?: string[]
 }
 
-export type TOnMessage<T = any> = (message: ProcessMessage, expect: T, done: () => void) => void
+export type TOnMessage<T = TTestSetting> = (
+  opts: { message: ProcessMessage; test: T; done: () => void; childProcess: execa.ExecaChildProcess<string> }
+) => void
