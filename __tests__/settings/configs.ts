@@ -1,8 +1,11 @@
 import { TestSetting, OnMessage } from '../types'
 
+import path from 'path'
+import { existsSync } from 'fs'
+
 export const major = 'config'
 
-export const onMessage: OnMessage = ({ message: { key, payload }, test, done }) => {
+export const onMessage: OnMessage = ({ message: { key, payload }, test }) => {
   if (key === 'config') {
     expect(payload).toMatchObject(test.expect.config)
   }
@@ -19,6 +22,19 @@ const tests: TestSetting[] = [
     expect: {
       config: {
         test: 'config-00__use-default-config-file'
+      }
+    }
+  },
+  {
+    name: '生成配置缓存',
+    hash: '1b4d096eedbf59ba56c0fcfaca9721b1f1927da9',
+    skip: false,
+    onMessage({ message: { key, payload }, test }) {
+      if (key === 'cache') {
+        expect(existsSync(path.resolve(test.rootDir, './node_modules/.web-steps_cache/config.js'))).toBeTruthy()
+      }
+      if (key === 'config') {
+        expect(payload).toMatchObject({ test: 'prod--web-steps' })
       }
     }
   }
