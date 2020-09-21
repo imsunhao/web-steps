@@ -72,6 +72,18 @@ const tests: TestSetting[] = [
         })
       }
     }
+  },
+  {
+    name: '确保 DLL配置 正常',
+    hash: '116f0e55d0f9026ea242900f49d4e1a0c2b62b69',
+    skip: false,
+    onMessage({ message: { key, payload }, test }) {
+      if (key === 'cache' && payload === 'dll') {
+        expect(
+          existsSync(path.resolve(test.rootDir, './node_modules/.web-steps_cache/vue-ssr-dll-manifest.json'))
+        ).toBeTruthy()
+      }
+    }
   }
 ]
 

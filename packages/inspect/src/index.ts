@@ -18,8 +18,13 @@ const timeout = 150000
 
 export function makeWebStepsTests(
   { name, tests, onMessage, submodule }: TDescribeSetting,
-  runOptions: RunOptions = {}
+  runOptions: RunOptions = {},
+  args: any = {}
 ) {
+  const { case: caseName } = args
+  const isSkipByCaseName = (name: string) => {
+    return name && caseName && !name.includes(caseName)
+  }
   name = `${prefixInteger(describeIndex++, 2)}-${name}`
   let init = false
   async function initializeTests() {
@@ -42,6 +47,7 @@ export function makeWebStepsTests(
     try {
       for (let i = 0; i < tests.length; i++) {
         const t = tests[i]
+        if (isSkipByCaseName(t.name)) continue
         t.name = `${prefixInteger(i, 2)}-${t.name}`
         await Execa.run('bash', [resolve('__tests__/bin/GIT_CHECKOUT.sh'), submodulePath, t.hash], runOptions)
 
@@ -73,7 +79,7 @@ export function makeWebStepsTests(
     })
 
     tests.forEach(t => {
-      if (t.skip || (__DEBUG_PORT__ && !t.debug)) {
+      if (t.skip || (__DEBUG_PORT__ && !t.debug) || isSkipByCaseName(t.name)) {
         test.skip(t.name, () => {})
         return
       }
@@ -96,7 +102,6 @@ export function makeWebStepsTests(
             `--port=${port}`,
             ...argv
           ]
-
           const childProcess = Execa.runNodeIPC(nodeArgv, { ...runOptions, envs: t.envs })
           if (!('on' in childProcess)) return done()
 

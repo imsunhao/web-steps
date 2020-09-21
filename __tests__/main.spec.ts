@@ -12,4 +12,4 @@ const runOptions: RunOptions = {
   isSilence: !args.show
 }
 
-makeWebStepsTests(getInspectOptions(config), runOptions)
+makeWebStepsTests(getInspectOptions(config), runOptions, args)
