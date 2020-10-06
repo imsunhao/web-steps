@@ -1,3 +1,24 @@
+## [0.2.1](https://github.com/imsunhao/web-steps/compare/v0.2.1-alpha.0...v0.2.1) (2020-10-06)
+
+
+### Bug Fixes
+
+* 修复 requrieFromString 中报错问题 ([39b901b](https://github.com/imsunhao/web-steps/commit/39b901bee645b7cf8c1bf743299c65ad7ff3db28))
+
+
+### Features
+
+* test 生成配置缓存 ([b95db5c](https://github.com/imsunhao/web-steps/commit/b95db5cc8e704e10d487b15f2f593a494a3d3485))
+* test 读取默认配置并导出配置 ([1e6fa7d](https://github.com/imsunhao/web-steps/commit/1e6fa7da4d7fbcfcac3b76201918b94af2880701))
+* 依赖升级 ts -> 3.9.7 ([91a3c99](https://github.com/imsunhao/web-steps/commit/91a3c995671a9310d82e633eaeed37e5057b56ed))
+* 完成 inspect web-steps 核心 ([68c07df](https://github.com/imsunhao/web-steps/commit/68c07df4718200f6eeccf6a48e729f4d747ce809))
+* 添加 inspect 包 ([933bec5](https://github.com/imsunhao/web-steps/commit/933bec57271eb9e676fd034869ca07455c88a27f))
+* 添加 submodules tests-source ([b138057](https://github.com/imsunhao/web-steps/commit/b13805779837e86bbd2b740ebb683fabb615f4b0))
+* 添加 确保 DLL配置 正常 测试 ([b43ed5f](https://github.com/imsunhao/web-steps/commit/b43ed5fcee3a262e886683c357ea690c74f645d0))
+* 移除 被代替的测试 ([131d32d](https://github.com/imsunhao/web-steps/commit/131d32d66fe6fef486b07a8ca7de73223f3d16b5))
+
+
+
 ## [0.2.1-alpha.0](https://github.com/imsunhao/utils/compare/v0.2.0-alpha.4...v0.2.1-alpha.0) (2020-06-16)
 
 
