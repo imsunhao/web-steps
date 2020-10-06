@@ -128,6 +128,12 @@ export function unregisterModules(store: Store<any>, configList: RegistrationCon
   })
 }
 
+export type SniffMutationPayload<T> = T extends (state: any, payload: infer P) => any ? P : T
+export type SniffMutationPayloadTree<S, M extends MutationTree<S>> = { [K in keyof M]: SniffMutationPayload<M[K]> }
+export type SniffActionPayload<T> = T extends (state: any, payload: infer P) => infer V
+  ? { payload: P; value: V }
+  : { payload: unknown; value: unknown }
+
 export class VuexStoreHelper<GlobalStates, GlobalGetters> {
   /**
    * 向 客户端 注入 vuex 服务器端 初始化的数据
@@ -168,12 +174,6 @@ export class VuexStoreHelper<GlobalStates, GlobalGetters> {
       [key: string]: Action<S, R>
     }
     /* ActionTree Fix end  */
-
-    type SniffMutationPayload<T> = T extends (state: any, payload: infer P) => any ? P : T
-    type SniffMutationPayloadTree<S, M extends MutationTree<S>> = { [K in keyof M]: SniffMutationPayload<M[K]> }
-    type SniffActionPayload<T> = T extends (state: any, payload: infer P) => infer V
-      ? { payload: P; value: V }
-      : { payload: unknown; value: unknown }
     type SniffActionPayloadTree<S, M extends ActionTree<S, GlobalStates>> = { [K in keyof M]: SniffActionPayload<M[K]> }
     type SniffActionPayloadPathTree<S, M extends ActionTree<S, GlobalStates>> = {
       [K in keyof M]: SniffMutationPayload<M[K]>
