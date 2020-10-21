@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/oss",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "@web-steps/oss",
   "main": "index.js",
   "files": [

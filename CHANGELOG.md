@@ -1,3 +1,12 @@
+## [0.2.2](https://github.com/imsunhao/utils/compare/v0.2.1...v0.2.2) (2020-10-21)
+
+
+### Bug Fixes
+
+* 修复 helper-assets 类型检查错误 ([c23d637](https://github.com/imsunhao/utils/commit/c23d637e4b844c54dba6ab98566e7a2529a11aca))
+
+
+
 ## [0.2.1](https://github.com/imsunhao/web-steps/compare/v0.2.1-alpha.0...v0.2.1) (2020-10-06)
 
 
