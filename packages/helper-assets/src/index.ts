@@ -37,79 +37,21 @@ export class AssetsHelper {
     }
 
     function GPA<T extends P>(key: keyof T): string
-    function GPA<T extends P, K extends keyof T>(k: K, k1: keyof T[K]): string
-    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K]>(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1]
-    ): string
-    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1],
-      k3: keyof T[K][K1][K2]
-    ): string
-    function GPA<
-      T extends P,
-      K extends keyof T,
-      K1 extends keyof T[K],
-      K2 extends keyof T[K][K1],
-      K3 extends keyof T[K][K1][K2]
-    >(k: K, k1: keyof T[K], k2: keyof T[K][K1], k3: keyof T[K][K1][K2], k4: keyof T[K][K1][K2][K3]): string
-    function GPA<
-      T extends P,
-      K extends keyof T,
-      K1 extends keyof T[K],
-      K2 extends keyof T[K][K1],
-      K3 extends keyof T[K][K1][K2],
-      K4 extends keyof T[K][K1][K2][K3]
-    >(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1],
-      k3: keyof T[K][K1][K2],
-      k4: keyof T[K][K1][K2][K3],
-      k5: keyof T[K][K1][K2][K3][K4]
-    ): string
+    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K]>(k: K, k1: K1): string
+    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(k: K, k1: K1, k2: K2): string
+    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2]>(k: K, k1: K1, k2: K2, k3: K3): string
+    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2], K4 extends keyof T[K][K1][K2][K3]>(k: K, k1: K1, k2: K2, k3: K3, k4: K4): string
+    function GPA<T extends P, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2], K4 extends keyof T[K][K1][K2][K3], K5 extends keyof T[K][K1][K2][K3][K4]>(k: K, k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): string
     function GPA(...args: any) {
       return baseGetPath('/public', PUBLIC_ASSETS, args)
     }
 
     function GSA<T extends S>(key: keyof T): string
-    function GSA<T extends S, K extends keyof T>(k: K, k1: keyof T[K]): string
-    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K]>(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1]
-    ): string
-    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1],
-      k3: keyof T[K][K1][K2]
-    ): string
-    function GSA<
-      T extends S,
-      K extends keyof T,
-      K1 extends keyof T[K],
-      K2 extends keyof T[K][K1],
-      K3 extends keyof T[K][K1][K2]
-    >(k: K, k1: keyof T[K], k2: keyof T[K][K1], k3: keyof T[K][K1][K2], k4: keyof T[K][K1][K2][K3]): string
-    function GSA<
-      T extends S,
-      K extends keyof T,
-      K1 extends keyof T[K],
-      K2 extends keyof T[K][K1],
-      K3 extends keyof T[K][K1][K2],
-      K4 extends keyof T[K][K1][K2][K3]
-    >(
-      k: K,
-      k1: keyof T[K],
-      k2: keyof T[K][K1],
-      k3: keyof T[K][K1][K2],
-      k4: keyof T[K][K1][K2][K3],
-      k5: keyof T[K][K1][K2][K3][K4]
-    ): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K]>(k: K, k1: K1): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1]>(k: K, k1: K1, k2: K2): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2]>(k: K, k1: K1, k2: K2, k3: K3): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2], K4 extends keyof T[K][K1][K2][K3]>(k: K, k1: K1, k2: K2, k3: K3, k4: K4): string
+    function GSA<T extends S, K extends keyof T, K1 extends keyof T[K], K2 extends keyof T[K][K1], K3 extends keyof T[K][K1][K2], K4 extends keyof T[K][K1][K2][K3], K5 extends keyof T[K][K1][K2][K3][K4]>(k: K, k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): string
     function GSA(...args: any) {
       return baseGetPath('/static', STATIC_ASSETS, args)
     }

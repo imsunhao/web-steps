@@ -8,6 +8,9 @@ const PUBLIC_ASSETS = {
           'home.svg': 'public/home/home.74b183e2d867fc9b68beda2d0c51e3ff.svg'
         }
       }
+    },
+    page: {
+      'xxx': 'ssss'
     }
   },
   'logo.svg': 'public/logo.74b183e2d867fc9b68beda2d0c51e3ff.svg',
