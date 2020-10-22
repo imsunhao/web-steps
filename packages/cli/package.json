@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/cli",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "@web-steps/cli",
   "main": "index.js",
   "files": [
@@ -25,11 +25,11 @@
   "homepage": "https://github.com/imsunhao/utils/tree/dev/packages/cli#readme",
   "peerDependencies": {
     "execa": "^4.0.0",
-    "@web-steps/compiler": "0.2.2",
-    "@web-steps/config": "0.2.2",
+    "@web-steps/compiler": "0.2.3",
+    "@web-steps/config": "0.2.3",
     "@web-steps/helper": "0.1.10",
-    "@web-steps/release": "0.2.2",
-    "@web-steps/oss": "0.2.2",
-    "@web-steps/server": "0.2.2"
+    "@web-steps/release": "0.2.3",
+    "@web-steps/oss": "0.2.3",
+    "@web-steps/server": "0.2.3"
   }
 }

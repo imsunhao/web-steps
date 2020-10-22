@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/imsunhao/utils/compare/v0.2.2...v0.2.3) (2020-10-22)
+
+
+### Features
+
+* AssetsHelper 添加 addHost ([aa1717d](https://github.com/imsunhao/utils/commit/aa1717d64c53791079effe2cb53b8f2e83946f57))
+
+
+
 ## [0.2.2](https://github.com/imsunhao/utils/compare/v0.2.1...v0.2.2) (2020-10-21)
 
 
