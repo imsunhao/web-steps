@@ -1,3 +1,4 @@
+import { getHostGlobal } from 'shared/SSR'
 import { Module, Store, MutationTree, Commit, Dispatch } from 'vuex'
 
 export type VUEX_DEVTOOL = ((options: VuexDevtoolOptions) => boolean) | boolean
@@ -5,7 +6,7 @@ export type VuexDevtoolOptions = { type: 'mutation' | 'action'; paths: string; p
 
 const log = ({ type, paths, payload }: VuexDevtoolOptions) => {
   if (!__IS_SERVER__ && !__PRODUCTION__) {
-    const devtool = (window as any).VUEX_DEVTOOL
+    const devtool = getHostGlobal().VUEX_DEVTOOL
     if (devtool) {
       if (devtool instanceof Function) {
         if (devtool({ type, paths, payload })) {
