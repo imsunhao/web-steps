@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/helper-release",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "@web-steps/helper-release",
   "main": "index.js",
   "files": [

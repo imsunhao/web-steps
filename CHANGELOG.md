@@ -1,3 +1,12 @@
+## [0.2.4](https://github.com/imsunhao/utils/compare/v0.2.3...v0.2.4) (2020-10-23)
+
+
+### Features
+
+* getHostGlobal 支持 小程序 ([9a2d676](https://github.com/imsunhao/utils/commit/9a2d6765bd2235ef43751d74d41c5bff63263814))
+
+
+
 ## [0.2.3](https://github.com/imsunhao/utils/compare/v0.2.2...v0.2.3) (2020-10-22)
 
 
