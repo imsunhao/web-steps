@@ -53,7 +53,7 @@ export async function start(args: Args) {
 
     step('\nSelecting version...')
     if (!skipVersion) {
-      const { release } = await prompt({
+      const { release } = await prompt<{ release: string }>({
         type: 'select',
         name: 'release',
         message: 'Select release type',
@@ -68,6 +68,7 @@ export async function start(args: Args) {
           initial: currentVersion
         })).version
       } else {
+        // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
         targetVersion = release.match(/\((.*)\)/)[1]
       }
 
@@ -75,7 +76,7 @@ export async function start(args: Args) {
         throw new Error(`invalid target version: ${targetVersion}`)
       }
 
-      const { yes } = await prompt({
+      const { yes } = await prompt<{ yes: boolean }>({
         type: 'confirm',
         name: 'yes',
         message: `Releasing v${targetVersion}. Confirm?`
