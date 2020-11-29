@@ -79,7 +79,7 @@ async function resolveMessageKey(
   args: any
 ) {
   const { messageKey, payload } = message
-  const msg: keyof TTestConfig['result'] = messageKey as any
+  const msg: keyof TTestConfig['result'] = messageKey
   const result: Required<TTestConfig['result']> = r as any
 
   if (result[msg]) {
@@ -128,6 +128,7 @@ async function resolveMessageKey(
           if (args.show) {
             console.log('[e2e] url =', url)
           }
+          // eslint-disable-next-line no-debugger
           if (__DEBUG_PORT__) debugger
           else return true
         }
@@ -188,6 +189,7 @@ export function testing(major: string, caseName: string, testConfig: TTestConfig
   const env = node.env || 'production'
   if (todo) return test.todo(caseName)
   if (skip || (process.env.VSCODE && !vscodeDebug)) return test.skip(caseName, () => {})
+  // eslint-disable-next-line no-debugger
   if (process.env.VSCODE) debugger
   const args = minimist(process.argv.slice(3), { string: 'case' })
   if (args['case']) {

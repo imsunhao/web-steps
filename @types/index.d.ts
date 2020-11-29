@@ -10,6 +10,7 @@ declare namespace WebSteps {
 
   type ProcessMessage<T= string> = {
     key: T
+    messageKey?: any
     payload?: any
   }
 

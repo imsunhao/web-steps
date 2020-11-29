@@ -3,10 +3,10 @@
     "rootDir": ".",
     "baseUrl": ".",
     "outDir": "dist",
-    "target": "esnext",
-    "module": "esnext",
+    "target": "es2020",
+    "module": "es2020",
     "moduleResolution": "node",
-    "lib": ["esnext", "dom"],
+    "lib": ["es2020", "dom"],
     "types": ["jest", "puppeteer"],
     "paths": {
       "@web-steps/*": ["packages/*/src"],
@@ -24,6 +24,7 @@
     "packages/global.d.ts",
     "packages/*/src",
     "packages/*/@types",
+    "packages/*/__tests__",
     "__tests__",
     "*.vue",
     "submodule/test-source"
