@@ -1,3 +1,17 @@
+## [0.2.5](https://github.com/imsunhao/utils/compare/v0.2.4...v0.2.5) (2020-11-30)
+
+
+### Bug Fixes
+
+* **ts:** 修复 类型检查 ([3b8c1a7](https://github.com/imsunhao/utils/commit/3b8c1a7a23a6afeeeb95628d56056ed20585b82d))
+
+
+### Features
+
+* 添加 INJECT_ENV ([e96d1d3](https://github.com/imsunhao/utils/commit/e96d1d38edde1e26879fb3eccf50b8b51f2fac7c))
+
+
+
 ## [0.2.4](https://github.com/imsunhao/utils/compare/v0.2.3...v0.2.4) (2020-10-23)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/helper-webpack",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "@web-steps/helper-webpack",
   "main": "index.js",
   "files": [
