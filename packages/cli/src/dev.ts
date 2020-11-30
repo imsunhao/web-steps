@@ -35,7 +35,7 @@ export function start(args: Args) {
 
     if (args.target === 'SSR') {
       const messageBus = new MessageBus<TSSRMessageBus>()
-      const { src, injectContext, port, dev } = config.config
+      const { src, injectContext, port, dev, INJECT_ENV } = config.config
       const SSR = src.SSR
       const { credentials } = dev
       serverStart(
@@ -46,6 +46,7 @@ export function start(args: Args) {
           injectContext: undefined,
           port,
           credentials,
+          INJECT_ENV,
           env
         },
         { messageBus }

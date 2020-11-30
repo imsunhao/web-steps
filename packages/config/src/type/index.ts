@@ -79,6 +79,14 @@ type TBaseConfig<T extends 'finish' | 'ready', INJECT_CONTEXT = any> = {
   injectContext: string
 
   /**
+   * 注入自定义 ENV 字段名
+   * - 注入client端 __INJECT_ENV__
+   * - 一般用于根据服务器环境变量不同做不同的事情
+   * - 默认值 []
+   */
+  INJECT_ENV: string[]
+
+  /**
    * 资源库
    * - 不会给上传的文件 添加 hash 值
    * - 默认值 path: './static'

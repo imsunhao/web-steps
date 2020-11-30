@@ -99,7 +99,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
       const rootDir = path.resolve(__dirname, '${path.relative(config.setting.output, config.args.rootDir)}')
       const getResolve = ${convertObjToSource(getResolve)}
       const resolve = getResolve({ rootDir })
-      const { server, DLL, injectContext, port } = ${convertObjToSource(startConfig)}
+      const { server, DLL, injectContext, port, INJECT_ENV } = ${convertObjToSource(startConfig)}
       const pathResolve = ${pathResolve}
       const getReplacePath = ${getReplacePath}
       const replaceRegExp = ${replaceRegExp}
@@ -111,6 +111,7 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
         rootDir,
         server,
         DLL,
+        INJECT_ENV,
         port,
         injectContext
       }

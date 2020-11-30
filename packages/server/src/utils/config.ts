@@ -30,9 +30,11 @@ export async function getInitConfig() {
     const setting = processMessageMap.setting
     const dll = processMessageMap.config.src.DLL
 
-    // TODO 这俩应该是 env环境变量 中 获取
+    // TODO 这三应该是 env环境变量 中 获取
     const injectContext = processMessageMap.config.injectContext
     const port = processMessageMap.config.port
+    const INJECT_ENV = processMessageMap.config.INJECT_ENV
+
     let credentials
     if (processMessageMap.config.dev) {
       credentials = processMessageMap.config.dev.credentials
@@ -43,6 +45,7 @@ export async function getInitConfig() {
       dll,
       injectContext,
       credentials,
+      INJECT_ENV,
       port
     }
   } catch (error) {

@@ -358,6 +358,10 @@ export class Config {
       }
     }
 
+    if (!this.config.INJECT_ENV) {
+      this.config.INJECT_ENV = []
+    }
+
     if (this.startupOptions.args.injectContext) {
       const injectContextPath = this.startupOptions.args.injectContext
       this.config.injectContext = injectContextPath.startsWith('/') ? injectContextPath : resolve(injectContextPath)

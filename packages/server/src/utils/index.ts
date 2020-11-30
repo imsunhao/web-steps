@@ -157,6 +157,10 @@ function getRenderContext(req: { url: string; headers: IncomingHttpHeaders }, re
     nonce: '',
     head: ''
   }
+  const INJECT_ENV = { nonce: context.nonce }
+  process.__INJECT_CONTEXT__.forEach((key: keyof typeof INJECT_ENV) => {
+    INJECT_ENV[key] = process.env[key]
+  })
 
   if (!injectContext.CSP_DISABLED) {
     const nonce = randomStringAsBase64Url(12)
@@ -168,10 +172,9 @@ function getRenderContext(req: { url: string; headers: IncomingHttpHeaders }, re
     : ''
 
   const nonceStr = context.nonce ? `nonce="${context.nonce}"` : ''
-  context.head = `<script ${nonceStr}>window.__INJECT_ENV__ = ${serialize(
-    { nonce: context.nonce },
-    { isJSON: true }
-  )};window.__INJECT_CONTEXT__ = ${serialize(injectContext, { isJSON: true })}${autoRemove}</script>`
+  context.head = `<script ${nonceStr}>window.__INJECT_ENV__ = ${serialize(INJECT_ENV, {
+    isJSON: true
+  })};window.__INJECT_CONTEXT__ = ${serialize(injectContext, { isJSON: true })}${autoRemove}</script>`
   return context
 }
 
@@ -296,8 +299,13 @@ export class Service {
   }
 
   static updateInjectContext(injectContext: any) {
-    log.info(`updated [InjectContext] time: ${new Date().toLocaleString()}`)
+    log.info(`updated [INJECT_CONTEXT] time: ${new Date().toLocaleString()}`)
     process.__INJECT_CONTEXT__ = injectContext || DEFAULT_INJECT_CONTEXT
+  }
+
+  static updateInjectENV(INJECT_ENV: any) {
+    log.info(`updated [INJECT_ENV] time: ${new Date().toLocaleString()}`)
+    process.__INJECT_ENV__ = INJECT_ENV || []
   }
 
   static getClientManifestAfterAddDll(clientManifest: any, DLL: TDLL) {

@@ -20,9 +20,13 @@ export function showWebpackCompilerError(stats: Stats) {
   return true
 }
 
-export function start({ server, setting, dll, credentials }: ServerStart, opts?: { messageBus: SSRMessageBus }) {
+export function start(
+  { server, setting, dll, credentials, INJECT_ENV }: ServerStart,
+  opts?: { messageBus: SSRMessageBus }
+) {
   const { messageBus } = opts
   const service = new DevService(server, setting, new DevAPP(), dll, credentials)
+  DevService.updateInjectENV(INJECT_ENV)
 
   messageBus.on('memory-fs', ({ mfs }) => {
     service.fileSystem = mfs

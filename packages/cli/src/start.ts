@@ -53,7 +53,7 @@ export function start(args: Args) {
     server.lifeCycle = {}
   }
 
-  const { DLL, injectContext, port } = startConfig as any
+  const { DLL, injectContext, port, INJECT_ENV } = startConfig as any
 
   if (args.target === 'SSR') {
     serverStart({
@@ -62,6 +62,7 @@ export function start(args: Args) {
       dll: DLL,
       credentials: undefined,
       injectContext,
+      INJECT_ENV,
       port: process.env.PORT || args.port || port,
       env: args.env
     })
