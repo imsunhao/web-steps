@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/helper-api",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "@web-steps/helper-api",
   "main": "index.js",
   "files": [

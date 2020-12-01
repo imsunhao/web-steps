@@ -1,3 +1,13 @@
+## [0.2.6](https://github.com/imsunhao/utils/compare/v0.2.5...v0.2.6) (2020-12-01)
+
+
+### Bug Fixes
+
+* 修复 build eslint error ([20dcf79](https://github.com/imsunhao/utils/commit/20dcf794a6361fdc2f0b61f9edea1439b2238f3c))
+* 修复 dev 模式下, StartConfig INJECT_ENV 获取失败 ([4d787b3](https://github.com/imsunhao/utils/commit/4d787b3efee9f69720d5c179bb884150d402914d))
+
+
+
 ## [0.2.5](https://github.com/imsunhao/utils/compare/v0.2.4...v0.2.5) (2020-11-30)
 
 
