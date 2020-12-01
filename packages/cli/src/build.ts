@@ -278,11 +278,10 @@ export async function start(args: Args) {
     }
 
     writeFileSync(config.userConfigPath.FILESManifest, JSON.stringify(FILES_MANIFEST, null, 2), 'utf-8')
-    debugger
 
+    // eslint-disable-next-line no-empty
     if (!('send' in process) || !__TEST__) {
     } else {
-      debugger
       if (isDocker) {
         processSend(process, { key: 'docker' })
       } else {
