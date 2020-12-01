@@ -158,7 +158,7 @@ function getRenderContext(req: { url: string; headers: IncomingHttpHeaders }, re
     head: ''
   }
   const INJECT_ENV = { nonce: context.nonce }
-  process.__INJECT_CONTEXT__.forEach((key: keyof typeof INJECT_ENV) => {
+  process.__INJECT_ENV__.forEach((key: keyof typeof INJECT_ENV) => {
     INJECT_ENV[key] = process.env[key]
   })
 
@@ -304,8 +304,8 @@ export class Service {
   }
 
   static updateInjectENV(INJECT_ENV: any) {
-    log.info(`updated [INJECT_ENV] time: ${new Date().toLocaleString()}`)
     process.__INJECT_ENV__ = INJECT_ENV || []
+    log.info(`updated [INJECT_ENV] time: ${new Date().toLocaleString()}`, process.__INJECT_ENV__)
   }
 
   static getClientManifestAfterAddDll(clientManifest: any, DLL: TDLL) {

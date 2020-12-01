@@ -90,7 +90,8 @@ function exportSSRStartConfig(DLL: any, injectContext: any) {
     server,
     DLL,
     injectContext,
-    port: config.config.port
+    port: config.config.port,
+    INJECT_ENV: config.config.INJECT_ENV
   }
 
   function getStartConfigJs() {

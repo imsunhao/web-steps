@@ -26,7 +26,6 @@ export function start(
 ) {
   const { messageBus } = opts
   const service = new DevService(server, setting, new DevAPP(), dll, credentials)
-  DevService.updateInjectENV(INJECT_ENV)
 
   messageBus.on('memory-fs', ({ mfs }) => {
     service.fileSystem = mfs
@@ -34,6 +33,7 @@ export function start(
 
   messageBus.on('config', ({ config }) => {
     service.config = config
+    DevService.updateInjectENV(INJECT_ENV)
   })
 
   messageBus.on('SSR-compiler', ({ compiler, webpackConfig: { name, output: { publicPath } } }) => {

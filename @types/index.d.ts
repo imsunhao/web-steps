@@ -40,6 +40,7 @@ declare namespace WebSteps {
     DLL: TDLL
     injectContext: any
     port: string | number
+    INJECT_ENV: string[]
   }
 
   type TFILES_MANIFEST = Record<'base' | 'dll' | 'SSR' | 'public' | 'static', string[]>
