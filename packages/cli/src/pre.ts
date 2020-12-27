@@ -11,6 +11,34 @@ const helperInfo = `
 ${COMMON_HELPER_INFO}
 `
 
+function objToArrayByKeysSort(obj: { [x: string]: any }) {
+  const keysSorted = Object.keys(obj).sort(function(k1: any, k2: any) {
+    return k1 - k2
+  })
+  return keysSorted.map(key => [key, obj[key]])
+}
+
+function arrayObjToString(arrayObj: any[], index = 1) {
+  if (!(arrayObj instanceof Array)) arrayObj = objToArrayByKeysSort(arrayObj)
+  let parentPrefix = ''
+  let prefix = ''
+  for (let i = 0; i < index; i++) {
+    prefix += '\t'
+    if (i) parentPrefix += '\t'
+  }
+  let str = '{'
+  arrayObj.forEach((item: any[]) => {
+    if (typeof item[1] === 'string') {
+      str += `\n${prefix}${JSON.stringify(item[0])}: ${JSON.stringify(item[1])},`
+    } else {
+      str += `\n${prefix}${JSON.stringify(item[0])}: ${arrayObjToString(item[1], index + 1)},`
+    }
+  })
+  if (arrayObj.length) str = str.slice(0, str.length - 1)
+  str += `\n${parentPrefix}}`
+  return str
+}
+
 export function start(args: Args) {
   checkHelper(args, {
     majorCommand: {
@@ -56,9 +84,9 @@ export function start(args: Args) {
     await Promise.all(promiseList)
 
     const resource = `
-export const PUBLIC_ASSETS = ${JSON.stringify(PUBLIC_ASSETS, null, 2)}
+export const PUBLIC_ASSETS = ${arrayObjToString(PUBLIC_ASSETS)}
 
-export const STATIC_ASSETS = ${JSON.stringify(STATIC_ASSETS, null, 2)}
+export const STATIC_ASSETS = ${arrayObjToString(STATIC_ASSETS)}
 `
 
     writeFileSync(helperAssetsPath, resource, 'utf-8')
