@@ -1,3 +1,17 @@
+## [0.2.7](https://github.com/imsunhao/utils/compare/v0.2.6...v0.2.7) (2020-12-27)
+
+
+### Bug Fixes
+
+* 保证 pre assets 输出顺序 ([1605385](https://github.com/imsunhao/utils/commit/16053854ecab0793f2a63173c7a17f97f8ecc600))
+
+
+### Features
+
+* 调整 bin命令 ([8a7a069](https://github.com/imsunhao/utils/commit/8a7a069c551e3db6253a6a924cb8d806c4f43c47))
+
+
+
 ## [0.2.6](https://github.com/imsunhao/utils/compare/v0.2.5...v0.2.6) (2020-12-01)
 
 
