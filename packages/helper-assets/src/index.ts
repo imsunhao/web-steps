@@ -4,7 +4,7 @@ const hostGlobal = getHostGlobal()
 
 function getPathWithHost(path: string, host: string) {
   let value = path || ''
-  if (host && host !== '/') {
+  if (host) {
     if (value.startsWith('/')) {
       value = value.slice(1)
     }
@@ -19,7 +19,7 @@ function getPathWithHost(path: string, host: string) {
 export class AssetsHelper {
   static makeWrapper<P, S>(
     payload: { PUBLIC_ASSETS: P; STATIC_ASSETS: S; dev?: boolean; addHost?: boolean },
-    host = hostGlobal.__INJECT_CONTEXT__.STATIC_HOST
+    host = hostGlobal.__INJECT_CONTEXT__.STATIC_HOST || '/'
   ) {
     const { PUBLIC_ASSETS, STATIC_ASSETS, dev: isDev, addHost } = payload
     function baseGetPath(prefix: string, assets: any, args: string[]) {
