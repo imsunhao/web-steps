@@ -303,8 +303,9 @@ export class Service {
     process.__INJECT_CONTEXT__ = injectContext || DEFAULT_INJECT_CONTEXT
   }
 
-  static updateInjectENV(INJECT_ENV: any) {
-    process.__INJECT_ENV__ = INJECT_ENV || []
+  static updateInjectENV(INJECT_ENV: string[] = []) {
+    INJECT_ENV.push('NODE_ENV')
+    process.__INJECT_ENV__ = INJECT_ENV
     log.info(`updated [INJECT_ENV] time: ${new Date().toLocaleString()}`, process.__INJECT_ENV__)
   }
 
