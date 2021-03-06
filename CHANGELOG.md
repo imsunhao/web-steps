@@ -1,3 +1,17 @@
+## [0.2.8](https://github.com/imsunhao/utils/compare/v0.2.7...v0.2.8) (2021-03-06)
+
+
+### Bug Fixes
+
+* 修复 getPathWithHost 错误的返回 ([6e617c6](https://github.com/imsunhao/utils/commit/6e617c6fd533f4002184c880bc2a751e539bf163))
+
+
+### Features
+
+* INJECT_ENV 自动添加 NODE_ENV ([d33c832](https://github.com/imsunhao/utils/commit/d33c8326ab03e6abffc224850be56c35a2148822))
+
+
+
 ## [0.2.7](https://github.com/imsunhao/utils/compare/v0.2.6...v0.2.7) (2020-12-27)
 
 
