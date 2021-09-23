@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/helper-view-router",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "@web-steps/helper-view-router",
   "main": "index.js",
   "files": [

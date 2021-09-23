@@ -1,3 +1,41 @@
+## [0.2.9](https://gitlab.bestminr.com/bestminr/web-steps/compare/v0.2.0-alpha.0...v0.2.9) (2021-09-23)
+
+
+### Bug Fixes
+
+* 保证 pre assets 输出顺序 ([1605385](https://gitlab.bestminr.com/bestminr/web-steps/commit/16053854ecab0793f2a63173c7a17f97f8ecc600))
+* 不能使用 统一入口, 必须使用多入口方式引用 ([53bd2c6](https://gitlab.bestminr.com/bestminr/web-steps/commit/53bd2c653d250d6b4bed93a506d4b407b167b35c))
+* 完善 api 类型增强 ([667face](https://gitlab.bestminr.com/bestminr/web-steps/commit/667face0477bc956812a5fcab3a1ed20b5421aa8))
+* 修复 build eslint error ([20dcf79](https://gitlab.bestminr.com/bestminr/web-steps/commit/20dcf794a6361fdc2f0b61f9edea1439b2238f3c))
+* 修复 dev 模式下 server.creating 的优先级问题 ([8063210](https://gitlab.bestminr.com/bestminr/web-steps/commit/80632100a5595bf377d585c4e23e77a52788aafc))
+* 修复 dev 模式下, StartConfig INJECT_ENV 获取失败 ([4d787b3](https://gitlab.bestminr.com/bestminr/web-steps/commit/4d787b3efee9f69720d5c179bb884150d402914d))
+* 修复 getPathWithHost 错误的返回 ([6e617c6](https://gitlab.bestminr.com/bestminr/web-steps/commit/6e617c6fd533f4002184c880bc2a751e539bf163))
+* **ts:** 修复 类型检查 ([3b8c1a7](https://gitlab.bestminr.com/bestminr/web-steps/commit/3b8c1a7a23a6afeeeb95628d56056ed20585b82d))
+* 修复 helper-assets 类型检查错误 ([c23d637](https://gitlab.bestminr.com/bestminr/web-steps/commit/c23d637e4b844c54dba6ab98566e7a2529a11aca))
+* 修复 requrieFromString 中报错问题 ([39b901b](https://gitlab.bestminr.com/bestminr/web-steps/commit/39b901bee645b7cf8c1bf743299c65ad7ff3db28))
+
+
+### Features
+
+* 拆分类型 防止强覆盖 导致丢失类型 ([541057e](https://gitlab.bestminr.com/bestminr/web-steps/commit/541057e0c252108dfac3281d6af6afa1bb534058))
+* 调整 bin命令 ([8a7a069](https://gitlab.bestminr.com/bestminr/web-steps/commit/8a7a069c551e3db6253a6a924cb8d806c4f43c47))
+* 添加 确保 DLL配置 正常 测试 ([b43ed5f](https://gitlab.bestminr.com/bestminr/web-steps/commit/b43ed5fcee3a262e886683c357ea690c74f645d0))
+* 添加 build docker 模式 ([c415fbf](https://gitlab.bestminr.com/bestminr/web-steps/commit/c415fbfd04b14b8fa99c724c627ef90ad0584b87))
+* 添加 INJECT_ENV ([e96d1d3](https://gitlab.bestminr.com/bestminr/web-steps/commit/e96d1d38edde1e26879fb3eccf50b8b51f2fac7c))
+* 添加 inspect 包 ([933bec5](https://gitlab.bestminr.com/bestminr/web-steps/commit/933bec57271eb9e676fd034869ca07455c88a27f))
+* 添加 submodules tests-source ([b138057](https://gitlab.bestminr.com/bestminr/web-steps/commit/b13805779837e86bbd2b740ebb683fabb615f4b0))
+* 添加 typescript 类型拓展解决方案 ([357571d](https://gitlab.bestminr.com/bestminr/web-steps/commit/357571d236a2e61bd2e0e3b01a22056f1afa9889))
+* 完成 inspect web-steps 核心 ([68c07df](https://gitlab.bestminr.com/bestminr/web-steps/commit/68c07df4718200f6eeccf6a48e729f4d747ce809))
+* 依赖升级 ts -> 3.9.7 ([91a3c99](https://gitlab.bestminr.com/bestminr/web-steps/commit/91a3c995671a9310d82e633eaeed37e5057b56ed))
+* 移除 被代替的测试 ([131d32d](https://gitlab.bestminr.com/bestminr/web-steps/commit/131d32d66fe6fef486b07a8ca7de73223f3d16b5))
+* AssetsHelper 添加 addHost ([aa1717d](https://gitlab.bestminr.com/bestminr/web-steps/commit/aa1717d64c53791079effe2cb53b8f2e83946f57))
+* getHostGlobal 支持 小程序 ([9a2d676](https://gitlab.bestminr.com/bestminr/web-steps/commit/9a2d6765bd2235ef43751d74d41c5bff63263814))
+* INJECT_ENV 自动添加 NODE_ENV ([d33c832](https://gitlab.bestminr.com/bestminr/web-steps/commit/d33c8326ab03e6abffc224850be56c35a2148822))
+* test 读取默认配置并导出配置 ([1e6fa7d](https://gitlab.bestminr.com/bestminr/web-steps/commit/1e6fa7da4d7fbcfcac3b76201918b94af2880701))
+* test 生成配置缓存 ([b95db5c](https://gitlab.bestminr.com/bestminr/web-steps/commit/b95db5cc8e704e10d487b15f2f593a494a3d3485))
+
+
+
 ## [0.2.8](https://github.com/imsunhao/utils/compare/v0.2.7...v0.2.8) (2021-03-06)
 
 
