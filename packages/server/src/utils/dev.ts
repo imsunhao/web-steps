@@ -176,6 +176,7 @@ export class DevAPP extends APP {
 
   priority: Array<TAPP['status']> = [
     'beforeCreated',
+    'creating',
     'devMiddleware',
     'beforeStart',
     'start',
