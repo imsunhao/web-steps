@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/inspect",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "@web-steps/inspect",
   "main": "index.js",
   "files": [

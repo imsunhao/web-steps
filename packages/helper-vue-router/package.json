@@ -1,6 +1,6 @@
 {
   "name": "@web-steps/helper-vue-router",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "@web-steps/helper-vue-router",
   "main": "index.js",
   "files": [
